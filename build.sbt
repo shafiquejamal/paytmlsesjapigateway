@@ -11,6 +11,9 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   filters,
+  "org.scalikejdbc" %% "scalikejdbc"       % "2.3.5",
+  "com.h2database"  %  "h2"                % "1.4.191",
+  "ch.qos.logback"  %  "logback-classic"   % "1.1.3",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "net.codingwell" %% "scala-guice" % "4.0.1"

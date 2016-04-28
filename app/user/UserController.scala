@@ -15,7 +15,8 @@ class UserController @Inject() (userDAO:UserDAO, userAPI:UserAPI) extends Contro
     )(unlift(UserMessage.unapply))
 
   def user = Action {
-    Ok(userAPI.find("someId").map(Json.toJson(_)).getOrElse(""))
+    // Ok(userAPI.find("someId").map(Json.toJson(_)).getOrElse(""))
+    Ok
   }
 
 
