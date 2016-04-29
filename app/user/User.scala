@@ -1,6 +1,6 @@
 package user
 
-import entity.Active
+import entity.ActiveFlag
 import org.joda.time.DateTime
 
 case class User (
@@ -10,7 +10,7 @@ case class User (
                   password: String,
                   override val isActive: Boolean,
                   created:Option[DateTime] = None
-          ) extends Active[User]
+          ) extends ActiveFlag[User]
 
 object User {
   def apply(id: String, email: String, password: String): User = new User(Some(id), None, email, password, isActive = true)

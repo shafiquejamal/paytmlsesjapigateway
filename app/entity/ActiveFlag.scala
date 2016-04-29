@@ -1,6 +1,6 @@
 package entity
 
-trait Active[T <: Active[T]] {
+trait ActiveFlag[T <: ActiveFlag[T]] {
 
   def isActive:Boolean
 
