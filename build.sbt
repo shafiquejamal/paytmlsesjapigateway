@@ -4,7 +4,7 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   jdbc,
@@ -12,6 +12,8 @@ libraryDependencies ++= Seq(
   ws,
   filters,
   "org.scalikejdbc" %% "scalikejdbc"       % "2.3.5",
+  "org.scalikejdbc" %% "scalikejdbc-test"   % "2.3.5"   % "test",
+  "org.flywaydb" %% "flyway-play" % "3.0.0",
   "com.h2database"  %  "h2"                % "1.4.191",
   "ch.qos.logback"  %  "logback-classic"   % "1.1.3",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test",

@@ -1,19 +1,22 @@
 package user
 
 import entity.Active
+import org.joda.time.DateTime
 
-case class User(
-                 id:Option[String],
-                 userName:Option[String],
-                 emailAddress:Option[String],
-                 password:String,
-                 override val isActive:Boolean
-               ) extends Active[User]
+case class User (
+                  id: Option[String],
+                  userName: Option[String],
+                  email: String,
+                  password: String,
+                  override val isActive: Boolean,
+                  created:Option[DateTime] = None
+          ) extends Active[User]
 
 object User {
-  def apply(id:String, password:String):User = User(Some(id), None, None, password, isActive = true)
-  def apply(id:String, email:String, password:String):User = User(Some(id), None, Some(email), password, isActive = true)
-  def apply(id:String, password:String, isActive:Boolean):User = User(Some(id), None, None, password, isActive)
-  def apply(id:String, email:String, password:String, isActive:Boolean):User =
-    User(Some(id), None, Some(email), password, isActive)
+  def apply(id: String, email: String, password: String): User = new User(Some(id), None, email, password, isActive = true)
+
+  def apply(id: String, email: String, password: String, isActive: Boolean): User = {
+    new User(Some(id), None, email, password, isActive)
+  }
+
 }

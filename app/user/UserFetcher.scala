@@ -1,10 +1,11 @@
 package user
 
 import com.google.inject.Inject
-import fetcher.Fetcher
 
-class UserFetcher @Inject() (userDAO:UserDAO) extends Fetcher[User] {
+class UserFetcher @Inject() (userDAO:UserDAO) {
 
-  def by(id:String):Option[User] = keepIfActive { userDAO.by(id) }
+  def byUserName(userName:String):Option[User] = userDAO.byUserName(userName)
+
+  def byEmail(email:String):Option[User] = userDAO.byEmail(email)
   
 }
