@@ -11,14 +11,15 @@ case class User (
                   email: String,
                   password: String,
                   override val isActive: Boolean,
-                  maybeCreated:Option[DateTime] = None
+                  maybeCreated:Option[DateTime] = None,
+                  maybeParentId: Option[UUID]
           ) extends ActiveFlag[User]
 
 object User {
-  def apply(id: UUID, email: String, password: String): User = new User(Some(id), None, email, password, isActive = true)
+  def apply(id: UUID, email: String, password: String): User = new User(Some(id), None, email, password, isActive = true, None, None)
 
   def apply(id: UUID, email: String, password: String, isActive: Boolean): User = {
-    new User(Some(id), None, email, password, isActive)
+    new User(Some(id), None, email, password, isActive, None, None)
   }
 
 }

@@ -8,6 +8,6 @@ trait UserDAO {
 
   def byEmail(email:String):Option[User]
 
-  def add(user:User):Try[User]
+  def addFirstTime(user:User):Try[User]
 
 }

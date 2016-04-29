@@ -15,7 +15,7 @@ class UserFetcherUTest extends FlatSpec with ShouldMatchers with MockFactory {
 
   it should "return a user object for a username that is active" in {
     val validUserName = "some active user name"
-    val user = User(null, Some(validUserName), "an@email.address", "a password", isActive = true)
+    val user = User(None, Some(validUserName), "an@email.address", "a password", isActive = true, None, None)
     (mockUserDAO.byUserName _).expects(validUserName).returning(Some(user))
     new UserFetcher(mockUserDAO).byUserName(validUserName) should contain(user)
   }
@@ -28,7 +28,7 @@ class UserFetcherUTest extends FlatSpec with ShouldMatchers with MockFactory {
 
   it should "return a user object for an email address of an active user" in {
     val validEmail = "an@email.address"
-    val user = User(null, Some("username"),validEmail, "a password", isActive = true)
+    val user = User(None, Some("username"),validEmail, "a password", isActive = true, None, None)
     (mockUserDAO.byEmail _).expects(validEmail).returning(Some(user))
     new UserFetcher(mockUserDAO).byEmail(validEmail) should contain(user)
   }

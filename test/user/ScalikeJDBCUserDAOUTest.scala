@@ -36,26 +36,26 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     sql"insert into xuser  (id, name, username, email, password, isactive, created) values (${id5}, 'charlie c', 'charlie', 'charlie@charlie.com', 'password', FALSE, ${later})".update.apply()
   }
 
-  "retrieving a user by user username" should "return the user with that username added the latest if that user is active" in
+  "retrieving a user by user username" should "return the user with that username added the latest" in
   { implicit  session =>
     val expectedUser = User(Some(id2), Some("alice"), "alice@alice.com", "password",
-                            isActive = true, Some(later))
-    new ScalikeJDBCUserDAO().UserByUserName("alice") should contain(expectedUser)
+                            isActive = true, Some(later), None)
+    new ScalikeJDBCUserDAO().UserByUserName("ALIce") should contain(expectedUser)
   }
 
-  it should "return empty if the latest matching user entry is inactive" in { implicit  session =>
-    new ScalikeJDBCUserDAO().UserByUserName("charlie")(session) shouldBe empty
+  it should "return empty if there is no matching username" in { implicit  session =>
+    new ScalikeJDBCUserDAO().UserByUserName("zoe")(session) shouldBe empty
   }
 
-  "retrieving a user by email" should "return a the user with that email address added the latest if that user is active, " +
-                                      "and return nothing otherwise" in { implicit session =>
-    val expectedUser = User(Some(id2), Some("alice"), "alice@alice.com", "password",
-                            isActive = true, Some(later))
-    new ScalikeJDBCUserDAO().UserByEmail("alice@alice.com") should contain(expectedUser)
+  "retrieving a user by email" should "return a the user with that email address added the latest " in { implicit session =>
+    val expectedUser = User(Some(id5), Some("charlie"), "charlie@charlie.com", "password",
+                            isActive = false, Some(later), None)
+    new ScalikeJDBCUserDAO().UserByEmail("ChArLie@cHaRlIe.com") should contain(expectedUser)
   }
 
   it should "return empty if the latest matching email is inactive" in { implicit  session =>
-    new ScalikeJDBCUserDAO().UserByUserName("charlie@charlie.com")(session) shouldBe empty
+    new ScalikeJDBCUserDAO().UserByUserName("zoe@zoe.com")(session) shouldBe empty
   }
+
 
 }

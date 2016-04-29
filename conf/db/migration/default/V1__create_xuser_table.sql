@@ -6,4 +6,5 @@ create table xuser (
   password varchar not null,
   isactive boolean not null ,
   created timestamp not null,
-  timezone VARCHAR(3) DEFAULT 'UTC')
+  parentid uuid,
+  timezone VARCHAR(3) DEFAULT 'UTC');
