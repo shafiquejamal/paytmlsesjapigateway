@@ -1,3 +1,5 @@
 package user
 
-case class UserMessage(id:String, username:Option[String], email:String)
+import java.util.UUID
+
+case class UserMessage(maybeId:Option[UUID], maybeUsername:Option[String], email:String)

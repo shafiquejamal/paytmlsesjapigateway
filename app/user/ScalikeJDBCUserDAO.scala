@@ -1,5 +1,7 @@
 package user
 
+import java.util.UUID
+
 import scalikejdbc._
 
 import scala.util.{Success, Try}
@@ -22,19 +24,19 @@ class ScalikeJDBCUserDAO extends UserDAO {
     sqlQuery
     .map { rs =>
       new User(
-                id = Option(rs.string("id")),
-                userName = Option(rs.string("username")),
+                maybeId = Option(UUID.fromString(rs.string("id"))),
+                maybeUserName = Option(rs.string("username")),
                 email = rs.string("email"),
                 password = rs.string("password"),
                 isActive = rs.boolean("isactive"),
-                created = Option(rs.jodaDateTime("created"))
+                maybeCreated = Option(rs.jodaDateTime("created"))
               )
     }
     .single.apply().filter(_.isActive)
   }
 
   def addUser(user:User)(implicit session: DBSession = AutoSession):Try[User] = {
-    sql"insert into xuser (username, email, password, isactive) values (${user.userName}, ${user.email}, ${user.password}, ${user.isActive})"
+    sql"insert into xuser (username, email, password, isactive) values (${user.maybeUserName}, ${user.email}, ${user.password}, ${user.isActive})"
     Success(user)
   }
 
