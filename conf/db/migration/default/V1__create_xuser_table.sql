@@ -1,6 +1,5 @@
 create table xuser (
   id uuid primary key not null,
-  name varchar,
   username varchar not null,
   email varchar not null,
   password varchar not null,

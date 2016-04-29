@@ -29,11 +29,11 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     val flyway = new Flyway()
     flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
     flyway.migrate()
-    sql"insert into xuser  (id, name, username, email, password, isactive, created) values (${id1}, 'alica a', 'alice', 'alice@alice.com', 'password', TRUE, ${now})".update.apply()
-    sql"insert into xuser  (id, name, username, email, password, isactive, created) values (${id2}, 'alice a', 'alice', 'alice@alice.com', 'password', TRUE, ${later})".update.apply()
-    sql"insert into xuser  (id, name, username, email, password, isactive, created) values (${id3}, 'bob b', 'bob', 'bob@bob.com', 'password', TRUE, ${now})".update.apply()
-    sql"insert into xuser  (id, name, username, email, password, isactive, created) values (${id4}, 'charlie c', 'charlie', 'charlie@charlie.com', 'password', TRUE, ${now})".update.apply()
-    sql"insert into xuser  (id, name, username, email, password, isactive, created) values (${id5}, 'charlie c', 'charlie', 'charlie@charlie.com', 'password', FALSE, ${later})".update.apply()
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id1}, 'alice', 'alice@alice.com', 'password', TRUE, ${now})".update.apply()
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id2}, 'alice', 'alice@alice.com', 'password', TRUE, ${later})".update.apply()
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id3}, 'bob', 'bob@bob.com', 'password', TRUE, ${now})".update.apply()
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id4}, 'charlie', 'charlie@charlie.com', 'password', TRUE, ${now})".update.apply()
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id5}, 'charlie', 'charlie@charlie.com', 'password', FALSE, ${later})".update.apply()
   }
 
   "retrieving a user by user username" should "return the user with that username added the latest" in

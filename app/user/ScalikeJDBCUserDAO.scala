@@ -13,11 +13,11 @@ class ScalikeJDBCUserDAO extends UserDAO {
   override def addFirstTime(user:User):Try[User] = addUserFirstTime(user:User)
 
   def UserByUserName(userName:String)(implicit session: DBSession = ReadOnlyAutoSession):Option[User] = {
-    by(sql"select id, name, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${userName}) order by created desc limit 1")(session)
+    by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${userName}) order by created desc limit 1")(session)
   }
 
   def UserByEmail(email:String)(implicit session: DBSession = ReadOnlyAutoSession):Option[User] = {
-    by(sql"select id, name, email, username, isactive, password, created, parentid  from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1")
+    by(sql"select id, email, username, isactive, password, created, parentid  from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1")
   }
 
   private def by(sqlQuery:SQL[_, _])(implicit session: DBSession = ReadOnlyAutoSession):Option[User] = {
@@ -37,7 +37,7 @@ class ScalikeJDBCUserDAO extends UserDAO {
   }
 
   def addUserFirstTime(user:User, uUID: UUID = UUID.randomUUID())(implicit session: DBSession = AutoSession):Try[User] = {
-    val result = sql"insert into xuser (id, name, username, email, password, isactive, parentid) values (${uUID}, '', ${user.maybeUserName}, ${user.email}, ${user.password}, ${user.isActive}, ${uUID})"
+    val result = sql"insert into xuser (id, username, email, password, isactive, parentid) values (${uUID}, ${user.maybeUserName}, ${user.email}, ${user.password}, ${user.isActive}, ${uUID})"
       .update.apply()
     if (result == 1) {
       UserByEmail(user.email).map(Success(_)).getOrElse(Failure(new RuntimeException("Problem adding user to DB.")))
