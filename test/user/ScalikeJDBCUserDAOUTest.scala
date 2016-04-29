@@ -3,13 +3,13 @@ package user
 import java.util.UUID
 
 import org.flywaydb.core.Flyway
-import org.flywaydb.core.internal.command.DbMigrate
-import org.flywaydb.play.FlywayPlayComponents
+
 import org.scalatest.ShouldMatchers
 import org.scalatest.fixture.FlatSpec
 import scalikejdbc._
 import scalikejdbc.scalatest.AutoRollback
 import org.joda.time.DateTime
+import org.scalatest.TryValues._
 
 class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRollback {
 
@@ -20,7 +20,6 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
   val id3 = UUID.randomUUID()
   val id4 = UUID.randomUUID()
   val id5 = UUID.randomUUID()
-
 
   Class.forName("org.h2.Driver")
   ConnectionPool.singleton("jdbc:h2:mem:hello", "user", "pass")
@@ -55,6 +54,16 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   it should "return empty if the latest matching email is inactive" in { implicit  session =>
     new ScalikeJDBCUserDAO().UserByUserName("zoe@zoe.com")(session) shouldBe empty
+  }
+
+  "adding a user for the first time (no existing user has this email or username)" should "add the user with the properties" +
+    " given in the user object" in { implicit session =>
+    val now = DateTime.now
+    val id6 = UUID.randomUUID()
+    val expectedUser =
+      User(Some(id6), Some("newuser"), "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
+    val maybeAddedUser = new ScalikeJDBCUserDAO().addUserFirstTime(expectedUser, now, id6)
+    maybeAddedUser.success.value shouldBe expectedUser
   }
 
 

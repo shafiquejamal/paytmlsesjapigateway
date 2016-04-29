@@ -1,5 +1,9 @@
 package user
 
+import java.util.UUID
+
+import org.joda.time.DateTime
+
 import scala.util.Try
 
 trait UserDAO {
@@ -8,6 +12,6 @@ trait UserDAO {
 
   def byEmail(email:String):Option[User]
 
-  def addFirstTime(user:User):Try[User]
+  def addFirstTime(user:User, created:DateTime, uUID: UUID):Try[User]
 
 }
