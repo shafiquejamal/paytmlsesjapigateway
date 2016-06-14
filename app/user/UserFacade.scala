@@ -1,6 +1,7 @@
 package user
 
 import com.google.inject.Inject
+import entity.User
 
 class UserFacade @Inject() (userDAO:UserDAO) extends UserAPI {
 

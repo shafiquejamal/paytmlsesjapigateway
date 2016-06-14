@@ -2,6 +2,7 @@ package user
 
 import java.util.UUID
 
+import entity.User
 import org.joda.time.DateTime
 
 import scala.util.Try

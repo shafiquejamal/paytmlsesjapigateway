@@ -4,6 +4,7 @@ import java.util.UUID
 
 import org.joda.time.DateTime
 import scalikejdbc._
+import entity.User
 
 import scala.util.{Failure, Success, Try}
 
@@ -11,20 +12,20 @@ class ScalikeJDBCUserDAO extends UserDAO {
 
   override def byUserName(userName:String) = UserByUserName(userName)
   override def byEmail(email:String) = UserByEmail(email)
-  override def addFirstTime(user:User, created:DateTime, uUID: UUID):Try[User] = addUserFirstTime(user:User, created, uUID)
+  override def addFirstTime(user:User, created:DateTime, uUID: UUID):Try[User] =
+    addUserFirstTime(user:User, created, uUID)
 
-  def UserByUserName(userName:String)(implicit session: DBSession = ReadOnlyAutoSession):Option[User] = {
+  def UserByUserName(userName:String)(implicit session: DBSession = ReadOnlyAutoSession):Option[User] =
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${userName}) order by created desc limit 1")(session)
-  }
 
-  def UserByEmail(email:String)(implicit session: DBSession = ReadOnlyAutoSession):Option[User] = {
+
+  def UserByEmail(email:String)(implicit session: DBSession = ReadOnlyAutoSession):Option[User] =
     by(sql"select id, email, username, isactive, password, created, parentid  from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1")
-  }
 
   private def by(sqlQuery:SQL[_, _])(implicit session: DBSession = ReadOnlyAutoSession):Option[User] = {
     sqlQuery
     .map { rs =>
-      new User(
+      new UserImpl(
                 maybeId = Option(rs.string("id")).map(UUID.fromString),
                 maybeUserName = Option(rs.string("username")).filterNot(_.trim.isEmpty),
                 email = rs.string("email"),
@@ -32,7 +33,7 @@ class ScalikeJDBCUserDAO extends UserDAO {
                 isActive = rs.boolean("isactive"),
                 maybeCreated = Option(rs.jodaDateTime("created")),
                 maybeParentId = Option(rs.string("parentid")).map(UUID.fromString)
-              )
+                  )
     }
     .single.apply()
   }

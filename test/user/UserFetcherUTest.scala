@@ -7,7 +7,7 @@ class UserFetcherUTest extends FlatSpec with ShouldMatchers with MockFactory {
 
   val mockUserDAO = mock[UserDAO]
 
-  "The fetch by user name" should "call the userDao and return empty for a non existent or inactive user" in {
+  "Fetching by user name" should "call the userDao and return empty for a non existent or inactive user" in {
     val nonExistentUserName = "Some non-existend user name"
     (mockUserDAO.byUserName _).expects(nonExistentUserName).returning(None)
     new UserFetcher(mockUserDAO).byUserName(nonExistentUserName) shouldBe empty
@@ -15,12 +15,12 @@ class UserFetcherUTest extends FlatSpec with ShouldMatchers with MockFactory {
 
   it should "return a user object for a username that is active" in {
     val validUserName = "some active user name"
-    val user = User(None, Some(validUserName), "an@email.address", "a password", isActive = true, None, None)
+    val user = UserImpl(None, Some(validUserName), "an@email.address", "a password", isActive = true, None, None)
     (mockUserDAO.byUserName _).expects(validUserName).returning(Some(user))
     new UserFetcher(mockUserDAO).byUserName(validUserName) should contain(user)
   }
 
-  "the fetch by email address" should "call the userDao and return empty for a non existent or inactive user" in {
+  "Fetching by email address" should "call the userDao and return empty for a non existent or inactive user" in {
     val inActiveEmail = "notactive@inactive.com"
     (mockUserDAO.byEmail _).expects(inActiveEmail).returning(None)
     new UserFetcher(mockUserDAO).byEmail(inActiveEmail) shouldBe empty
@@ -28,7 +28,7 @@ class UserFetcherUTest extends FlatSpec with ShouldMatchers with MockFactory {
 
   it should "return a user object for an email address of an active user" in {
     val validEmail = "an@email.address"
-    val user = User(None, Some("username"),validEmail, "a password", isActive = true, None, None)
+    val user = UserImpl(None, Some("username"), validEmail, "a password", isActive = true, None, None)
     (mockUserDAO.byEmail _).expects(validEmail).returning(Some(user))
     new UserFetcher(mockUserDAO).byEmail(validEmail) should contain(user)
   }
