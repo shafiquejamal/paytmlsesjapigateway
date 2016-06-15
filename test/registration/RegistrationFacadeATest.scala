@@ -32,8 +32,15 @@ class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers
       user.hashedPassword shouldBe hashedPassword
     }
 
-    val resultDuplicateUsername = api.signUp(userMessage, hashedPassword)
+    val duplicateUserName = UserMessage(None, Some("some useR name"), "un@ique.com")
+
+    val resultDuplicateUsername = api.signUp(duplicateUserName, hashedPassword)
     resultDuplicateUsername.isFailure shouldBe true
+
+    val duplicateEmail = UserMessage(None, Some("unique"), "tEst@user.com")
+
+    val resultDuplicateEmail = api.signUp(duplicateEmail, hashedPassword)
+    resultDuplicateEmail.isFailure shouldBe true
 
   }
 
