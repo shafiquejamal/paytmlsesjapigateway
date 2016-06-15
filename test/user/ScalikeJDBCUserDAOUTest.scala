@@ -29,16 +29,16 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
     flyway.migrate()
     sql"insert into xuser  (id, username, email, password, isactive, created) values (${id1}, 'alice', 'alice@alice.com', 'password', TRUE, ${now})".update.apply()
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id2}, 'alice', 'alice@alice.com', 'password', TRUE, ${later})".update.apply()
+    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id2}, 'alice', 'alice@alice.com', 'password', TRUE, ${later}, ${id1})".update.apply()
     sql"insert into xuser  (id, username, email, password, isactive, created) values (${id3}, 'bob', 'bob@bob.com', 'password', TRUE, ${now})".update.apply()
     sql"insert into xuser  (id, username, email, password, isactive, created) values (${id4}, 'charlie', 'charlie@charlie.com', 'password', TRUE, ${now})".update.apply()
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id5}, 'charlie', 'charlie@charlie.com', 'password', FALSE, ${later})".update.apply()
+    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id5}, 'charlie', 'charlie@charlie.com', 'password', FALSE, ${later}, ${id4})".update.apply()
   }
 
   "retrieving a user by user username" should "return the user with that username added the latest" in
   { implicit  session =>
     val expectedUser = UserImpl(Some(id2), Some("alice"), "alice@alice.com", "password",
-                            isActive = true, Some(later), None)
+                            isActive = true, Some(later), Some(id1))
     new ScalikeJDBCUserDAO().UserByUserName("ALIce") should contain(expectedUser)
   }
 
@@ -48,7 +48,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   "retrieving a user by email" should "return a the user with that email address added the latest " in { implicit session =>
     val expectedUser = UserImpl(Some(id5), Some("charlie"), "charlie@charlie.com", "password",
-                            isActive = false, Some(later), None)
+                            isActive = false, Some(later), Some(id4))
     new ScalikeJDBCUserDAO().UserByEmail("ChArLie@cHaRlIe.com") should contain(expectedUser)
   }
 
@@ -66,5 +66,10 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     maybeAddedUser.success.value shouldBe expectedUser
   }
 
+  "retrieving a user by parent id" should "retrieve the user with the matching parent id that was added the latest" in { implicit session =>
+    val expectedUser = UserImpl(Some(id5), Some("charlie"), "charlie@charlie.com", "password",
+                                                   isActive = false, Some(later), Some(id4))
+    new ScalikeJDBCUserDAO().byParentId(id4) should contain(expectedUser)
+   }
 
 }
