@@ -1,12 +1,11 @@
 package registration
 
 import org.flywaydb.core.Flyway
-import org.scalatest.{Matchers, ShouldMatchers}
 import org.scalatest.fixture.FlatSpec
+import org.scalatest.{Matchers, ShouldMatchers}
 import scalikejdbc.scalatest.AutoRollback
 import scalikejdbc.{ConnectionPool, DBSession}
-import user.{UserImpl, UserMessage, ScalikeJDBCUserDAO}
-
+import user.{ScalikeJDBCUserDAO, UserMessage}
 
 class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers with AutoRollback {
 
