@@ -22,8 +22,8 @@ class ScalikeJDBCUserDAO extends UserDAO {
   def UserByEmail(email:String)(implicit session: DBSession = ReadOnlyAutoSession, resultSetToUserMapping: WrappedResultSet => User):Option[User] =
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1")
 
-  def byParentId(parentId:UUID)(implicit session: DBSession = ReadOnlyAutoSession, resultSetToUserMapping: WrappedResultSet => User):Option[User] =
-    by(sql"select id, email, username, isactive, password, created, parentid from xuser where parentid = ${parentId} order by created desc limit 1")
+  def byParentID(parentID:UUID)(implicit session: DBSession = ReadOnlyAutoSession, resultSetToUserMapping: WrappedResultSet => User):Option[User] =
+    by(sql"select id, email, username, isactive, password, created, parentid from xuser where parentid = ${parentID} order by created desc limit 1")
 
   private def by(sqlQuery:SQL[_, _])(implicit session: DBSession = ReadOnlyAutoSession, resultSetToUserMapping: WrappedResultSet => User ):Option[User] = {
     sqlQuery.map(resultSetToUserMapping).single.apply()

@@ -72,7 +72,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
   "retrieving a user by parent id" should "retrieve the user with the matching parent id that was added the latest" in { implicit session =>
     val expectedUser = TestUserImpl(Some(id5), Some("charlie"), "charlie@charlie.com", "password",
                                                    isActive = false, Some(later), Some(id4))
-    new ScalikeJDBCUserDAO().byParentId(id4) should contain(expectedUser)
+    new ScalikeJDBCUserDAO().byParentID(id4) should contain(expectedUser)
    }
 
 }
