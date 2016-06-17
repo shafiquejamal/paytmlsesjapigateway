@@ -7,6 +7,7 @@ class Module extends AbstractModule with ScalaModule {
 
   override def configure() {
     bind[UserDAO].to[ScalikeJDBCUserDAO]
+    bind[WrappedResultSetToUserConverter].to[WrappedResultSetToUserConverterImpl]
   }
 
 }
