@@ -2,6 +2,7 @@ package user
 
 import java.util.UUID
 
+import db.TestScalikeJDBCSessionProvider
 import org.flywaydb.core.Flyway
 import org.joda.time.DateTime
 import org.scalatest.ShouldMatchers
@@ -38,21 +39,21 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
   { implicit  session =>
     val expectedUser = TestUserImpl(Some(id2), Some("alice"), "alice@alice.com", "password",
                             isActive = true, Some(later), Some(id1))
-    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl()).UserByUserName("ALIce") should contain(expectedUser)
+    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session)).byUserName("ALIce") should contain(expectedUser)
   }
 
   it should "return empty if there is no matching username" in { implicit  session =>
-    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl()).UserByUserName("zoe") shouldBe empty
+    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session)).byUserName("zoe") shouldBe empty
   }
 
   "retrieving a user by email" should "return a the user with that email address added the latest " in { implicit session =>
     val expectedUser = TestUserImpl(Some(id5), Some("charlie"), "charlie@charlie.com", "password",
                             isActive = false, Some(later), Some(id4))
-    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl()).UserByEmail("ChArLie@cHaRlIe.com") should contain(expectedUser)
+    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session)).byEmail("ChArLie@cHaRlIe.com") should contain(expectedUser)
   }
 
   it should "return empty if the latest matching email is inactive" in { implicit  session =>
-    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl()).UserByUserName("zoe@zoe.com") shouldBe empty
+    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session)).byUserName("zoe@zoe.com") shouldBe empty
   }
 
   "adding a user for the first time (no existing user has this email or username)" should "add the user with the properties" +
@@ -61,14 +62,14 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     val id6 = UUID.randomUUID()
     val expectedUser =
       TestUserImpl(Some(id6), Some("newuser"), "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
-    val maybeAddedUser = new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl()).addUserFirstTime(expectedUser, now, id6)
+    val maybeAddedUser = new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session)).addUserFirstTime(expectedUser, now, id6)
     maybeAddedUser.success.value shouldBe expectedUser
   }
 
   "retrieving a user by parent id" should "retrieve the user with the matching parent id that was added the latest" in { implicit session =>
     val expectedUser = TestUserImpl(Some(id5), Some("charlie"), "charlie@charlie.com", "password",
                                                    isActive = false, Some(later), Some(id4))
-    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl()).byParentID(id4) should contain(expectedUser)
+    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session)).byParentID(id4) should contain(expectedUser)
    }
 
 }

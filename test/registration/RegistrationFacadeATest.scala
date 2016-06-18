@@ -1,5 +1,6 @@
 package registration
 
+import db.TestScalikeJDBCSessionProvider
 import org.flywaydb.core.Flyway
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{Matchers, ShouldMatchers}
@@ -16,10 +17,12 @@ class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers
     val flyway = new Flyway()
     flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
     flyway.migrate()
+    val foo = 1
   }
 
   "signing up" should "add user that does not already exist" in { implicit session =>
-    val userDAO = new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl())
+
+    val userDAO = new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
     val api = new RegistrationFacade(userDAO)
     val userMessage = UserMessage(None, Some("some user name"), "test@user.com")
     val hashedPassword = "some hashed password"
