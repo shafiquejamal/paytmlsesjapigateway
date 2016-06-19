@@ -19,4 +19,14 @@ trait User {
 
   def add(userDAO: UserDAO):Try[User]
 
+  def create(
+              maybeId: Option[UUID],
+              maybeUserName: Option[String],
+              email: String,
+              hashedPassword: String,
+              isActive: Boolean,
+              maybeCreated: Option[DateTime] = None,
+              maybeParentId: Option[UUID]
+            ):User
+
 }

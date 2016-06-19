@@ -2,12 +2,13 @@ package user
 
 import java.util.UUID
 
+import com.google.inject.Inject
 import entity.User
 import scalikejdbc.WrappedResultSet
 
-class WrappedResultSetToUserConverterImpl extends WrappedResultSetToUserConverter {
+class WrappedResultSetToUserConverterImpl @Inject() (user:User) extends WrappedResultSetToUserConverter {
 
-  override def converter(rs: WrappedResultSet):User = new UserImpl(
+  override def converter(rs: WrappedResultSet):User = user.create(
     Option(rs.string("id")).map(UUID.fromString),
     Option(rs.string("username")).filterNot(_.trim.isEmpty),
     rs.string("email"),

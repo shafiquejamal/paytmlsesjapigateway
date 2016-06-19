@@ -17,12 +17,24 @@ class UserImpl(
                      override val maybeParentId: Option[UUID]
                    ) extends User {
 
-  override def add(userDAO: UserDAO): Try[User] = {
+  override def add(userDAO: UserDAO): Try[User] =
     maybeId.fold[Try[User]](
                              new UserCreator(userDAO, this).signUp()
                            )(uUID =>
                                Failure[User](new RuntimeException("This user already has a UUID."))
                             )
-  }
+
+  def this() = this(None, None, "", "", false, None, None)
+
+  override def create(
+              maybeId: Option[UUID],
+              maybeUserName: Option[String],
+              email: String,
+              hashedPassword: String,
+              isActive: Boolean,
+              maybeCreated: Option[DateTime] = None,
+              maybeParentId: Option[UUID]
+            ):User =
+    new UserImpl(maybeId, maybeUserName, email, hashedPassword, isActive=isActive, maybeCreated, maybeParentId)
 
 }

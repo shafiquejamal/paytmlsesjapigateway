@@ -6,7 +6,7 @@ import org.scalatest.fixture.FlatSpec
 import org.scalatest.{Matchers, ShouldMatchers}
 import scalikejdbc.scalatest.AutoRollback
 import scalikejdbc.{ConnectionPool, DBSession}
-import user.{ScalikeJDBCUserDAO, UserMessage, WrappedResultSetToUserConverterImpl}
+import user.{ScalikeJDBCUserDAO, TestUserImpl, UserMessage, WrappedResultSetToUserConverterImpl}
 
 class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers with AutoRollback {
 
@@ -22,8 +22,10 @@ class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers
 
   "signing up" should "add user that does not already exist" in { implicit session =>
 
-    val userDAO = new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-    val api = new RegistrationFacade(userDAO)
+    val user = new TestUserImpl()
+    val userDAO =
+      new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
+    val api = new RegistrationFacade(userDAO, user)
     val userMessage = UserMessage(None, Some("some user name"), "test@user.com")
     val hashedPassword = "some hashed password"
     val result = api.signUp(userMessage, hashedPassword)
