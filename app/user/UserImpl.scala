@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 
 import scala.util.{Failure, Try}
 
-case class UserImpl(
+class UserImpl(
                      override val maybeId: Option[UUID],
                      override val maybeUserName: Option[String],
                      override val email: String,
@@ -25,14 +25,4 @@ case class UserImpl(
                             )
   }
 
-}
-
-object UserImpl {
-  def apply(id: UUID, email: String, hashedPassword: String): UserImpl = {
-    new UserImpl(Some(id), None, email, hashedPassword, isActive = true, None, None)
-  }
-
-  def apply(id: UUID, email: String, hasedPassword: String, isActive: Boolean): UserImpl = {
-    new UserImpl(Some(id), None, email, hasedPassword, isActive, None, None)
-  }
 }

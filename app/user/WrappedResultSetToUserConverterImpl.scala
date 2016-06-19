@@ -7,7 +7,7 @@ import scalikejdbc.WrappedResultSet
 
 class WrappedResultSetToUserConverterImpl extends WrappedResultSetToUserConverter {
 
-  override def converter(rs: WrappedResultSet):User = UserImpl(
+  override def converter(rs: WrappedResultSet):User = new UserImpl(
     Option(rs.string("id")).map(UUID.fromString),
     Option(rs.string("username")).filterNot(_.trim.isEmpty),
     rs.string("email"),
