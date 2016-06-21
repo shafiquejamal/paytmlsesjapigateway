@@ -31,7 +31,7 @@ class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers
     val result = api.signUp(userMessage, hashedPassword)
     result.isSuccess shouldBe true
     result.toOption.foreach { user =>
-      user.maybeUserName should contain("some user name")
+      user.userName shouldBe "some user name"
       user.email shouldBe "test@user.com"
       user.hashedPassword shouldBe hashedPassword
     }

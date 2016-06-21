@@ -37,7 +37,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   "retrieving a user by user username" should "return the user with that username added the latest" in
   { implicit  session =>
-    val expectedUser = TestUserImpl(Some(id2), Some("alice"), "alice@alice.com", "password",
+    val expectedUser = TestUserImpl(Some(id2), "alice", "alice@alice.com", "password",
                             isActive = true, Some(later), Some(id1))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
       .byUserName("ALIce") should contain(expectedUser)
@@ -49,7 +49,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
   }
 
   "retrieving a user by email" should "return a the user with that email address added the latest " in { implicit session =>
-    val expectedUser = TestUserImpl(Some(id5), Some("charlie"), "charlie@charlie.com", "password",
+    val expectedUser = TestUserImpl(Some(id5), "charlie", "charlie@charlie.com", "password",
                             isActive = false, Some(later), Some(id4))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
       .byEmail("ChArLie@cHaRlIe.com") should contain(expectedUser)
@@ -65,7 +65,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     val now = DateTime.now
     val id6 = UUID.randomUUID()
     val expectedUser =
-      TestUserImpl(Some(id6), Some("newuser"), "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
+      TestUserImpl(Some(id6), "newuser", "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
       .addUserFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(isActive = true)
   }
@@ -75,7 +75,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     val now = DateTime.now
     val id6 = UUID.randomUUID()
     val expectedUser =
-      TestUserImpl(Some(id6), Some("newuser"), "charlie@charlie.com", "password", isActive = false, Some(now), Some(id6))
+      TestUserImpl(Some(id6), "newuser", "charlie@charlie.com", "password", isActive = false, Some(now), Some(id6))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
     .addUserFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(isActive = true)
   }
@@ -85,7 +85,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     val now = DateTime.now
     val id6 = UUID.randomUUID()
     val expectedUser =
-      TestUserImpl(Some(id6), Some("charlie"), "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
+      TestUserImpl(Some(id6), "charlie", "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
       .addUserFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(isActive = true)
   }
@@ -95,7 +95,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     val now = DateTime.now
     val id6 = UUID.randomUUID()
     val duplicateActiveEmailUser =
-      TestUserImpl(Some(id6), Some("newuser"), "alice@alice.com", "password", isActive = false, Some(now), Some(id6))
+      TestUserImpl(Some(id6), "newuser", "alice@alice.com", "password", isActive = false, Some(now), Some(id6))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
     .addUserFirstTime(duplicateActiveEmailUser, now, id6).failure.exception shouldBe a[RuntimeException]
   }
@@ -105,7 +105,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     val now = DateTime.now
     val id6 = UUID.randomUUID()
     val duplicateActiveEmailUser =
-      TestUserImpl(Some(id6), Some("boB"), "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
+      TestUserImpl(Some(id6), "boB", "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
       .addUserFirstTime(duplicateActiveEmailUser, now, id6).failure.exception shouldBe a[RuntimeException]
   }
@@ -113,7 +113,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
   "retrieving a user by parent id" should "retrieve the user with the matching parent id that was added the latest" in
   { implicit session =>
     val expectedUser =
-      TestUserImpl(Some(id5), Some("charlie"), "charlie@charlie.com", "password", isActive = false, Some(later), Some(id4))
+      TestUserImpl(Some(id5), "charlie", "charlie@charlie.com", "password", isActive = false, Some(later), Some(id4))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
       .byParentID(id4) should contain(expectedUser)
    }

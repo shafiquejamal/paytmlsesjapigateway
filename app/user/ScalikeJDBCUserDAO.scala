@@ -36,7 +36,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
   }
 
   def addUserFirstTime(user: User, created: DateTime, uUID: UUID = UUID.randomUUID()): Try[User] = {
-    val (username, email) = (user.maybeUserName.getOrElse(""), user.email)
+    val (username, email) = (user.userName, user.email)
     val result:Try[User] = DB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession

@@ -10,7 +10,7 @@ class WrappedResultSetToUserConverterImpl @Inject() (user:User) extends WrappedR
 
   override def converter(rs: WrappedResultSet):User = user.create(
     Option(rs.string("id")).map(UUID.fromString),
-    Option(rs.string("username")).filterNot(_.trim.isEmpty),
+    rs.string("username"),
     rs.string("email"),
     rs.string("password"),
     rs.boolean("isactive"),

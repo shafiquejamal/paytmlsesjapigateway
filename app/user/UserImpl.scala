@@ -9,7 +9,7 @@ import scala.util.{Failure, Try}
 
 class UserImpl(
     override val maybeId: Option[UUID],
-    override val maybeUserName: Option[String],
+    override val userName: String,
     override val email: String,
     override val hashedPassword: String,
     override val isActive: Boolean,
@@ -24,16 +24,16 @@ class UserImpl(
       Failure[User](new RuntimeException("This user already has a UUID."))
     )
 
-  def this() = this(None, None, "", "", false, None, None)
+  def this() = this(None, "", "", "", false, None, None)
 
   override def create(
       maybeId: Option[UUID],
-      maybeUserName: Option[String],
+      userName: String,
       email: String,
       hashedPassword: String,
       isActive: Boolean,
       maybeCreated: Option[DateTime] = None,
       maybeParentId: Option[UUID]): User =
-    new UserImpl(maybeId, maybeUserName, email, hashedPassword, isActive=isActive, maybeCreated, maybeParentId)
+    new UserImpl(maybeId, userName, email, hashedPassword, isActive=isActive, maybeCreated, maybeParentId)
 
 }
