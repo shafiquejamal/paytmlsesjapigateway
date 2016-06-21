@@ -17,7 +17,6 @@ class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers
     val flyway = new Flyway()
     flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
     flyway.migrate()
-    val foo = 1
   }
 
   "signing up" should "add user that does not already exist" in { implicit session =>
