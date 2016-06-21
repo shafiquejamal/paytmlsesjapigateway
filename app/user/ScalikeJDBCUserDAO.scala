@@ -14,16 +14,14 @@ import scala.util.{Failure, Success, Try}
 class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResultSetToUserConverter,
                                    scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider) extends UserDAO {
 
-  override def addFirstTime(user: User, created: DateTime, uUID: UUID): Try[User] = {
-    addUserFirstTime(user: User, created, uUID)
-  }
-
   override def byUserName(userName: String): Option[User] = {
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${userName}) order by created desc limit 1")
+      .filter(_.isActive)
   }
 
   override def byEmail(email: String): Option[User] = {
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1")
+      .filter(_.isActive)
   }
 
   override def byParentID(parentID: UUID): Option[User] = {
@@ -35,7 +33,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply()
   }
 
-  def addUserFirstTime(user: User, created: DateTime, uUID: UUID = UUID.randomUUID()): Try[User] = {
+  override def addFirstTime(user: User, created: DateTime, uUID: UUID): Try[User] = {
     val (username, email) = (user.userName, user.email)
     val result:Try[User] = DB localTx { _ =>
 
