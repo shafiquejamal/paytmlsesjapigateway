@@ -2,7 +2,7 @@ package user
 
 import java.util.UUID
 
-import db.TestScalikeJDBCSessionProvider
+import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.flywaydb.core.Flyway
 import org.joda.time.DateTime
 import org.scalatest.ShouldMatchers
@@ -11,28 +11,13 @@ import org.scalatest.fixture.FlatSpec
 import scalikejdbc._
 import scalikejdbc.scalatest.AutoRollback
 
-class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRollback {
-
-  val now = DateTime.now
-  val later = now.plusDays(1)
-  val id1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
-  val id2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
-  val id3 = UUID.fromString("00000000-0000-0000-0000-000000000003")
-  val id4 = UUID.fromString("00000000-0000-0000-0000-000000000004")
-  val id5 = UUID.fromString("00000000-0000-0000-0000-000000000005")
-
-  Class.forName("org.h2.Driver")
-  ConnectionPool.singleton("jdbc:h2:mem:hello", "user", "pass")
+class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRollback with UserFixture with TestDBConnection {
 
   override def fixture(implicit session: DBSession) {
     val flyway = new Flyway()
     flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
     flyway.migrate()
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id1}, 'alice', 'alice@alice.com', 'password', true, ${now})".update.apply()
-    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id2}, 'alice', 'alice@alice.com', 'password', true, ${later}, ${id1})".update.apply()
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id3}, 'bob', 'bob@bob.com', 'password', true, ${now})".update.apply()
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id4}, 'charlie', 'charlie@charlie.com', 'password', true, ${now})".update.apply()
-    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id5}, 'charlie', 'charlie@charlie.com', 'password', false, ${later}, ${id4})".update.apply()
+    sqlToAddUsers.foreach(_.update.apply())
   }
 
   "retrieving a user by user username" should "return the user with that username added the latest" in

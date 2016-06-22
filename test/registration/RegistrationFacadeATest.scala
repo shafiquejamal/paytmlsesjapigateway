@@ -1,27 +1,33 @@
 package registration
 
-import db.TestScalikeJDBCSessionProvider
+import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.flywaydb.core.Flyway
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{Matchers, ShouldMatchers}
+import scalikejdbc.DBSession
 import scalikejdbc.scalatest.AutoRollback
-import scalikejdbc.{ConnectionPool, DBSession}
-import user.{ScalikeJDBCUserDAO, TestUserImpl, UserMessage, WrappedResultSetToUserConverterImpl}
+import user._
 
-class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers with AutoRollback {
+class RegistrationFacadeATest
+  extends FlatSpec
+  with ShouldMatchers
+  with Matchers
+  with AutoRollback
+  with UserFixture
+  with TestDBConnection {
 
-  Class.forName("org.h2.Driver")
-  ConnectionPool.singleton("jdbc:h2:mem:hello", "user", "pass")
 
   override def fixture(implicit session: DBSession) {
     val flyway = new Flyway()
     flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
     flyway.migrate()
+    sqlToAddUsers.foreach(_.update.apply())
   }
+
+  val user = new TestUserImpl()
 
   "signing up" should "add user that does not already exist" in { implicit session =>
 
-    val user = new TestUserImpl()
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
     val api = new RegistrationFacade(userDAO, user)
@@ -44,8 +50,30 @@ class RegistrationFacadeATest extends FlatSpec with ShouldMatchers with Matchers
 
     val resultDuplicateEmail = api.signUp(duplicateEmail, hashedPassword)
     resultDuplicateEmail.isFailure shouldBe true
+  }
+
+  "checking for username" should "return true only if there is no active user with the given username" in { implicit session =>
+
+    val userDAO =
+      new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
+    val api = new RegistrationFacade(userDAO, user)
+    api.isUsernameIsAvailable("charlie") shouldBe true
+    api.isUsernameIsAvailable("alIcE") shouldBe false
+    api.isUsernameIsAvailable("bob") shouldBe false
+    api.isUsernameIsAvailable("zoe") shouldBe true
 
   }
 
+  "checking for email" should "return true only if there is no active user with the given email" in { implicit session =>
+
+    val userDAO =
+      new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
+    val api = new RegistrationFacade(userDAO, user)
+    api.isEmailIsAvailable("charlie@charlie.com") shouldBe true
+    api.isEmailIsAvailable("alIcE@alice.com") shouldBe false
+    api.isEmailIsAvailable("bob@bob.com") shouldBe false
+    api.isEmailIsAvailable("zoe@zoe.com") shouldBe true
+
+  }
 
 }

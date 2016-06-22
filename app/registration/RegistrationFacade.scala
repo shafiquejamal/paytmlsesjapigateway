@@ -17,4 +17,8 @@ class RegistrationFacade @Inject() (userDAO:UserDAO, user:User) extends Registra
               isActive = true, Some(DateTime.now), None)
       .add(userDAO)
 
+  override def isUsernameIsAvailable(username:String):Boolean = userDAO.byUserName(username).isEmpty
+
+  override def isEmailIsAvailable(email:String):Boolean = userDAO.byEmail(email).isEmpty
+
 }
