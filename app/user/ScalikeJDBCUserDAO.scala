@@ -14,23 +14,19 @@ import scala.util.{Failure, Success, Try}
 class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResultSetToUserConverter,
                                    scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider) extends UserDAO {
 
-  override def byUserName(userName: String): Option[User] = {
+  override def byUserName(userName: String): Option[User] =
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${userName}) order by created desc limit 1")
-      .filter(_.isActive)
-  }
 
-  override def byEmail(email: String): Option[User] = {
+
+  override def byEmail(email: String): Option[User] =
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1")
-      .filter(_.isActive)
-  }
 
-  override def byParentID(parentID: UUID): Option[User] = {
+  override def byParentID(parentID: UUID): Option[User] =
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where parentid = ${parentID} order by created desc limit 1")
-  }
 
   private def by(sqlQuery: SQL[_, _]): Option[User] = {
     implicit val session = scalikeJDBCSessionProvider.provideReadOnlySession
-    sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply()
+    sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply().filter(_.isActive)
   }
 
   override def addFirstTime(user: User, created: DateTime, uUID: UUID): Try[User] = {

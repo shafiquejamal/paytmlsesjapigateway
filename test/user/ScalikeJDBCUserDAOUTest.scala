@@ -76,8 +76,7 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
       .addFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(isActive = true)
   }
 
-  "adding a user with an email address that is already active in the db" should "add fail" +
-     " given in the user object" in { implicit session =>
+  "adding a user with an email address that is already active in the db" should "fail" in { implicit session =>
     val now = DateTime.now
     val id6 = UUID.randomUUID()
     val duplicateActiveEmailUser =
@@ -90,18 +89,21 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     " given in the user object" in { implicit session =>
     val now = DateTime.now
     val id6 = UUID.randomUUID()
-    val duplicateActiveEmailUser =
+    val duplicateActiveUsernameUser =
       TestUserImpl(Some(id6), "boB", "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-      .addFirstTime(duplicateActiveEmailUser, now, id6).failure.exception shouldBe a[RuntimeException]
+      .addFirstTime(duplicateActiveUsernameUser, now, id6).failure.exception shouldBe a[RuntimeException]
   }
 
-  "retrieving a user by parent id" should "retrieve the user with the matching parent id that was added the latest" in
-  { implicit session =>
+  "retrieving a user by parent id" should "retrieve the user with the matching parent id that was added the latest" +
+    " if that user is active, otherwise it should return none" in { implicit session =>
+    val userDAO =
+      new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
+    userDAO.byParentID(id4) shouldBe empty
+
     val expectedUser =
-      TestUserImpl(Some(id5), "charlie", "charlie@charlie.com", "password", isActive = false, Some(later), Some(id4))
-    new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-      .byParentID(id4) should contain(expectedUser)
+      TestUserImpl(Some(id2), "alice", "alice@alice.com", "password", isActive = true, Some(later), Some(id1))
+    userDAO.byParentID(id1) should contain(expectedUser)
    }
 
 }
