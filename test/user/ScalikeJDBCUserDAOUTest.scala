@@ -22,28 +22,24 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   "retrieving a user by user username" should "return the user with that username added the latest" in
   { implicit  session =>
-    val expectedUser = TestUserImpl(Some(id2), "alice", "alice@alice.com", "password",
-                            isActive = true, Some(later), Some(id1))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-      .byUserName("ALIce") should contain(expectedUser)
+    .byUsername("ALIce") should contain(alice2)
   }
 
   it should "return empty if there is no matching username" in { implicit  session =>
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-      .byUserName("zoe") shouldBe empty
+    .byUsername("zoe") shouldBe empty
   }
 
   "retrieving a user by email" should
   "return a the user with that email address added the latest, if that user is active " in { implicit session =>
-    val expectedUser = TestUserImpl(Some(id5), "alice", "alice@alice.com", "password",
-                            isActive = true, Some(later), Some(id4))
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-      .byEmail("AlIcE@aLIcE.CoM") should contain(expectedUser.copy(maybeId = Some(id2), maybeParentId = Some(id1)))
+      .byEmail("AlIcE@aLIcE.CoM") should contain(alice2)
   }
 
   it should "return empty if the latest matching email is inactive" in { implicit  session =>
     new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-      .byUserName("charlie@charlie.com") shouldBe empty
+    .byUsername("charlie@charlie.com") shouldBe empty
   }
 
   "adding a user for the first time (no existing user has this email or username)" should
@@ -99,11 +95,29 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
     " if that user is active, otherwise it should return none" in { implicit session =>
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
-    userDAO.byParentID(id4) shouldBe empty
+    userDAO.by(id4) shouldBe empty
 
     val expectedUser =
-      TestUserImpl(Some(id2), "alice", "alice@alice.com", "password", isActive = true, Some(later), Some(id1))
-    userDAO.byParentID(id1) should contain(expectedUser)
+      TestUserImpl(Some(id2), "alice", "alice@alice.com", "passwordAliceID2", isActive = true, Some(later), Some(id1))
+    userDAO.by(id1) should contain(expectedUser)
    }
+
+  "retrieving a user by username or email, and hashed password" should "retrieve the matching user if the latest user " +
+    " entry with that username has a matching hased password" in { implicit session =>
+    val userDAO =
+      new ScalikeJDBCUserDAO(new WrappedResultSetToTestUserConverterImpl(), TestScalikeJDBCSessionProvider(session))
+
+    userDAO.byUsername("alice", "passwordAliceID1") shouldBe empty
+    userDAO.byUsername("aLiCe", "passwordAliceID2") should contain(alice2)
+    userDAO.byUsername("aLiCe", "PasswordAliceID2") shouldBe empty
+    userDAO.byUsername("alice@alice.com", "passwordAliceID2") shouldBe empty
+    userDAO.byUsername("charlie", "passwordCharlieID5") shouldBe empty
+
+    userDAO.byEmail("alice@alice.com", "passwordAliceID1") shouldBe empty
+    userDAO.byEmail("AlicE@alIce.com", "passwordAliceID2") should contain(alice2)
+    userDAO.byEmail("alice@alice.com", "PasswordAliceID2") shouldBe empty
+    userDAO.byEmail("charlie@charlie.com", "passwordCharlieID5") shouldBe empty
+
+  }
 
 }

@@ -10,7 +10,7 @@ import scala.util.Try
 trait User {
 
   def maybeId: Option[UUID]
-  def userName: String
+  def username: String
   def email: String
   def hashedPassword: String
   def isActive: Boolean
@@ -21,7 +21,7 @@ trait User {
 
   def create(
       maybeId: Option[UUID],
-      userName: String,
+      username: String,
       email: String,
       hashedPassword: String,
       isActive: Boolean,

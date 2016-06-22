@@ -9,7 +9,7 @@ import scala.util.{Failure, Try}
 
 class UserImpl(
     override val maybeId: Option[UUID],
-    override val userName: String,
+    override val username: String,
     override val email: String,
     override val hashedPassword: String,
     override val isActive: Boolean,
@@ -28,12 +28,12 @@ class UserImpl(
 
   override def create(
       maybeId: Option[UUID],
-      userName: String,
+      username: String,
       email: String,
       hashedPassword: String,
       isActive: Boolean,
       maybeCreated: Option[DateTime] = None,
       maybeParentId: Option[UUID]): User =
-    new UserImpl(maybeId, userName, email, hashedPassword, isActive=isActive, maybeCreated, maybeParentId)
+    new UserImpl(maybeId, username, email, hashedPassword, isActive=isActive, maybeCreated, maybeParentId)
 
 }

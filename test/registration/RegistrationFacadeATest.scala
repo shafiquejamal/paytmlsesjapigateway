@@ -36,14 +36,14 @@ class RegistrationFacadeATest
     val result = api.signUp(userMessage, hashedPassword)
     result.isSuccess shouldBe true
     result.toOption.foreach { user =>
-      user.userName shouldBe "some user name"
+      user.username shouldBe "some user name"
       user.email shouldBe "test@user.com"
       user.hashedPassword shouldBe hashedPassword
     }
 
-    val duplicateUserName = UserMessage(None, Some("some useR name"), "un@ique.com")
+    val duplicateUsername = UserMessage(None, Some("some useR name"), "un@ique.com")
 
-    val resultDuplicateUsername = api.signUp(duplicateUserName, hashedPassword)
+    val resultDuplicateUsername = api.signUp(duplicateUsername, hashedPassword)
     resultDuplicateUsername.isFailure shouldBe true
 
     val duplicateEmail = UserMessage(None, Some("unique"), "tEst@user.com")
@@ -52,7 +52,8 @@ class RegistrationFacadeATest
     resultDuplicateEmail.isFailure shouldBe true
   }
 
-  "checking for username" should "return true only if there is no active user with the given username" in { implicit session =>
+  "checking for username" should "return true only if there is no active user with the given username" in
+    { implicit session =>
 
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))

@@ -9,12 +9,16 @@ import scala.util.Try
 
 trait UserDAO {
 
-  def byUserName(userName: String): Option[User]
+  def byUsername(username: String): Option[User]
 
   def byEmail(email: String): Option[User]
 
   def addFirstTime(user: User, created: DateTime, uUID: UUID): Try[User]
 
-  def byParentID(parentID: UUID): Option[User]
+  def by(parentID: UUID): Option[User]
+
+  def byEmail(email:String, hashedPassword:String): Option[User]
+
+  def byUsername(username:String, hashedPassword:String): Option[User]
 
 }

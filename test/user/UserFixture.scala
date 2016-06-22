@@ -1,9 +1,9 @@
 package user
 
 import java.util.UUID
-import scalikejdbc._
 
 import org.joda.time.DateTime
+import scalikejdbc._
 
 trait UserFixture {
 
@@ -15,14 +15,15 @@ trait UserFixture {
   val id4 = UUID.fromString("00000000-0000-0000-0000-000000000004")
   val id5 = UUID.fromString("00000000-0000-0000-0000-000000000005")
 
+  val alice2 =
+    TestUserImpl(Some(id2), "alice", "alice@alice.com", "passwordAliceID2", isActive = true, Some(later), Some(id1))
 
   val sqlToAddUsers = Vector(
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id1}, 'alice', 'alice@alice.com', 'password', true, ${now})",
-    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id2}, 'alice', 'alice@alice.com', 'password', true, ${later}, ${id1})",
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id3}, 'bob', 'bob@bob.com', 'password', true, ${now})",
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id4}, 'charlie', 'charlie@charlie.com', 'password', true, ${now})",
-    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id5}, 'charlie', 'charlie@charlie.com', 'password', false, ${later}, ${id4})"
-
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id1}, 'alice', 'alice@alice.com', 'passwordAliceID1', true, ${now})",
+    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id2}, 'alice', 'alice@alice.com', 'passwordAliceID2', true, ${later}, ${id1})",
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id3}, 'bob', 'bob@bob.com', 'passwordBobID3', true, ${now})",
+    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id4}, 'charlie', 'charlie@charlie.com', 'passwordCharlieID4', true, ${now})",
+    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id5}, 'charlie', 'charlie@charlie.com', 'passwordCharlieID5', false, ${later}, ${id4})"
   )
 
 
