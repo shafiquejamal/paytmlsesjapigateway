@@ -7,7 +7,7 @@ import scalikejdbc._
 
 trait UserFixture {
 
-  val now = DateTime.now
+  val now = new DateTime(2016, 12, 30, 13, 14, 15)
   val later = now.plusDays(1)
   val id1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
   val id2 = UUID.fromString("00000000-0000-0000-0000-000000000002")

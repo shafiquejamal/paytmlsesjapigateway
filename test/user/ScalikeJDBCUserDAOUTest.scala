@@ -4,7 +4,6 @@ import java.util.UUID
 
 import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.flywaydb.core.Flyway
-import org.joda.time.DateTime
 import org.scalatest.ShouldMatchers
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
@@ -44,7 +43,6 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   "adding a user for the first time (no existing user has this email or username)" should
   "add the user with the properties given in the user object" in { implicit session =>
-    val now = DateTime.now
     val id6 = UUID.randomUUID()
     val expectedUser =
       TestUserImpl(Some(id6), "newuser", "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
@@ -54,7 +52,6 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   "adding a user for the first time (no active existing user has this email, but an inactive one does)" should
   "add the user with the properties given in the user object" in { implicit session =>
-    val now = DateTime.now
     val id6 = UUID.randomUUID()
     val expectedUser =
       TestUserImpl(Some(id6), "newuser", "charlie@charlie.com", "password", isActive = false, Some(now), Some(id6))
@@ -64,7 +61,6 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   "adding a user for the first time (no active existing user has this username, but an inactive one does)" should
   "add the user with the properties given in the user object" in { implicit session =>
-    val now = DateTime.now
     val id6 = UUID.randomUUID()
     val expectedUser =
       TestUserImpl(Some(id6), "charlie", "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))
@@ -73,7 +69,6 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
   }
 
   "adding a user with an email address that is already active in the db" should "fail" in { implicit session =>
-    val now = DateTime.now
     val id6 = UUID.randomUUID()
     val duplicateActiveEmailUser =
       TestUserImpl(Some(id6), "newuser", "alice@alice.com", "password", isActive = false, Some(now), Some(id6))
@@ -83,7 +78,6 @@ class ScalikeJDBCUserDAOUTest extends FlatSpec with ShouldMatchers with AutoRoll
 
   "adding a user with a username that is already active in the db" should "add fail" +
     " given in the user object" in { implicit session =>
-    val now = DateTime.now
     val id6 = UUID.randomUUID()
     val duplicateActiveUsernameUser =
       TestUserImpl(Some(id6), "boB", "newuser@newuser.com", "password", isActive = false, Some(now), Some(id6))

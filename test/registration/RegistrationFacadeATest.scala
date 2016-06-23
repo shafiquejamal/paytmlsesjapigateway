@@ -7,6 +7,7 @@ import org.scalatest.{Matchers, ShouldMatchers}
 import scalikejdbc.DBSession
 import scalikejdbc.scalatest.AutoRollback
 import user._
+import utils.TestTimeProviderImpl
 
 class RegistrationFacadeATest
   extends FlatSpec
@@ -30,7 +31,7 @@ class RegistrationFacadeATest
 
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
-    val api = new RegistrationFacade(userDAO, user)
+    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl)
     val userMessage = UserMessage(None, Some("some user name"), "test@user.com")
     val hashedPassword = "some hashed password"
     val result = api.signUp(userMessage, hashedPassword)
@@ -57,7 +58,7 @@ class RegistrationFacadeATest
 
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
-    val api = new RegistrationFacade(userDAO, user)
+    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl)
     api.isUsernameIsAvailable("charlie") shouldBe true
     api.isUsernameIsAvailable("alIcE") shouldBe false
     api.isUsernameIsAvailable("bob") shouldBe false
@@ -69,7 +70,7 @@ class RegistrationFacadeATest
 
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
-    val api = new RegistrationFacade(userDAO, user)
+    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl)
     api.isEmailIsAvailable("charlie@charlie.com") shouldBe true
     api.isEmailIsAvailable("alIcE@alice.com") shouldBe false
     api.isEmailIsAvailable("bob@bob.com") shouldBe false
