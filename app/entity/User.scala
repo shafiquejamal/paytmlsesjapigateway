@@ -4,6 +4,7 @@ import java.util.UUID
 
 import org.joda.time.DateTime
 import user.UserDAO
+import util.UUIDProvider
 
 import scala.util.Try
 
@@ -17,7 +18,7 @@ trait User {
   def maybeCreated:Option[DateTime] = None
   def maybeParentId: Option[UUID]
 
-  def add(userDAO: UserDAO):Try[User]
+  def add(userDAO: UserDAO, uUIDProvider: UUIDProvider):Try[User]
 
   def create(
       maybeId: Option[UUID],

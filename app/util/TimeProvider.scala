@@ -1,9 +1,9 @@
-package utils
+package util
 
 import org.joda.time.DateTime
 
 trait TimeProvider {
 
-  def now: DateTime
+  def now(): DateTime
 
 }

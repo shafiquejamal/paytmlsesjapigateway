@@ -7,7 +7,7 @@ import org.scalatest.{Matchers, ShouldMatchers}
 import scalikejdbc.DBSession
 import scalikejdbc.scalatest.AutoRollback
 import user._
-import utils.TestTimeProviderImpl
+import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 class RegistrationFacadeATest
   extends FlatSpec
@@ -26,12 +26,14 @@ class RegistrationFacadeATest
   }
 
   val user = new TestUserImpl()
+  val testUUIDProviderImpl = TestUUIDProviderImpl
+  testUUIDProviderImpl.index(10)
 
   "signing up" should "add user that does not already exist" in { implicit session =>
 
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
-    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl)
+    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     val userMessage = UserMessage(None, Some("some user name"), "test@user.com")
     val hashedPassword = "some hashed password"
     val result = api.signUp(userMessage, hashedPassword)
@@ -58,7 +60,7 @@ class RegistrationFacadeATest
 
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
-    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl)
+    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     api.isUsernameIsAvailable("charlie") shouldBe true
     api.isUsernameIsAvailable("alIcE") shouldBe false
     api.isUsernameIsAvailable("bob") shouldBe false
@@ -70,7 +72,7 @@ class RegistrationFacadeATest
 
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
-    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl)
+    val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     api.isEmailIsAvailable("charlie@charlie.com") shouldBe true
     api.isEmailIsAvailable("alIcE@alice.com") shouldBe false
     api.isEmailIsAvailable("bob@bob.com") shouldBe false

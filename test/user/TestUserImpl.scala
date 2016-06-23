@@ -4,6 +4,7 @@ import java.util.UUID
 
 import entity.User
 import org.joda.time.DateTime
+import util.UUIDProvider
 
 import scala.util.{Failure, Try}
 
@@ -17,9 +18,9 @@ case class TestUserImpl(
     override val maybeParentId: Option[UUID])
   extends User {
 
-  override def add(userDAO: UserDAO): Try[User] =
+  override def add(userDAO: UserDAO, uUIDProvider: UUIDProvider): Try[User] =
     maybeId.fold[Try[User]](
-      userDAO.addFirstTime(this, new DateTime(), UUID.randomUUID())
+      userDAO.addFirstTime(this, new DateTime(), uUIDProvider.randomUUID())
     )(uUID =>
       Failure[User](new RuntimeException("This user already has a UUID."))
   )

@@ -2,18 +2,19 @@ package user
 
 import java.util.UUID
 
-import org.joda.time.DateTime
 import scalikejdbc._
+import util.TestTimeProviderImpl
 
 trait UserFixture {
 
-  val now = new DateTime(2016, 12, 30, 13, 14, 15)
+  val now = TestTimeProviderImpl.now()
   val later = now.plusDays(1)
   val id1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
   val id2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
   val id3 = UUID.fromString("00000000-0000-0000-0000-000000000003")
   val id4 = UUID.fromString("00000000-0000-0000-0000-000000000004")
   val id5 = UUID.fromString("00000000-0000-0000-0000-000000000005")
+  val id6 = UUID.fromString("00000000-0000-0000-0000-000000000006")
 
   val alice2 =
     TestUserImpl(Some(id2), "alice", "alice@alice.com", "passwordAliceID2", isActive = true, Some(later), Some(id1))

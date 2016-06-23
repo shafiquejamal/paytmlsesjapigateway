@@ -1,4 +1,4 @@
-package utils
+package util
 
 import org.joda.time.DateTime
 
@@ -11,6 +11,6 @@ object TestTimeProviderImpl extends TimeProvider {
     dateTime
   }
 
-  override def now: DateTime = dateTime
+  override def now(): DateTime = dateTime
 
 }
