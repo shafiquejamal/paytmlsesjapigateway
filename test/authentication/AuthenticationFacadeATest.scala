@@ -43,12 +43,12 @@ class AuthenticationFacadeATest
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
     val api = new AuthenticationFacade(userDAO, user)
 
-    api.user(UserMessage(None, Some("aLIce"), "wrong-email"), "passwordAliceID2") should contain(alice2)
-    api.user(UserMessage(None, Some("wrongUsername"), "alicE@alice.com"), "passwordAliceID2") should contain(alice2)
-    api.user(UserMessage(None, Some("wrongUsername"), "wrongEmail"), "passwordAliceID2") shouldBe empty
-    api.user(UserMessage(None, Some("alice"), "alice@alice.com"), "passwordAliceID1") shouldBe empty
-    api.user(UserMessage(None, Some("charlie"), "charlie@charlie.com"), "passwordCharlieID5") shouldBe empty
-    api.user(UserMessage(None, Some("charlie"), "charlie@charlie.com"), "passwordCharlieID4") shouldBe empty
+    api.user(UserMessage(Some("aLIce"), "wrong-email"), "passwordAliceID2") should contain(alice2)
+    api.user(UserMessage(Some("wrongUsername"), "alicE@alice.com"), "passwordAliceID2") should contain(alice2)
+    api.user(UserMessage(Some("wrongUsername"), "wrongEmail"), "passwordAliceID2") shouldBe empty
+    api.user(UserMessage(Some("alice"), "alice@alice.com"), "passwordAliceID1") shouldBe empty
+    api.user(UserMessage(Some("charlie"), "charlie@charlie.com"), "passwordCharlieID5") shouldBe empty
+    api.user(UserMessage(Some("charlie"), "charlie@charlie.com"), "passwordCharlieID4") shouldBe empty
   }
 
 }

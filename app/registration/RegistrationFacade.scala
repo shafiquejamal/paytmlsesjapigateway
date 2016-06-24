@@ -2,7 +2,8 @@ package registration
 
 import com.google.inject.Inject
 import entity.User
-import user.{UserDAO, UserMessage}
+import org.mindrot.jbcrypt.BCrypt
+import user.UserDAO
 import util.{TimeProvider, UUIDProvider}
 
 import scala.util.Try
@@ -14,11 +15,17 @@ class RegistrationFacade @Inject() (
     uUIDProvider: UUIDProvider)
   extends RegistrationAPI {
 
-  override def signUp(userMessage:UserMessage, hashedPassword:String):Try[User] =
-      user
-      .create(None, userMessage.maybeUsername.getOrElse(uUIDProvider.randomUUID().toString), userMessage.email, hashedPassword,
-        isActive = true, Some(timeProvider.now()), None)
+  override def signUp(registrationMessage: RegistrationMessage):Try[User] = {
+    val hashedPassword = BCrypt.hashpw(registrationMessage.password, BCrypt.gensalt())
+    user.create(None,
+        registrationMessage.maybeUsername.getOrElse(uUIDProvider.randomUUID().toString),
+        registrationMessage.email,
+        hashedPassword,
+        isActive = true,
+        Some(timeProvider.now()),
+        None)
       .add(userDAO, uUIDProvider)
+  }
 
   override def isUsernameIsAvailable(username:String): Boolean = userDAO.byUsername(username).isEmpty
 

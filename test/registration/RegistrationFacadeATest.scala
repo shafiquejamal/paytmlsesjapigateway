@@ -2,6 +2,7 @@ package registration
 
 import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.flywaydb.core.Flyway
+import org.mindrot.jbcrypt.BCrypt
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{Matchers, ShouldMatchers}
 import scalikejdbc.DBSession
@@ -34,24 +35,24 @@ class RegistrationFacadeATest
     val userDAO =
       new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
     val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
-    val userMessage = UserMessage(None, Some("some user name"), "test@user.com")
-    val hashedPassword = "some hashed password"
-    val result = api.signUp(userMessage, hashedPassword)
+    val password = "some non-hashed password"
+    val registrationMessage = RegistrationMessage(Some("some user name"), "test@user.com", password)
+    val result = api.signUp(registrationMessage)
     result.isSuccess shouldBe true
     result.toOption.foreach { user =>
       user.username shouldBe "some user name"
       user.email shouldBe "test@user.com"
-      user.hashedPassword shouldBe hashedPassword
+      BCrypt.checkpw(password, user.hashedPassword) shouldBe true
     }
 
-    val duplicateUsername = UserMessage(None, Some("some useR name"), "un@ique.com")
+    val duplicateUsername = RegistrationMessage(Some("some useR name"), "un@ique.com", password)
 
-    val resultDuplicateUsername = api.signUp(duplicateUsername, hashedPassword)
+    val resultDuplicateUsername = api.signUp(duplicateUsername)
     resultDuplicateUsername.isFailure shouldBe true
 
-    val duplicateEmail = UserMessage(None, Some("unique"), "tEst@user.com")
+    val duplicateEmail = RegistrationMessage(Some("unique"), "tEst@user.com", password)
 
-    val resultDuplicateEmail = api.signUp(duplicateEmail, hashedPassword)
+    val resultDuplicateEmail = api.signUp(duplicateEmail)
     resultDuplicateEmail.isFailure shouldBe true
   }
 
