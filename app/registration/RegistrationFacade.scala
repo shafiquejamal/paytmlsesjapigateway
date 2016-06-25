@@ -1,6 +1,6 @@
 package registration
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import entity.User
 import org.mindrot.jbcrypt.BCrypt
 import user.UserDAO
@@ -8,6 +8,7 @@ import util.{TimeProvider, UUIDProvider}
 
 import scala.util.Try
 
+@Singleton
 class RegistrationFacade @Inject() (
     userDAO:UserDAO,
     user:User,

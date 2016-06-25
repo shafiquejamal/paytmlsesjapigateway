@@ -1,17 +1,22 @@
 package db
 
+import com.google.inject.{Inject, Singleton}
+import play.api.inject.ApplicationLifecycle
 import scalikejdbc.config.DBs
 
-class ScalikeJDBCDevProdDBConfig extends DBConfig {
+import scala.concurrent.Future
+
+@Singleton
+class ScalikeJDBCDevProdDBConfig @Inject()(lifecycle: ApplicationLifecycle) extends DBConfig {
 
   override def setUpAllDB(): Unit = DBs.setupAll()
 
   override def closeAll(): Unit = DBs.closeAll()
 
-}
+  setUpAllDB()
 
-object ScalikeJDBCDevProdDBConfig {
-
-  def apply = new ScalikeJDBCDevProdDBConfig()
+  lifecycle.addStopHook { () =>
+    Future.successful(closeAll())
+  }
 
 }

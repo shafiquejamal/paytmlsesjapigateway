@@ -2,7 +2,7 @@ package user
 
 import java.util.UUID
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import db.{DBConfig, ScalikeJDBCSessionProvider}
 import entity.User
 import org.joda.time.DateTime
@@ -11,11 +11,10 @@ import scalikejdbc._
 
 import scala.util.{Failure, Success, Try}
 
+@Singleton
 class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResultSetToUserConverter,
                                    scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider,
                                    dBConfig: DBConfig) extends UserDAO {
-
-  dBConfig.setUpAllDB()
 
   override def byUsername(username: String): Option[User] =
     by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${username}) order by created desc limit 1")

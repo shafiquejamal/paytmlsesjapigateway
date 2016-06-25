@@ -21,7 +21,7 @@ class AuthenticationFacadeATest
 
   override def fixture(implicit session: DBSession) {
     val flyway = new Flyway()
-    flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
+    flyway.setDataSource("jdbc:h2:mem:play", "sa", "")
     flyway.migrate()
     sqlToAddUsers.foreach(_.update.apply())
   }
