@@ -1,10 +1,10 @@
 package db
 
-import scalikejdbc.ConnectionPool
+import user.WrappedResultSetToTestUserConverterImpl
 
 trait TestDBConnection {
 
-  Class.forName("org.h2.Driver")
-  ConnectionPool.singleton("jdbc:h2:mem:hello", "user", "pass")
+  val converter = new WrappedResultSetToTestUserConverterImpl()
+  val dBConfig = new ScalikeJDBCTestDBConfig()
 
 }

@@ -4,7 +4,7 @@ import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.flywaydb.core.Flyway
 import org.mindrot.jbcrypt.BCrypt
 import org.scalatest.fixture.FlatSpec
-import org.scalatest.{Matchers, ShouldMatchers}
+import org.scalatest.{BeforeAndAfterEach, Matchers, ShouldMatchers}
 import scalikejdbc.DBSession
 import scalikejdbc.scalatest.AutoRollback
 import user._
@@ -16,12 +16,13 @@ class RegistrationFacadeATest
   with Matchers
   with AutoRollback
   with UserFixture
-  with TestDBConnection {
+  with TestDBConnection
+  with BeforeAndAfterEach {
 
 
   override def fixture(implicit session: DBSession) {
     val flyway = new Flyway()
-    flyway.setDataSource("jdbc:h2:mem:hello", "user", "pass")
+    flyway.setDataSource("jdbc:h2:mem:play", "sa", "")
     flyway.migrate()
     sqlToAddUsers.foreach(_.update.apply())
   }
@@ -30,10 +31,20 @@ class RegistrationFacadeATest
   val testUUIDProviderImpl = TestUUIDProviderImpl
   testUUIDProviderImpl.index(10)
 
+  override def beforeEach() {
+    dBConfig.setUpAllDB()
+    super.beforeEach()
+  }
+
+  override def afterEach() {
+    dBConfig.closeAll()
+    super.afterEach()
+  }
+
   "signing up" should "add user that does not already exist" in { implicit session =>
 
     val userDAO =
-      new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
+      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig)
     val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     val password = "some non-hashed password"
     val registrationMessage = RegistrationMessage(Some("some user name"), "test@user.com", password)
@@ -60,7 +71,7 @@ class RegistrationFacadeATest
     { implicit session =>
 
     val userDAO =
-      new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
+      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig)
     val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     api.isUsernameIsAvailable("charlie") shouldBe true
     api.isUsernameIsAvailable("alIcE") shouldBe false
@@ -72,7 +83,7 @@ class RegistrationFacadeATest
   "checking for email" should "return true only if there is no active user with the given email" in { implicit session =>
 
     val userDAO =
-      new ScalikeJDBCUserDAO(new WrappedResultSetToUserConverterImpl(user), TestScalikeJDBCSessionProvider(session))
+      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig)
     val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     api.isEmailIsAvailable("charlie@charlie.com") shouldBe true
     api.isEmailIsAvailable("alIcE@alice.com") shouldBe false

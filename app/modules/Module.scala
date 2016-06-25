@@ -1,10 +1,10 @@
 package modules
 
-import authentication.{AuthenticationFacade, AuthenticationAPI}
+import authentication.{AuthenticationAPI, AuthenticationFacade}
 import com.google.inject.AbstractModule
-import db.{ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
+import db.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import net.codingwell.scalaguice.ScalaModule
-import registration.{RegistrationFacade, RegistrationAPI}
+import registration.{RegistrationAPI, RegistrationFacade}
 import util._
 
 class Module extends AbstractModule with ScalaModule {
@@ -15,6 +15,7 @@ class Module extends AbstractModule with ScalaModule {
     bind[UUIDProvider].to[UUIDProviderImpl]
     bind[RegistrationAPI].to[RegistrationFacade]
     bind[AuthenticationAPI].to[AuthenticationFacade]
+    bind[DBConfig].to[ScalikeJDBCDevProdDBConfig]
   }
 
 }
