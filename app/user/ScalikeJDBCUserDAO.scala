@@ -24,51 +24,62 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
                "xuserstatus.xuserid = xuser.id inner join xuseremail.xuserid = xuser.id inner join xuserpassword on " +
                "xuserpassword.xuserid = xuser.id"
 
-  override def byUsername(username: String): Option[User] =
+  override def byUsername(username: String, userFilter: User => Boolean): Option[User] =
     by(
       sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
             xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
             on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
             LOWER(username) = (${username.trim.toLowerCase()}) order by xuserstatus.createdat desc, xuserusername.createdat
-            desc, xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""")
+            desc, xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""",
+      userFilter)
 
-  override def byEmail(email: String): Option[User] =
+  override def byEmail(email: String, userFilter: User => Boolean): Option[User] =
     by(
       sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
             xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
             on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
             LOWER(email) = (${email.trim.toLowerCase()}) order by xuserstatus.createdat desc,  xuserusername.createdat desc,
-            xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""")
+            xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""",
+      userFilter)
 
-  override def by(id: UUID): Option[User] =
+  override def by(id: UUID, userFilter: User => Boolean): Option[User] =
     by(
       sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
             xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
             on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
             xuser.id = ${id} order by xuserstatus.createdat desc,  xuserusername.createdat desc, xuserpassword.createdat
-            desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""")
+            desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""", userFilter)
 
-  override def byEmail(email:String, hashedPassword:String): Option[User] = byEmail(email).filter(_.hashedPassword == hashedPassword)
+  override def byEmail(email:String, hashedPassword:String, userFilter: User => Boolean): Option[User] =
+    byEmail(email, userFilter).filter(_.hashedPassword == hashedPassword)
 
-  override def byUsername(username:String, hashedPassword:String): Option[User] = byUsername(username).filter(_.hashedPassword == hashedPassword)
+  override def byUsername(username:String, hashedPassword:String, userFilter: User => Boolean): Option[User] =
+    byUsername(username, userFilter).filter(_.hashedPassword == hashedPassword)
 
-  private def by(sqlQuery: SQL[_, _]): Option[User] = {
+  private def by(sqlQuery: SQL[_, _], userFilter: User => Boolean): Option[User] = {
     implicit val session = scalikeJDBCSessionProvider.provideReadOnlySession
-    sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply()
-    .filter(user => UserStatus.usernameAndEmailNotAvailable.contains(user.userStatus))
+    val temp = sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply()
+    val temp2 = temp.filter(userFilter)
+    temp2
   }
 
-  override def addFirstTime(user: User, created: DateTime, uUID: UUID): Try[User] = {
+  override def addFirstTime(
+    user: User,
+    created: DateTime,
+    uUID: UUID,
+    registrationUserFilter: User => Boolean,
+    authenticationUserFilter: User => Boolean): Try[User] = {
+
     val (username, email) = (user.username.trim, user.email.trim)
     val result:Try[User] = DB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
-      val isUsernameIsAvailable = byUsername(username).isEmpty
-      val isEmailAddressIsAvailable = byEmail(email).isEmpty
-      val isUsernameDoesNotMatchExistingActiveUser = byEmail(username).isEmpty
+      val isUsernameIsAvailable = byUsername(username, authenticationUserFilter).isEmpty
+      val isEmailAddressIsAvailable = byEmail(email, authenticationUserFilter).isEmpty
+      val isUsernameDoesNotMatchExistingUserEmail = byEmail(username, authenticationUserFilter).isEmpty
 
-      if (isUsernameIsAvailable & isEmailAddressIsAvailable & isUsernameDoesNotMatchExistingActiveUser) {
+      if (isUsernameIsAvailable & isEmailAddressIsAvailable & isUsernameDoesNotMatchExistingUserEmail) {
         sql"""insert into xuser (id, authorid, createdat) values (${uUID}, ${uUID}, ${created})""".update.apply()
         sql"""insert into xuseremail (id, xuserid, authorid, createdat, email) values
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${email})""".update.apply()
@@ -80,7 +91,9 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${username})""".update.apply()
 
         val activeUsersWithThisUsernameOrEmail =
-          (byUsername(username).toList ++ byEmail(email).toList ++ byEmail(username).toList)
+          (byUsername(username, authenticationUserFilter).toList ++
+            byEmail(email, authenticationUserFilter).toList ++
+            byEmail(username, authenticationUserFilter).toList)
           .groupBy(_.maybeId).flatMap{ case (maybeId, users) => users.headOption }.toList
 
         activeUsersWithThisUsernameOrEmail match {

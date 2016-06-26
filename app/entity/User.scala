@@ -17,7 +17,11 @@ trait User {
   def userStatus: UserStatus
   def maybeCreated:Option[DateTime] = None
 
-  def add(userDAO: UserDAO, uUIDProvider: UUIDProvider):Try[User]
+  def add(
+      userDAO: UserDAO,
+      uUIDProvider: UUIDProvider,
+      registrationUserFilter: User => Boolean,
+      authenticationUserFilter: User => Boolean):Try[User]
 
   def create(
       maybeId: Option[UUID],

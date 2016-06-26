@@ -18,9 +18,13 @@ class UserImpl(
     override val maybeCreated: Option[DateTime] = None)
   extends User {
 
-  override def add(userDAO: UserDAO, uUIDProvider: UUIDProvider): Try[User] =
+  override def add(
+      userDAO: UserDAO,
+      uUIDProvider: UUIDProvider,
+      registrationUserFilter: User => Boolean,
+      authenticationUserFilter: User => Boolean): Try[User] =
     maybeId.fold[Try[User]](
-      userDAO.addFirstTime(this, new DateTime(), uUIDProvider.randomUUID())
+      userDAO.addFirstTime(this, new DateTime(), uUIDProvider.randomUUID(), registrationUserFilter, authenticationUserFilter)
     )(uUID =>
       Failure[User](new RuntimeException("This user already has a UUID."))
     )

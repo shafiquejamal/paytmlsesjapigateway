@@ -32,7 +32,7 @@ trait UserFixture {
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
          (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, ${Active.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
-         (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, ${Active.value})""",
+         (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, ${Admin.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
          (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, ${Active.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
