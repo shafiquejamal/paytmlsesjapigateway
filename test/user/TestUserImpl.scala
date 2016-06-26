@@ -14,8 +14,7 @@ case class TestUserImpl(
     override val email: String,
     override val hashedPassword: String,
     override val isActive: Boolean,
-    override val maybeCreated: Option[DateTime] = None,
-    override val maybeParentId: Option[UUID])
+    override val maybeCreated: Option[DateTime] = None)
   extends User {
 
   override def add(userDAO: UserDAO, uUIDProvider: UUIDProvider): Try[User] =
@@ -25,7 +24,7 @@ case class TestUserImpl(
       Failure[User](new RuntimeException("This user already has a UUID."))
   )
 
-  def this() = this(None, "", "", "", false, None, None)
+  def this() = this(None, "", "", "", false, None)
 
   def create(
       maybeId: Option[UUID],
@@ -33,7 +32,6 @@ case class TestUserImpl(
       email: String,
       hashedPassword: String,
       isActive: Boolean,
-      maybeCreated: Option[DateTime] = None,
-      maybeParentId: Option[UUID]):User =
-    new TestUserImpl(maybeId, username, email, hashedPassword, isActive = isActive, maybeCreated, maybeParentId)
+      maybeCreated: Option[DateTime] = None):User =
+    new TestUserImpl(maybeId, username, email, hashedPassword, isActive = isActive, maybeCreated)
 }

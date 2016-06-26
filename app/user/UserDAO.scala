@@ -15,10 +15,10 @@ trait UserDAO {
 
   def addFirstTime(user: User, created: DateTime, uUID: UUID): Try[User]
 
-  def by(parentID: UUID): Option[User]
+  def by(id: UUID): Option[User]
 
-  def byEmail(email:String, hashedPassword:String): Option[User]
+  def byEmail(email: String, hashedPassword: String): Option[User]
 
-  def byUsername(username:String, hashedPassword:String): Option[User]
+  def byUsername(username: String, hashedPassword: String): Option[User]
 
 }

@@ -44,7 +44,7 @@ class RegistrationFacadeATest
   "signing up" should "add user that does not already exist" in { implicit session =>
 
     val userDAO =
-      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig)
+      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
     val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     val password = "some non-hashed password"
     val registrationMessage = RegistrationMessage(Some("some user name"), "test@user.com", password)
@@ -71,7 +71,7 @@ class RegistrationFacadeATest
     { implicit session =>
 
     val userDAO =
-      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig)
+      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
     val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     api.isUsernameIsAvailable("charlie") shouldBe true
     api.isUsernameIsAvailable("alIcE") shouldBe false
@@ -83,7 +83,7 @@ class RegistrationFacadeATest
   "checking for email" should "return true only if there is no active user with the given email" in { implicit session =>
 
     val userDAO =
-      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig)
+      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
     val api = new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
     api.isEmailIsAvailable("charlie@charlie.com") shouldBe true
     api.isEmailIsAvailable("alIcE@alice.com") shouldBe false

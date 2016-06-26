@@ -3,7 +3,7 @@ package user
 import java.util.UUID
 
 import scalikejdbc._
-import util.TestTimeProviderImpl
+import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 trait UserFixture {
 
@@ -16,15 +16,35 @@ trait UserFixture {
   val id5 = UUID.fromString("00000000-0000-0000-0000-000000000005")
   val id6 = UUID.fromString("00000000-0000-0000-0000-000000000006")
 
-  val alice2 =
-    TestUserImpl(Some(id2), "alice", "alice@alice.com", "passwordAliceID2", isActive = true, Some(later), Some(id1))
+  val uUIDProvider = TestUUIDProviderImpl
+  uUIDProvider.index(100)
+
+  val alice =
+    TestUserImpl(Some(id1), "alice", "alice@alice.com", "passwordAliceID2", isActive = true, Some(now))
+  val charlie =
+    TestUserImpl(Some(id4), "charlie", "charlie@charlie.com", "passwordCharlieID2", isActive = true, Some(now))
 
   val sqlToAddUsers = Vector(
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id1}, 'alice', 'alice@alice.com', 'passwordAliceID1', true, ${now})",
-    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id2}, 'alice', 'alice@alice.com', 'passwordAliceID2', true, ${later}, ${id1})",
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id3}, 'bob', 'bob@bob.com', 'passwordBobID3', true, ${now})",
-    sql"insert into xuser  (id, username, email, password, isactive, created) values (${id4}, 'charlie', 'charlie@charlie.com', 'passwordCharlieID4', true, ${now})",
-    sql"insert into xuser  (id, username, email, password, isactive, created, parentid) values (${id5}, 'charlie', 'charlie@charlie.com', 'passwordCharlieID5', false, ${later}, ${id4})"
+    sql"insert into xuser  (id, authorid, createdat) values (${id1}, ${id1}, ${now})",
+    sql"insert into xuser  (id, authorid, createdat) values (${id2}, ${id2}, ${now})",
+    sql"insert into xuser  (id, authorid, createdat) values (${id3}, ${id3}, ${now})",
+    sql"insert into xuser  (id, authorid, createdat) values (${id4}, ${id4}, ${now})",
+    sql"insert into xuser  (id, authorid, createdat) values (${id5}, ${id5}, ${now})",
+    sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, true)""",
+    sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, true)""",
+    sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, true)""",
+    sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values (${uUIDProvider.randomUUID()}, ${id4}, ${later}, ${id4}, false)""",
+    sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, 'alice@alice.com')""",
+    sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, 'bob@bob.com')""",
+    sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, 'charlie@charlie.com')""",
+    sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, 'alice')""",
+    sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, 'bob')""",
+    sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, 'charlie')""",
+    sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, 'passwordAliceID1')""",
+    sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values (${uUIDProvider.randomUUID()}, ${id1}, ${later}, ${id1}, 'passwordAliceID2')""",
+    sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, 'passwordBobID3')""",
+    sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, 'passwordCharlieID4')""",
+    sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values (${uUIDProvider.randomUUID()}, ${id4}, ${later}, ${id4}, 'passwordCharlieID5')"""
   )
 
 

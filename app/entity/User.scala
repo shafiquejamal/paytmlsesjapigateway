@@ -16,7 +16,6 @@ trait User {
   def hashedPassword: String
   def isActive: Boolean
   def maybeCreated:Option[DateTime] = None
-  def maybeParentId: Option[UUID]
 
   def add(userDAO: UserDAO, uUIDProvider: UUIDProvider):Try[User]
 
@@ -26,7 +25,6 @@ trait User {
       email: String,
       hashedPassword: String,
       isActive: Boolean,
-      maybeCreated: Option[DateTime] = None,
-      maybeParentId: Option[UUID]):User
+      maybeCreated: Option[DateTime] = None):User
 
 }

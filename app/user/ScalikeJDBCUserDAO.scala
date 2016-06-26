@@ -8,22 +8,44 @@ import entity.User
 import org.joda.time.DateTime
 import scalikejdbc.TxBoundary.Try._
 import scalikejdbc._
+import util.UUIDProvider
 
 import scala.util.{Failure, Success, Try}
 
 @Singleton
 class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResultSetToUserConverter,
                                    scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider,
-                                   dBConfig: DBConfig) extends UserDAO {
+                                   dBConfig: DBConfig,
+                                   uUIDProvider: UUIDProvider) extends UserDAO {
+
+  val userFields = "xuser.id, email, username, status, password, createdat"
+  val tables = "xuser inner join xuserusername on xuserusername.xuserid = xuser.id inner join xuserstatus on " +
+               "xuserstatus.xuserid = xuser.id inner join xuseremail.xuserid = xuser.id inner join xuserpassword on " +
+               "xuserpassword.xuserid = xuser.id"
 
   override def byUsername(username: String): Option[User] =
-    by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${username}) order by created desc limit 1")
+    by(
+      sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
+            xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
+            on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
+            LOWER(username) = (${username.trim.toLowerCase()}) order by xuserstatus.createdat desc, xuserusername.createdat
+            desc, xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""")
 
   override def byEmail(email: String): Option[User] =
-    by(sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1")
+    by(
+      sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
+            xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
+            on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
+            LOWER(email) = (${email.trim.toLowerCase()}) order by xuserstatus.createdat desc,  xuserusername.createdat desc,
+            xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""")
 
-  override def by(parentID: UUID): Option[User] =
-    by(sql"select id, email, username, isactive, password, created, parentid from xuser where parentid = ${parentID} order by created desc limit 1")
+  override def by(id: UUID): Option[User] =
+    by(
+      sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
+            xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
+            on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
+            xuser.id = ${id} order by xuserstatus.createdat desc,  xuserusername.createdat desc, xuserpassword.createdat
+            desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""")
 
   override def byEmail(email:String, hashedPassword:String): Option[User] = byEmail(email).filter(_.hashedPassword == hashedPassword)
 
@@ -35,24 +57,28 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
   }
 
   override def addFirstTime(user: User, created: DateTime, uUID: UUID): Try[User] = {
-    val (username, email) = (user.username, user.email)
+    val (username, email) = (user.username.trim, user.email.trim)
     val result:Try[User] = DB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
-      val isUsernameIsAvailable =
-        !sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${username}) order by created desc limit 1"
-        .map(wrappedResultSetToUserConverter.converter).list().apply().headOption.exists(_.isActive)
-      val isEmailAddressIsAvailable =
-        !sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(email) = LOWER(${email}) order by created desc limit 1"
-        .map(wrappedResultSetToUserConverter.converter).list().apply().headOption.exists(_.isActive)
+      val isUsernameIsAvailable = byUsername(username).isEmpty
+      val isEmailAddressIsAvailable = byEmail(email).isEmpty
 
       if (isUsernameIsAvailable & isEmailAddressIsAvailable) {
-        sql"insert into xuser (id, username, email, password, isactive, parentid, created) values (${uUID}, ${username}, ${user.email}, ${user.hashedPassword}, true, ${uUID}, ${created})"
-        .update.apply()
+        sql"""insert into xuser (id, authorid, createdat) values (${uUID}, ${uUID}, ${created})""".update.apply()
+        sql"""insert into xuseremail (id, xuserid, authorid, createdat, email) values
+             (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${email})""".update.apply()
+        sql"""insert into xuserstatus (id, xuserid, authorid, createdat, status) values
+             (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, true)""".update.apply()
+        sql"""insert into xuserpassword (id, xuserid, authorid, createdat, password) values
+             (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${user.hashedPassword})""".update.apply()
+        sql"""insert into xuserusername (id, xuserid, authorid, createdat, username) values
+             (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${username})""".update.apply()
 
-        val activeUsersWithThisUsernameOrEmail = sql"select id, email, username, isactive, password, created, parentid from xuser where LOWER(username) = LOWER(${username}) or LOWER(email) = LOWER(${email}) order by created desc limit 2"
-                    .map(wrappedResultSetToUserConverter.converter).list.apply().filter(_.isActive)
+        val activeUsersWithThisUsernameOrEmail =
+          (byUsername(username).toList ++ byEmail(email).toList)
+          .groupBy(_.maybeId).flatMap{ case (maybeId, users) => users.headOption }.toList
 
         activeUsersWithThisUsernameOrEmail match {
           case addedUser :: Nil  =>

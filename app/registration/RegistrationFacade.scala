@@ -19,12 +19,11 @@ class RegistrationFacade @Inject() (
   override def signUp(registrationMessage: RegistrationMessage):Try[User] = {
     val hashedPassword = BCrypt.hashpw(registrationMessage.password, BCrypt.gensalt())
     user.create(None,
-        registrationMessage.maybeUsername.getOrElse(uUIDProvider.randomUUID().toString),
+        registrationMessage.maybeUsername.getOrElse(registrationMessage.email),
         registrationMessage.email,
         hashedPassword,
         isActive = true,
-        Some(timeProvider.now()),
-        None)
+        Some(timeProvider.now()))
       .add(userDAO, uUIDProvider)
   }
 
