@@ -4,6 +4,7 @@ import com.google.inject.{Inject, Singleton}
 import entity.User
 import org.mindrot.jbcrypt.BCrypt
 import user.UserDAO
+import user.UserStatus.Active
 import util.{TimeProvider, UUIDProvider}
 
 import scala.util.Try
@@ -22,7 +23,7 @@ class RegistrationFacade @Inject() (
         registrationMessage.maybeUsername.getOrElse(registrationMessage.email),
         registrationMessage.email,
         hashedPassword,
-        isActive = true,
+        Active,
         Some(timeProvider.now()))
       .add(userDAO, uUIDProvider)
   }

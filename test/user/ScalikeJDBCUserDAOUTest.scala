@@ -7,6 +7,7 @@ import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers}
 import scalikejdbc._
 import scalikejdbc.scalatest.AutoRollback
+import user.UserStatus.{Active, Unverified}
 
 class ScalikeJDBCUserDAOUTest
   extends FlatSpec
@@ -58,44 +59,44 @@ class ScalikeJDBCUserDAOUTest
   "adding a user for the first time (no existing user has this email or username)" should
   "add the user with the properties given in the user object" in { implicit session =>
     val expectedUser =
-      TestUserImpl(Some(id6), "newuser", "newuser@newuser.com", "password", isActive = false, Some(now))
+      TestUserImpl(Some(id6), "newuser", "newuser@newuser.com", "password", userStatus = Unverified, Some(now))
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-      .addFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(isActive = true)
+      .addFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(userStatus = Active)
   }
 
   "adding a user for the first time (no active existing user has this email, but an inactive one does)" should
   "add the user with the properties given in the user object" in { implicit session =>
     val expectedUser =
-      TestUserImpl(Some(id6), "newuser", "charlie@charlie.com", "password", isActive = false, Some(now))
+      TestUserImpl(Some(id6), "newuser", "charlie@charlie.com", "password", userStatus = Unverified, Some(now))
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-    .addFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(isActive = true)
+    .addFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(userStatus = Active)
   }
 
   "adding a user for the first time (no active existing user has this username, but an inactive one does)" should
   "add the user with the properties given in the user object" in { implicit session =>
     val expectedUser =
-      TestUserImpl(Some(id6), "charlie", "newuser@newuser.com", "password", isActive = false, Some(now))
+      TestUserImpl(Some(id6), "charlie", "newuser@newuser.com", "password", userStatus = Unverified, Some(now))
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-      .addFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(isActive = true)
+      .addFirstTime(expectedUser, now, id6).success.value shouldBe expectedUser.copy(userStatus = Active)
   }
 
   "adding a user with an email address that is already active in the db" should "fail" in { implicit session =>
     val duplicateActiveEmailUser =
-      TestUserImpl(Some(id6), "newuser", "alice@alice.com", "password", isActive = false, Some(now))
+      TestUserImpl(Some(id6), "newuser", "alice@alice.com", "password", userStatus = Unverified, Some(now))
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
     .addFirstTime(duplicateActiveEmailUser, now, id6).failure.exception shouldBe a[RuntimeException]
   }
 
   "adding a user with a username that is already active in the db" should "fail" in { implicit session =>
     val duplicateActiveUsernameUser =
-      TestUserImpl(Some(id6), "boB", "newuser@newuser.com", "password", isActive = false, Some(now))
+      TestUserImpl(Some(id6), "boB", "newuser@newuser.com", "password", userStatus = Unverified, Some(now))
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
       .addFirstTime(duplicateActiveUsernameUser, now, id6).failure.exception shouldBe a[RuntimeException]
   }
 
   "adding a user with a username that matches an email address of an active user" should "fail" in { implicit session =>
     val usernameIsExistingEmail =
-      TestUserImpl(Some(id6), "bob@bob.com", "newuser@newuser.com", "password", isActive = false, Some(now))
+      TestUserImpl(Some(id6), "bob@bob.com", "newuser@newuser.com", "password", userStatus = Unverified, Some(now))
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
         .addFirstTime(usernameIsExistingEmail, now, id6).failure.exception shouldBe a[RuntimeException]
   }

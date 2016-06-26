@@ -3,7 +3,7 @@ package entity
 import java.util.UUID
 
 import org.joda.time.DateTime
-import user.UserDAO
+import user.{UserDAO, UserStatus}
 import util.UUIDProvider
 
 import scala.util.Try
@@ -14,7 +14,7 @@ trait User {
   def username: String
   def email: String
   def hashedPassword: String
-  def isActive: Boolean
+  def userStatus: UserStatus
   def maybeCreated:Option[DateTime] = None
 
   def add(userDAO: UserDAO, uUIDProvider: UUIDProvider):Try[User]
@@ -24,7 +24,7 @@ trait User {
       username: String,
       email: String,
       hashedPassword: String,
-      isActive: Boolean,
+      userStatus: UserStatus,
       maybeCreated: Option[DateTime] = None):User
 
 }

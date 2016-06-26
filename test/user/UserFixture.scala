@@ -3,6 +3,7 @@ package user
 import java.util.UUID
 
 import scalikejdbc._
+import user.UserStatus._
 import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 trait UserFixture {
@@ -20,9 +21,7 @@ trait UserFixture {
   uUIDProvider.index(100)
 
   val alice =
-    TestUserImpl(Some(id1), "alice", "alice@alice.com", "passwordAliceID2", isActive = true, Some(now))
-  val charlie =
-    TestUserImpl(Some(id4), "charlie", "charlie@charlie.com", "passwordCharlieID2", isActive = true, Some(now))
+    TestUserImpl(Some(id1), "alice", "alice@alice.com", "passwordAliceID2", userStatus = Active, Some(now))
 
   val sqlToAddUsers = Vector(
     sql"insert into xuser  (id, authorid, createdat) values (${id1}, ${id1}, ${now})",
@@ -31,13 +30,13 @@ trait UserFixture {
     sql"insert into xuser  (id, authorid, createdat) values (${id4}, ${id4}, ${now})",
     sql"insert into xuser  (id, authorid, createdat) values (${id5}, ${id5}, ${now})",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, true)""",
+         (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, ${Active.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
-         (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, true)""",
+         (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, ${Active.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
-         (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, true)""",
+         (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, ${Active.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
-         (${uUIDProvider.randomUUID()}, ${id4}, ${later}, ${id4}, false)""",
+         (${uUIDProvider.randomUUID()}, ${id4}, ${later}, ${id4}, ${Unverified.value})""",
     sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values
          (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, 'alice@alice.com')""",
     sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values

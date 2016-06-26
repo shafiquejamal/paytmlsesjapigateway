@@ -5,6 +5,7 @@ import java.util.UUID
 import com.google.inject.{Inject, Singleton}
 import entity.User
 import scalikejdbc.WrappedResultSet
+import UserStatus._
 
 @Singleton
 class WrappedResultSetToUserConverterImpl @Inject() (user:User) extends WrappedResultSetToUserConverter {
@@ -14,7 +15,7 @@ class WrappedResultSetToUserConverterImpl @Inject() (user:User) extends WrappedR
     rs.string("username"),
     rs.string("email"),
     rs.string("password"),
-    rs.boolean("status"),
+    toUserStatus(rs.int("status")),
     Option(rs.jodaDateTime("createdat"))
   )
 

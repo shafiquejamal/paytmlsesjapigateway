@@ -9,7 +9,7 @@ create table xuserstatus (
   authorid uuid not null REFERENCES xuser (id),
   createdat timestamp not null,
   xuserid uuid not null REFERENCES xuser (id),
-  status BOOLEAN --smallint not null check (status >= 0)
+  status smallint not null check (status >= 0)
 );
 --create index on xuserstatus (status);
 

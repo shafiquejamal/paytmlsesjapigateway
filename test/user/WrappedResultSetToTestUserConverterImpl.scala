@@ -13,7 +13,7 @@ class WrappedResultSetToTestUserConverterImpl extends WrappedResultSetToUserConv
         rs.string("username"),
         rs.string("email"),
         rs.string("password"),
-        rs.boolean("status"),
+        UserStatus.toUserStatus(rs.int("status")),
         Option(rs.jodaDateTime("createdat")))
 
 }
