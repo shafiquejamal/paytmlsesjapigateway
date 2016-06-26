@@ -64,8 +64,9 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
 
       val isUsernameIsAvailable = byUsername(username).isEmpty
       val isEmailAddressIsAvailable = byEmail(email).isEmpty
+      val isUsernameDoesNotMatchExistingActiveUser = byEmail(username).isEmpty
 
-      if (isUsernameIsAvailable & isEmailAddressIsAvailable) {
+      if (isUsernameIsAvailable & isEmailAddressIsAvailable & isUsernameDoesNotMatchExistingActiveUser) {
         sql"""insert into xuser (id, authorid, createdat) values (${uUID}, ${uUID}, ${created})""".update.apply()
         sql"""insert into xuseremail (id, xuserid, authorid, createdat, email) values
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${email})""".update.apply()
@@ -77,7 +78,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${username})""".update.apply()
 
         val activeUsersWithThisUsernameOrEmail =
-          (byUsername(username).toList ++ byEmail(email).toList)
+          (byUsername(username).toList ++ byEmail(email).toList ++ byEmail(username).toList)
           .groupBy(_.maybeId).flatMap{ case (maybeId, users) => users.headOption }.toList
 
         activeUsersWithThisUsernameOrEmail match {

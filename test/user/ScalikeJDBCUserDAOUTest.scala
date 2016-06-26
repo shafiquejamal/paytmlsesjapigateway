@@ -93,6 +93,13 @@ class ScalikeJDBCUserDAOUTest
       .addFirstTime(duplicateActiveUsernameUser, now, id6).failure.exception shouldBe a[RuntimeException]
   }
 
+  "adding a user with a username that matches an email address of an active user" should "fail" in { implicit session =>
+    val usernameIsExistingEmail =
+      TestUserImpl(Some(id6), "bob@bob.com", "newuser@newuser.com", "password", isActive = false, Some(now))
+    new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
+        .addFirstTime(usernameIsExistingEmail, now, id6).failure.exception shouldBe a[RuntimeException]
+  }
+
   "retrieving a user by id" should "retrieve the user with the matching parent id that was added the latest" +
     " if that user is active, otherwise it should return none" in { implicit session =>
     val userDAO =
