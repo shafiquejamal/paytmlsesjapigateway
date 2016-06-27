@@ -8,7 +8,6 @@ import entity.User
 import org.joda.time.DateTime
 import scalikejdbc.TxBoundary.Try._
 import scalikejdbc._
-import user.UserStatus.Active
 import util.UUIDProvider
 
 import scala.util.{Failure, Success, Try}
@@ -76,7 +75,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
         sql"""insert into xuseremail (id, xuserid, authorid, createdat, email) values
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${email})""".update.apply()
         sql"""insert into xuserstatus (id, xuserid, authorid, createdat, status) values
-             (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${Active.value})""".update.apply()
+             (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${user.userStatus.value})""".update.apply()
         sql"""insert into xuserpassword (id, xuserid, authorid, createdat, password) values
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${user.hashedPassword})""".update.apply()
         sql"""insert into xuserusername (id, xuserid, authorid, createdat, username) values

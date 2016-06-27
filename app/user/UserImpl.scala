@@ -4,7 +4,7 @@ import java.util.UUID
 
 import entity.User
 import org.joda.time.DateTime
-import user.UserStatus.Blocked
+import user.UserStatus.Active
 import util.UUIDProvider
 
 import scala.util.{Failure, Try}
@@ -29,7 +29,7 @@ class UserImpl(
       Failure[User](new RuntimeException("This user already has a UUID."))
     )
 
-  def this() = this(None, "", "", "", Blocked, None)
+  def this() = this(None, "", "", "", Active, None)
 
   override def create(
       maybeId: Option[UUID],
