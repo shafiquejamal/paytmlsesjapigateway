@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "net.codingwell" %% "scala-guice" % "4.0.1",
-  "org.mindrot" % "jbcrypt" % "0.3m"
+  "org.mindrot" % "jbcrypt" % "0.3m",
+  "commons-validator" % "commons-validator" % "1.5.1"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
