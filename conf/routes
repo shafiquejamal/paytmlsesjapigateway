@@ -13,3 +13,5 @@ GET     /message                    controllers.AsyncController.message
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 POST    /                           registration.RegistrationController.register
+GET     /username/:username         registration.RegistrationController.usernameCheck(username:String)
+GET     /email/:email               registration.RegistrationController.emailCheck(email:String)
