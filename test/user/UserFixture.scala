@@ -2,6 +2,7 @@ package user
 
 import java.util.UUID
 
+import registration.PasswordHasher.hash
 import scalikejdbc._
 import user.UserStatus._
 import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
@@ -20,8 +21,14 @@ trait UserFixture {
   val uUIDProvider = TestUUIDProviderImpl
   uUIDProvider.index(100)
 
+  val pAlice1 = hash("passwordAliceID1")
+  val pAlice2 = hash("passwordAliceID2")
+  val pBob3 = hash("passwordBobID3")
+  val pCharlie4 = hash("passwordCharlieID4")
+  val pCharlie5 = hash("passwordCharlieID5")
+
   val alice =
-    TestUserImpl(Some(id1), "alice", "alice@alice.com", "passwordAliceID2", userStatus = Active, Some(now))
+    TestUserImpl(Some(id1), "alice", "alice@alice.com", pAlice2, userStatus = Active, Some(now))
 
   val sqlToAddUsers = Vector(
     sql"insert into xuser  (id, authorid, createdat) values (${id1}, ${id1}, ${now})",
@@ -50,15 +57,15 @@ trait UserFixture {
     sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values
          (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, 'charlie')""",
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, 'passwordAliceID1')""",
+         (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, ${pAlice1}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${later}, ${id1}, 'passwordAliceID2')""",
+         (${uUIDProvider.randomUUID()}, ${id1}, ${later}, ${id1}, ${pAlice2}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
-         (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, 'passwordBobID3')""",
+         (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, ${pBob3}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
-         (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, 'passwordCharlieID4')""",
+         (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, ${pCharlie4}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
-         (${uUIDProvider.randomUUID()}, ${id4}, ${later}, ${id4}, 'passwordCharlieID5')"""
+         (${uUIDProvider.randomUUID()}, ${id4}, ${later}, ${id4}, ${pCharlie5}) """
   )
 
 

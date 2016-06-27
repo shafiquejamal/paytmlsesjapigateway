@@ -1,10 +1,9 @@
 package registration
 
-import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
-
 import org.apache.commons.validator.routines.EmailValidator
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json._
 
 case class RegistrationMessage(maybeUsername:Option[String], email:String, password:String) {
 
@@ -13,9 +12,8 @@ case class RegistrationMessage(maybeUsername:Option[String], email:String, passw
   require(emailValidator.isValid(email.trim))
   require(password.trim.nonEmpty)
   require(
-    maybeUsername.map(_.trim).map { username =>
-      (emailValidator.isValid(username) && username == email.trim) | !emailValidator.isValid(username)
-    }.getOrElse(true))
+    maybeUsername.fold(true)(username =>
+      (emailValidator.isValid(username) && username == email.trim) | !emailValidator.isValid(username)))
 }
 
 object RegistrationMessage {

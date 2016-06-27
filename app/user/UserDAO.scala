@@ -22,8 +22,4 @@ trait UserDAO {
 
   def by(id: UUID, userFilter: User => Boolean): Option[User]
 
-  def byEmail(email: String, hashedPassword: String, userFilter: User => Boolean): Option[User]
-
-  def byUsername(username: String, hashedPassword: String, userFilter: User => Boolean): Option[User]
-
 }

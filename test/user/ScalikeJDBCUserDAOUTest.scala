@@ -111,27 +111,9 @@ class ScalikeJDBCUserDAOUTest
     " if that user is active, otherwise it should return none" in { implicit session =>
     val userDAO =
       new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-    userDAO.by(id4, authenticationUserFilter) shouldBe empty
 
+    userDAO.by(id4, authenticationUserFilter) shouldBe empty
     userDAO.by(id1, authenticationUserFilter) should contain(alice)
    }
-
-  "retrieving a user by username or email, and hashed password" should "retrieve the matching user if the latest user " +
-    " entry with that username has a matching hased password" in { implicit session =>
-    val userDAO =
-      new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-
-    userDAO.byUsername("alice", "passwordAliceID1", authenticationUserFilter) shouldBe empty
-    userDAO.byUsername("aLiCe", "passwordAliceID2", authenticationUserFilter) should contain(alice)
-    userDAO.byUsername("aLiCe", "PasswordAliceID2", authenticationUserFilter) shouldBe empty
-    userDAO.byUsername("alice@alice.com", "passwordAliceID2", authenticationUserFilter) shouldBe empty
-    userDAO.byUsername("charlie", "passwordCharlieID5", authenticationUserFilter) shouldBe empty
-
-    userDAO.byEmail("alice@alice.com", "passwordAliceID1", authenticationUserFilter) shouldBe empty
-    userDAO.byEmail("AlicE@alIce.com", "passwordAliceID2", authenticationUserFilter) should contain(alice)
-    userDAO.byEmail("alice@alice.com", "PasswordAliceID2", authenticationUserFilter) shouldBe empty
-    userDAO.byEmail("charlie@charlie.com", "passwordCharlieID5", authenticationUserFilter) shouldBe empty
-
-  }
 
 }

@@ -50,17 +50,9 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
             xuser.id = ${id} order by xuserstatus.createdat desc,  xuserusername.createdat desc, xuserpassword.createdat
             desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""", userFilter)
 
-  override def byEmail(email:String, hashedPassword:String, userFilter: User => Boolean): Option[User] =
-    byEmail(email, userFilter).filter(_.hashedPassword == hashedPassword)
-
-  override def byUsername(username:String, hashedPassword:String, userFilter: User => Boolean): Option[User] =
-    byUsername(username, userFilter).filter(_.hashedPassword == hashedPassword)
-
   private def by(sqlQuery: SQL[_, _], userFilter: User => Boolean): Option[User] = {
     implicit val session = scalikeJDBCSessionProvider.provideReadOnlySession
-    val temp = sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply()
-    val temp2 = temp.filter(userFilter)
-    temp2
+    sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply().filter(userFilter)
   }
 
   override def addFirstTime(
