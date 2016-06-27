@@ -19,11 +19,8 @@ class RegistrationFacadeATest
   with TestDBConnection
   with BeforeAndAfterEach {
 
-
   override def fixture(implicit session: DBSession) {
-    val flyway = new Flyway()
-    flyway.setDataSource("jdbc:h2:mem:play", "sa", "")
-    flyway.migrate()
+    super.fixture
     sqlToAddUsers.foreach(_.update.apply())
   }
 
