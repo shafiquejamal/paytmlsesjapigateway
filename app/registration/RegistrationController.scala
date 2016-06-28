@@ -29,7 +29,7 @@ class RegistrationController @Inject() (registrationAPI: RegistrationAPI) extend
   }
 
   def usernameCheck(username:String) = Action {
-    Ok(Json.obj("status" -> registrationAPI.isEmailIsAvailable(username)))
+    Ok(Json.obj("status" -> registrationAPI.isUsernameIsAvailable(username)))
   }
 
 }
