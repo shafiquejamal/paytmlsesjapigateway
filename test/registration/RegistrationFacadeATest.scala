@@ -1,7 +1,6 @@
 package registration
 
 import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
-import org.flywaydb.core.Flyway
 import org.mindrot.jbcrypt.BCrypt
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, Matchers, ShouldMatchers}

@@ -1,3 +1,4 @@
+import org.scalatest.{ShouldMatchers, FlatSpec}
 import org.scalatestplus.play._
 import play.api.test._
 import play.api.test.Helpers._
@@ -7,36 +8,23 @@ import play.api.test.Helpers._
  * You can mock out a whole application including requests, plugins etc.
  * For more information, consult the wiki.
  */
-class ApplicationSpec extends PlaySpec with OneAppPerTest {
+class ApplicationSpec extends FlatSpec with ShouldMatchers with OneAppPerTest {
 
-  "Routes" should {
-
-    "send 404 on a bad request" in  {
-      route(app, FakeRequest(GET, "/boum")).map(status) mustBe Some(NOT_FOUND)
-    }
-
+  "Routes" should "send 404 on a bad request" in {
+      route(app, FakeRequest(GET, "/boum")).map(status) should contain(NOT_FOUND)
   }
 
-  "HomeController" should {
-
-    "render the index page" in {
+  "HomeController" should "render the index page" in {
       val home = route(app, FakeRequest(GET, "/")).get
 
-      status(home) mustBe OK
-      // contentType(home) mustBe Some("text/html")
-      // contentAsString(home) must include ("Your new application is ready.")
-    }
-
+      status(home) shouldBe OK
+      contentType(home) should contain("text/plain")
   }
 
-  "CountController" should {
-
-    "return an increasing count" in {
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "0"
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "1"
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "2"
-    }
-
+  "CountController" should "return an increasing count" in {
+      contentAsString(route(app, FakeRequest(GET, "/count")).get) shouldBe "0"
+      contentAsString(route(app, FakeRequest(GET, "/count")).get) shouldBe "1"
+      contentAsString(route(app, FakeRequest(GET, "/count")).get) shouldBe "2"
   }
 
 }
