@@ -25,7 +25,7 @@ class RegistrationFacadeATest
 
   val user = new TestUserImpl()
   val testUUIDProviderImpl = TestUUIDProviderImpl
-  testUUIDProviderImpl.index(10)
+  testUUIDProviderImpl.index = 10
 
   override def beforeEach() {
     dBConfig.setUpAllDB()
