@@ -30,6 +30,12 @@ class RegistrationControllerTest extends FlatSpec with ShouldMatchers with OneAp
       .get
     val content = contentAsJson(result)
     (content \ "status").asOpt[String] should contain("success")
+
+    val checkEmailAvailable = contentAsJson(route(app, FakeRequest(GET, "/email/new@user.com")).get)
+    (checkEmailAvailable \ "status").asOpt[Boolean] should contain(false)
+
+    val checkUsernameAvailable = contentAsJson(route(app, FakeRequest(GET, "/username/newuser")).get)
+    (checkUsernameAvailable \ "status").asOpt[Boolean] should contain(false)
   }
 
 }
