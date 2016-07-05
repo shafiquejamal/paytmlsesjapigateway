@@ -1,9 +1,14 @@
 package db
 
+import java.io.File
+
+import com.typesafe.config.ConfigFactory
 import org.flywaydb.core.Flyway
+import play.api.Configuration
 import scalikejdbc.DBSession
 import scalikejdbc.scalatest.AutoRollback
 import user.WrappedResultSetToTestUserConverterImpl
+import util.PlayConfigParamsProvider
 
 trait TestDBConnection { this: AutoRollback =>
 
@@ -11,8 +16,14 @@ trait TestDBConnection { this: AutoRollback =>
   val dBConfig = new ScalikeJDBCTestDBConfig()
 
   override def fixture(implicit session: DBSession) {
+    val configParamsProvider =
+      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
+    val configParams = configParamsProvider.configParams
+    val url = configParams.getOrElse("db.default.url", "")
+    val username = configParams.getOrElse("db.default.username", "")
+    val password = configParams.getOrElse("db.default.password", "")
     val flyway = new Flyway()
-    flyway.setDataSource("jdbc:h2:mem:play", "sa", "")
+    flyway.setDataSource(url, username, password)
     flyway.migrate()
   }
 

@@ -3,7 +3,6 @@ package authentication
 import java.util.UUID
 
 import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
-import org.flywaydb.core.Flyway
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
 import scalikejdbc.DBSession
@@ -19,10 +18,8 @@ class AuthenticationFacadeATest
   with TestDBConnection
   with BeforeAndAfterEach {
 
-  override def fixture(implicit session: DBSession) {
-    val flyway = new Flyway()
-    flyway.setDataSource("jdbc:h2:mem:play", "sa", "")
-    flyway.migrate()
+  override def fixture(implicit session: DBSession): Unit = {
+    super.fixture
     sqlToAddUsers.foreach(_.update.apply())
   }
 

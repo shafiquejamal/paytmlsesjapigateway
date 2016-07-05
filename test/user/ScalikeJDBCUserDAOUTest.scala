@@ -1,7 +1,6 @@
 package user
 
 import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
-import org.flywaydb.core.Flyway
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers}

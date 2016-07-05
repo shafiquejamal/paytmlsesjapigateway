@@ -16,6 +16,7 @@ class Module extends AbstractModule with ScalaModule {
     bind[RegistrationAPI].to[RegistrationFacade]
     bind[AuthenticationAPI].to[AuthenticationFacade]
     bind[DBConfig].to[ScalikeJDBCDevProdDBConfig]
+    bind[ConfigParamsProvider].to[PlayConfigParamsProvider]
   }
 
 }
