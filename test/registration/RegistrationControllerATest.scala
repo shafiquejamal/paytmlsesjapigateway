@@ -7,7 +7,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test._
 
-class RegistrationControllerTest extends FlatSpec with ShouldMatchers with OneAppPerTest {
+class RegistrationControllerATest extends FlatSpec with ShouldMatchers with OneAppPerTest {
 
   "Checking whether a username is available" should "return true if the username is available" in {
     val result = route(app, FakeRequest(GET, "/username/available")).get

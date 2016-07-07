@@ -14,10 +14,10 @@ trait TestDBConnection { this: AutoRollback =>
 
   val converter = new WrappedResultSetToTestUserConverterImpl()
   val dBConfig = new ScalikeJDBCTestDBConfig()
+  val configParamsProvider =
+    new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
 
   override def fixture(implicit session: DBSession) {
-    val configParamsProvider =
-      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
     val configParams = configParamsProvider.configParams
     val url = configParams.getOrElse("db.default.url", "")
     val username = configParams.getOrElse("db.default.username", "")
