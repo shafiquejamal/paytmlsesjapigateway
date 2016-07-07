@@ -93,7 +93,24 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     }
   }
 
-  override def changeUsername(id: UUID, newUsername:String, created:DateTime, authenticationUserFilter: User => Boolean): Try[User] = {
+  override def changePassword(id: UUID, newHashedPassword:String, created:DateTime): Try[User] = {
+    DB localTx { _ =>
+
+      implicit val session = scalikeJDBCSessionProvider.provideAutoSession
+
+      val maybeUser = by(id, (user:User) => true)
+
+      maybeUser.fold[Try[User]](Failure(new RuntimeException("User does not exist in DB."))){ user =>
+        sql"""insert into xuserpassword (id, xuserid, authorid, createdat, password) values
+          (${uUIDProvider.randomUUID()}, ${id}, ${id}, ${created}, ${newHashedPassword})""".update.apply()
+        Success(user)
+      }
+    }
+
+  }
+
+  override def changeUsername(id: UUID, newUsername:String, created:DateTime, authenticationUserFilter: User => Boolean):
+  Try[User] = {
 
     DB localTx { _ =>
 

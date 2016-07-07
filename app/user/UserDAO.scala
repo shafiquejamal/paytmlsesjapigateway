@@ -26,4 +26,6 @@ trait UserDAO {
     created:DateTime,
     userFilter: User => Boolean): Try[User]
 
+  def changePassword(id: UUID, newHashedPassword:String, created:DateTime): Try[User]
+
 }

@@ -17,6 +17,7 @@ trait UserFixture {
   val id4 = UUID.fromString("00000000-0000-0000-0000-000000000004")
   val id5 = UUID.fromString("00000000-0000-0000-0000-000000000005")
   val id6 = UUID.fromString("00000000-0000-0000-0000-000000000006")
+  val idNonExistentUser = UUID.fromString("90000000-0000-0000-0000-000000000000")
 
   val uUIDProvider = TestUUIDProviderImpl
   uUIDProvider.index = 100

@@ -4,10 +4,13 @@ import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers}
+import registration.PasswordHasher.hash
 import scalikejdbc._
 import scalikejdbc.scalatest.AutoRollback
 import user.UserStatus._
 import util.TestTimeProviderImpl
+
+import scala.util.Success
 
 class ScalikeJDBCUserDAOUTest
   extends FlatSpec
@@ -132,6 +135,22 @@ class ScalikeJDBCUserDAOUTest
     val newUsername = " bob@bob.com "
 
     userDAO.changeUsername(id1, newUsername, TestTimeProviderImpl.now(), authenticationUserFilter)
+    .failure.exception shouldBe a[RuntimeException]
+  }
+
+  "changing the users password" should "change the user's password" in { implicit session =>
+    val userDAO = makeDAO(session)
+    val newHashedPassword = hash("some_new_password")
+
+    userDAO.changePassword(id3, newHashedPassword, now.plusMillis(1)) shouldBe a[Success[_]]
+    userDAO.by(id3, authenticationUserFilter).map(_.hashedPassword) should contain(newHashedPassword)
+  }
+
+  it should "fail if the user id does not represent a user in the db" in { implicit session =>
+    val userDAO = makeDAO(session)
+    val newHashedPassword = hash("some_new_password")
+
+    userDAO.changePassword(idNonExistentUser, newHashedPassword, now.plusMillis(1))
     .failure.exception shouldBe a[RuntimeException]
   }
 
