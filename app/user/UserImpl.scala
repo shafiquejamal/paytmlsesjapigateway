@@ -24,7 +24,7 @@ class UserImpl(
       registrationUserFilter: User => Boolean,
       authenticationUserFilter: User => Boolean): Try[User] =
     maybeId.fold[Try[User]](
-      userDAO.addFirstTime(this, new DateTime(), uUIDProvider.randomUUID(), registrationUserFilter, authenticationUserFilter)
+      userDAO.add(this, new DateTime(), uUIDProvider.randomUUID(), registrationUserFilter, authenticationUserFilter)
     )(uUID =>
       Failure[User](new RuntimeException("This user already has a UUID."))
     )

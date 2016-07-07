@@ -54,7 +54,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply().filter(userFilter)
   }
 
-  override def addFirstTime(
+  override def add(
     user: User,
     created: DateTime,
     uUID: UUID,
@@ -62,7 +62,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     authenticationUserFilter: User => Boolean): Try[User] = {
 
     val (username, email) = (user.username.trim, user.email.trim)
-    val result:Try[User] = DB localTx { _ =>
+    DB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
@@ -81,26 +81,57 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
         sql"""insert into xuserusername (id, xuserid, authorid, createdat, username) values
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${username})""".update.apply()
 
-        val activeUsersWithThisUsernameOrEmail =
-          (byUsername(username, authenticationUserFilter).toList ++
-            byEmail(email, authenticationUserFilter).toList ++
-            byEmail(username, authenticationUserFilter).toList)
-          .groupBy(_.maybeId).flatMap{ case (maybeId, users) => users.headOption }.toList
+        val activeUsersWithThisUsernameOrEmail = uniqueUsers(
+          byUsername(username, authenticationUserFilter).toList ++
+          byEmail(email, authenticationUserFilter).toList ++
+          byEmail(username, authenticationUserFilter).toList)
 
-        activeUsersWithThisUsernameOrEmail match {
-          case addedUser :: Nil  =>
-            Success(addedUser)
-          case u :: otherUsers =>
-            Failure(new RuntimeException("Username or email already exists in DB."))
-          case _ =>
-            Failure(new RuntimeException("Username or email already exists in DB."))
-        }
+        activeUserCheck(activeUsersWithThisUsernameOrEmail)
 
       } else {
-        Failure(new RuntimeException("Username or email already exists in DB."))
+        failureResult
       }
     }
-    result
   }
+
+  override def changeUsername(id: UUID, newUsername:String, created:DateTime, authenticationUserFilter: User => Boolean): Try[User] = {
+
+    DB localTx { _ =>
+
+      val username = newUsername.trim()
+      implicit val session = scalikeJDBCSessionProvider.provideAutoSession
+      val isUsernameIsAvailable = byUsername(username, authenticationUserFilter).isEmpty
+      val isUsernameDoesNotMatchExistingUserEmail = byEmail(username, authenticationUserFilter).isEmpty
+
+      if (isUsernameIsAvailable & isUsernameDoesNotMatchExistingUserEmail) {
+
+        sql"""insert into xuserusername (id, xuserid, authorid, createdat, username) values
+          (${uUIDProvider.randomUUID()}, ${id}, ${id}, ${created}, ${username})""".update.apply()
+
+        val activeUsersWithThisUsernameOrEmail = uniqueUsers(
+          byUsername(username, authenticationUserFilter).toList ++
+          byEmail(username, authenticationUserFilter).toList)
+
+        activeUserCheck(activeUsersWithThisUsernameOrEmail)
+      } else {
+        failureResult
+      }
+
+    }
+
+  }
+
+  private def activeUserCheck(activeUsers:List[User]):Try[User] =
+    activeUsers match {
+      case addedUser :: Nil  =>
+        Success(addedUser)
+      case _ =>
+        failureResult
+    }
+
+  val failureResult = Failure(new RuntimeException("Username or email already exists in DB."))
+
+  private def uniqueUsers(fetchedUsers:List[User]):List[User] =
+    fetchedUsers.groupBy(_.maybeId).flatMap{ case (maybeId, users) => users.headOption }.toList
 
 }
