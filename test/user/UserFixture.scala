@@ -2,9 +2,9 @@ package user
 
 import java.util.UUID
 
-import registration.PasswordHasher.hash
 import scalikejdbc._
 import user.UserStatus._
+import util.Password.hash
 import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 trait UserFixture {

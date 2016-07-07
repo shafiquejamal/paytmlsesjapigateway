@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule
 import db.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import net.codingwell.scalaguice.ScalaModule
 import registration.{RegistrationAPI, RegistrationFacade}
+import user.{UserAPI, UserFacade}
 import util._
 
 class Module extends AbstractModule with ScalaModule {
@@ -15,6 +16,7 @@ class Module extends AbstractModule with ScalaModule {
     bind[UUIDProvider].to[UUIDProviderImpl]
     bind[RegistrationAPI].to[RegistrationFacade]
     bind[AuthenticationAPI].to[AuthenticationFacade]
+    bind[UserAPI].to[UserFacade]
     bind[DBConfig].to[ScalikeJDBCDevProdDBConfig]
     bind[ConfigParamsProvider].to[PlayConfigParamsProvider]
   }

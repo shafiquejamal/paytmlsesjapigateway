@@ -6,7 +6,9 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-case class ChangeUsernameMessage(userId: UUID, newUsername: String)
+case class ChangeUsernameMessage(userId: UUID, newUsername: String) {
+  require(newUsername.trim.nonEmpty)
+}
 
 object ChangeUsernameMessage {
 

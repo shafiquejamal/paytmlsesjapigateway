@@ -1,9 +1,9 @@
 package registration
 
 import com.google.inject.{Inject, Singleton}
-import registration.PasswordHasher.hash
-import user.{User, UserDAO}
 import user.UserStatus.{Active, _}
+import user.{User, UserDAO}
+import util.Password.hash
 import util.{TimeProvider, UUIDProvider}
 
 import scala.util.Try

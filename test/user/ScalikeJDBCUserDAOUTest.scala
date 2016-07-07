@@ -4,11 +4,11 @@ import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers}
-import registration.PasswordHasher.hash
 import scalikejdbc._
 import scalikejdbc.scalatest.AutoRollback
 import user.UserStatus._
-import util.TestTimeProviderImpl
+import util.Password.hash
+import util.{Password, TestTimeProviderImpl}
 
 import scala.util.Success
 
