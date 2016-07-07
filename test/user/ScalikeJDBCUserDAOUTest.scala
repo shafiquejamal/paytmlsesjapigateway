@@ -79,7 +79,7 @@ class ScalikeJDBCUserDAOUTest
   "adding a user with an email address that is already active in the db" should "fail" in { implicit session =>
     val duplicateActiveEmailUser =
       TestUserImpl(Some(id6), "newuser", "alice@alice.com", "password", Active, Some(now))
-    
+
     makeDAO(session)
     .add(duplicateActiveEmailUser, now, id6, registrationUserFilter, authenticationUserFilter)
     .failure.exception shouldBe a[RuntimeException]

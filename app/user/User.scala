@@ -1,9 +1,8 @@
-package entity
+package user
 
 import java.util.UUID
 
 import org.joda.time.DateTime
-import user.{UserDAO, UserStatus}
 import util.UUIDProvider
 
 import scala.util.Try

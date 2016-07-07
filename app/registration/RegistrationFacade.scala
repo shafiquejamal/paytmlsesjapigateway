@@ -1,9 +1,8 @@
 package registration
 
 import com.google.inject.{Inject, Singleton}
-import entity.User
 import registration.PasswordHasher.hash
-import user.UserDAO
+import user.{User, UserDAO}
 import user.UserStatus.{Active, _}
 import util.{TimeProvider, UUIDProvider}
 

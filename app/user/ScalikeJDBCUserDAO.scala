@@ -4,7 +4,6 @@ import java.util.UUID
 
 import com.google.inject.{Inject, Singleton}
 import db.{DBConfig, ScalikeJDBCSessionProvider}
-import entity.User
 import org.joda.time.DateTime
 import scalikejdbc.TxBoundary.Try._
 import scalikejdbc._

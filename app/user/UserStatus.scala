@@ -1,7 +1,5 @@
 package user
 
-import entity.User
-
 sealed trait UserStatus {
 
   def value:Int

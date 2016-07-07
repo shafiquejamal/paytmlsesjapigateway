@@ -3,9 +3,8 @@ package user
 import java.util.UUID
 
 import com.google.inject.{Inject, Singleton}
-import entity.User
 import scalikejdbc.WrappedResultSet
-import UserStatus._
+import user.UserStatus._
 
 @Singleton
 class WrappedResultSetToUserConverterImpl @Inject() (user:User) extends WrappedResultSetToUserConverter {

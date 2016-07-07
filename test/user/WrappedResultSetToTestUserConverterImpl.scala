@@ -2,7 +2,6 @@ package user
 
 import java.util.UUID
 
-import entity.User
 import scalikejdbc.WrappedResultSet
 
 class WrappedResultSetToTestUserConverterImpl extends WrappedResultSetToUserConverter {
