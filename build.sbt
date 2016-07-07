@@ -1,8 +1,8 @@
-name := """test-di"""
+name := """crauth"""
 
-version := "1.0-SNAPSHOT"
+version := "0.1-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, SbtWeb)
 
 scalaVersion := "2.11.8"
 
@@ -21,6 +21,8 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "net.codingwell" %% "scala-guice" % "4.0.1",
   "org.mindrot" % "jbcrypt" % "0.3m",
+  "org.webjars" %% "webjars-play" % "2.4.0-1",
+  "org.webjars" % "react" % "15.1.0",
   "commons-validator" % "commons-validator" % "1.5.1"
 )
 

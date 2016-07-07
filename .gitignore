@@ -6,3 +6,7 @@ target
 /.project
 /.settings
 /RUNNING_PID
+
+bundle.js
+.DS_Store
+node_modules/
