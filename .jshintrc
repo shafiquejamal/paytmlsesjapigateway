@@ -1,4 +1,6 @@
 {
   "-W099": true,
-  "evil" : true
+  "-W030": true,
+  "evil" : true,
+  "asi": true
 }

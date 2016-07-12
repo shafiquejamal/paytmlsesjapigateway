@@ -1,9 +1,20 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var {Provider} = require('react-redux');
-var {hashHistory} = require('react-router');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { Router, hashHistory } from 'react-router';
+import promise from 'redux-promise';
+
+import reducers from './main/reducers';
+import routes from './routes';
+
+const createStoreWithMiddleware = applyMiddleware(
+    promise
+)(createStore);
 
 ReactDOM.render(
-    <div>This text should be visible.</div>,
+    <Provider store={createStoreWithMiddleware(reducers)}>
+        <Router history={hashHistory} routes={routes} />
+    </Provider>,
     document.getElementById('app')
 );
