@@ -1,7 +1,10 @@
+@(webJarAssets: WebJarAssets, requireJS: org.webjars.play.RequireJS)
+
 <!DOCTYPE html>
 <html>
     <head>
-        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.fullPath("react", "react.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(webJarAssets.fullPath("react", "react.js"))'></script>
+        <link rel='stylesheet' href='@routes.WebJarAssets.at(webJarAssets.locate("css/bootstrap.min.css"))'>
     </head>
     <body>
         <div id="app"></div>

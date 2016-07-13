@@ -21,7 +21,8 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "net.codingwell" %% "scala-guice" % "4.0.1",
   "org.mindrot" % "jbcrypt" % "0.3m",
-  "org.webjars" %% "webjars-play" % "2.4.0-1",
+  "org.webjars" %% "webjars-play" % "2.5.0",
+  "org.webjars" % "bootstrap" % "4.0.0-alpha.2",
   "org.webjars" % "react" % "15.1.0",
   "commons-validator" % "commons-validator" % "1.5.1"
 )
