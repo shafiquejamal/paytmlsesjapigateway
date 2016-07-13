@@ -20,9 +20,9 @@ export default class Template extends Component {
                     </ul>
                 </nav>
 
-                <div className="container">
-                    {this.props.children}
+                {this.props.children}
 
+                <div className="container">
                     <hr/>
 
                         <footer>
