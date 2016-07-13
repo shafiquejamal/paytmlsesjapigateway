@@ -3,7 +3,7 @@ import React from 'react';
 export default (props) => {
     return (
         <div className="container">
-        Example 2
+            <div className="pink-test">Example 2</div>
         </div>
     );
 }

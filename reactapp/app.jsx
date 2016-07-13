@@ -12,7 +12,9 @@ const createStoreWithMiddleware = applyMiddleware(
     promise
 )(createStore);
 
-ReactDOM.render(
+require('style!css!sass!applicationStyles');
+
+ReactDOM.render(      
     <Provider store={createStoreWithMiddleware(reducers)}>
         <Router history={hashHistory} routes={routes} />
     </Provider>,
