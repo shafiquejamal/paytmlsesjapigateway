@@ -31,6 +31,7 @@ module.exports = {
     resolve: {
         root: __dirname,
         alias: {
+            configureStore: 'reactapp/main/store/configureStore.jsx',
             applicationStyles: 'reactapp/styles/app.scss'
         },
         extensions: ['', '.js', '.jsx']
