@@ -14,7 +14,7 @@ const createStoreWithMiddleware = applyMiddleware(
 
 require('style!css!sass!applicationStyles');
 
-ReactDOM.render(      
+ReactDOM.render(
     <Provider store={createStoreWithMiddleware(reducers)}>
         <Router history={hashHistory} routes={routes} />
     </Provider>,
