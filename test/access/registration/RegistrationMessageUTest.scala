@@ -1,13 +1,13 @@
-package registration
+package access.registration
 
-import org.scalatest.{ShouldMatchers, FlatSpec}
 import org.scalatest.TryValues._
+import org.scalatest.{FlatSpec, ShouldMatchers}
 
 import scala.util.{Success, Try}
 
 class RegistrationMessageUTest extends FlatSpec with ShouldMatchers {
 
-  "A registration message" should "not be formed if the username is an email address that is not the same as the email" +
+  "A access.registration message" should "not be formed if the username is an email address that is not the same as the email" +
   "address in the message" in {
     Try (RegistrationMessage(Some("new@user.com"), "old@user.com", "pass")).failure.exception shouldBe a[RuntimeException]
   }

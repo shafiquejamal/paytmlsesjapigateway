@@ -24,6 +24,7 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.5.0",
   "org.webjars" % "bootstrap" % "4.0.0-alpha.2",
   "org.webjars" % "react" % "15.1.0",
+  "com.pauldijou" % "jwt-play-json_2.11" % "0.8.0",
   "commons-validator" % "commons-validator" % "1.5.1"
 )
 

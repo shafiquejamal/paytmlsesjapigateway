@@ -1,4 +1,4 @@
-package registration
+package access.registration
 
 import user.User
 

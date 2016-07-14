@@ -1,4 +1,4 @@
-package registration
+package access.registration
 
 import com.google.inject.{Inject, Singleton}
 import user.UserStatus.{Active, _}

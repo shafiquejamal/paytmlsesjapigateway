@@ -1,4 +1,4 @@
-package authentication
+package access.authentication
 
 import java.util.UUID
 
@@ -10,7 +10,7 @@ import util.Password.passwordCheck
 @Singleton
 class AuthenticationFacade @Inject() (userDAO:UserDAO, user:User) extends AuthenticationAPI {
 
-  override def user(id:UUID): Option[User] = userDAO.by(id, authenticationUserFilter)
+  override def userById(id:UUID): Option[User] = userDAO.by(id, authenticationUserFilter)
 
   override def user(authenticationMessage:AuthenticationMessage): Option[User] = {
 

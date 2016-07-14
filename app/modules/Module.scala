@@ -1,10 +1,10 @@
 package modules
 
-import authentication.{AuthenticationAPI, AuthenticationFacade}
+import access.authentication.{AuthenticationAPI, AuthenticationFacade}
+import access.registration.{RegistrationAPI, RegistrationFacade}
 import com.google.inject.AbstractModule
 import db.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import net.codingwell.scalaguice.ScalaModule
-import registration.{RegistrationAPI, RegistrationFacade}
 import user.{UserAPI, UserFacade}
 import util._
 

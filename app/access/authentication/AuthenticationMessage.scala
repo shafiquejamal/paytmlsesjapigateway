@@ -1,4 +1,4 @@
-package authentication
+package access.authentication
 
 import org.apache.commons.validator.routines.EmailValidator
 import play.api.libs.functional.syntax._

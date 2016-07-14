@@ -1,4 +1,4 @@
-package registration
+package access.registration
 
 import org.scalatest.{FlatSpec, ShouldMatchers}
 import org.scalatestplus.play._

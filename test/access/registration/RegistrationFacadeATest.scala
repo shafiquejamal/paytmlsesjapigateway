@@ -1,4 +1,4 @@
-package registration
+package access.registration
 
 import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.mindrot.jbcrypt.BCrypt

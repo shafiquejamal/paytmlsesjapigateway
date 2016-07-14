@@ -13,6 +13,6 @@ GET     /message                    controllers.AsyncController.message
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 GET     /webjars/*file              controllers.WebJarAssets.at(file)
 
-POST    /register                   registration.RegistrationController.register
-GET     /username/:username         registration.RegistrationController.usernameCheck(username:String)
-GET     /email/:email               registration.RegistrationController.emailCheck(email:String)
+POST    /register                   access.registration.RegistrationController.register
+GET     /username/:username         access.registration.RegistrationController.usernameCheck(username:String)
+GET     /email/:email               access.registration.RegistrationController.emailCheck(email:String)

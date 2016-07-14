@@ -1,4 +1,4 @@
-package authentication
+package access.authentication
 
 import java.util.UUID
 
@@ -41,8 +41,8 @@ class AuthenticationFacadeATest
       new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
     val api = new AuthenticationFacade(userDAO, user)
 
-    api.user(UUID.fromString("00000000-0000-0000-0000-000000000001")).flatMap(_.maybeId) shouldBe alice.maybeId
-    api.user(UUID.fromString("00000000-0000-0000-0000-000000000004")) shouldBe empty
+    api.userById(UUID.fromString("00000000-0000-0000-0000-000000000001")).flatMap(_.maybeId) shouldBe alice.maybeId
+    api.userById(UUID.fromString("00000000-0000-0000-0000-000000000004")) shouldBe empty
   }
 
   "retrieving a user using username or email" should "retrieve the user with the matching username or email if that user" +

@@ -1,10 +1,9 @@
-package registration
+package access.registration
 
-import javax.inject.Inject
-
-import play.api.libs.json.{Json, JsError, JsSuccess}
+import access.registration.RegistrationMessage._
+import com.google.inject.Inject
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
-import registration.RegistrationMessage._
 
 import scala.util.Success
 
@@ -20,7 +19,7 @@ class RegistrationController @Inject() (registrationAPI: RegistrationAPI) extend
             Ok(Json.obj("status" -> "failed to add user"))
         }
       case error:JsError =>
-        Ok(Json.obj("status" -> "could not form registration message"))
+        Ok(Json.obj("status" -> "could not form access.registration message"))
     }
   }
 

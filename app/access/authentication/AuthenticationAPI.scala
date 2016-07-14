@@ -1,4 +1,4 @@
-package authentication
+package access.authentication
 
 import java.util.UUID
 
@@ -6,7 +6,7 @@ import user.User
 
 trait AuthenticationAPI {
 
-  def user(id: UUID): Option[User]
+  def userById(id: UUID): Option[User]
 
   def user(authenticationMessage: AuthenticationMessage): Option[User]
   
