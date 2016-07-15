@@ -39,7 +39,7 @@ class AuthenticatedActionATest extends FlatSpec with ShouldMatchers with OneAppP
     val user = new TestUserImpl().copy(maybeId = Some(uUUID))
     (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(Some(user))
     val token = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
-    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("token", token)) )
+    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", token)) )
 
     status(result) shouldBe 200
     contentAsString(result) shouldBe oKcontent
@@ -48,7 +48,7 @@ class AuthenticatedActionATest extends FlatSpec with ShouldMatchers with OneAppP
   it should "deny access if the api does not return a user" in {
     (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(None)
     val token = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
-    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("token", token)) )
+    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", token)) )
 
     status(result) shouldBe 401
     contentAsString(result) shouldBe empty
@@ -56,7 +56,7 @@ class AuthenticatedActionATest extends FlatSpec with ShouldMatchers with OneAppP
 
   it should "deny access if the token is not valid" in {
     val token = JwtJson.encode(claim, "wrong secret key", jWTParamsProvider.algorithm)
-    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("token", token)) )
+    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", token)) )
 
     status(result) shouldBe 401
     contentAsString(result) shouldBe empty

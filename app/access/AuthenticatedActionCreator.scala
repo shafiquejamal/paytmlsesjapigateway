@@ -21,7 +21,7 @@ trait AuthenticatedActionCreator {
   object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest] {
 
     def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]):Future[Result] =
-      request.headers.get("token").fold[Future[Result]](Future.successful(Unauthorized)) { token =>
+      request.headers.get("Authorization").fold[Future[Result]](Future.successful(Unauthorized)) { token =>
         JwtJson.decodeJson(token, secretKey, Seq(algorithm)) match {
         case Success(claim) =>
           val userId = UUID.fromString(claim.values.seq.headOption.map(_.toString()).getOrElse("").replace(""""""", ""))
