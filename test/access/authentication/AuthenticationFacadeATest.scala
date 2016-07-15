@@ -2,38 +2,21 @@ package access.authentication
 
 import java.util.UUID
 
-import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
+import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
-import scalikejdbc.DBSession
-import scalikejdbc.scalatest.AutoRollback
 import user._
 
 class AuthenticationFacadeATest
   extends FlatSpec
   with ShouldMatchers
   with Matchers
-  with AutoRollback
-  with UserFixture
+  with CrauthAutoRollback
+  with BeforeAndAfterEach
   with TestDBConnection
-  with BeforeAndAfterEach {
-
-  override def fixture(implicit session: DBSession): Unit = {
-    super.fixture
-    sqlToAddUsers.foreach(_.update.apply())
-  }
+  with UserFixture {
 
   val user = new TestUserImpl()
-
-  override def beforeEach() {
-    dBConfig.setUpAllDB()
-    super.beforeEach()
-  }
-
-  override def afterEach() {
-    dBConfig.closeAll()
-    super.afterEach()
-  }
 
   "retrieving a user by ID" should "retrieve the latest added user with the given parent ID if that user is" +
     " active, otherwise return empty" in { implicit session =>

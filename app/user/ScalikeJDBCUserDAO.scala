@@ -17,40 +17,40 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
                                    dBConfig: DBConfig,
                                    uUIDProvider: UUIDProvider) extends UserDAO {
 
-  val userFields = "xuser.id, email, username, status, password, createdat"
-  val tables = "xuser inner join xuserusername on xuserusername.xuserid = xuser.id inner join xuserstatus on " +
-               "xuserstatus.xuserid = xuser.id inner join xuseremail.xuserid = xuser.id inner join xuserpassword on " +
-               "xuserpassword.xuserid = xuser.id"
+  lazy val namedDB = NamedDB(Symbol(dBConfig.dBName))
+  namedDB.autoClose(false)
+  val readOnlySession = scalikeJDBCSessionProvider.provideReadOnlySession
 
   override def byUsername(username: String, userFilter: User => Boolean): Option[User] =
-    by(
-      sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
+    byUsernameWithSession(username, userFilter)(readOnlySession)
+
+  private def byUsernameWithSession(username: String, userFilter: User => Boolean)(implicit session:DBSession): Option[User] =
+     sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
             xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
             on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
             LOWER(username) = (${username.trim.toLowerCase()}) order by xuserstatus.createdat desc, xuserusername.createdat
-            desc, xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""",
-      userFilter)
+            desc, xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1"""
+     .map(wrappedResultSetToUserConverter.converter).single.apply().filter(userFilter)
 
   override def byEmail(email: String, userFilter: User => Boolean): Option[User] =
-    by(
-      sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
+    byEmailWithSession(email, userFilter)(readOnlySession)
+
+  private def byEmailWithSession(email: String, userFilter: User => Boolean)(implicit session:DBSession): Option[User] =
+    sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
             xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
             on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
             LOWER(email) = (${email.trim.toLowerCase()}) order by xuserstatus.createdat desc,  xuserusername.createdat desc,
-            xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""",
-      userFilter)
+            xuserpassword.createdat desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1"""
+        .map(wrappedResultSetToUserConverter.converter).single.apply().filter(userFilter)
 
-  override def by(id: UUID, userFilter: User => Boolean): Option[User] =
-    by(
-      sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
-            xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
-            on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
-            xuser.id = ${id} order by xuserstatus.createdat desc,  xuserusername.createdat desc, xuserpassword.createdat
-            desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1""", userFilter)
-
-  private def by(sqlQuery: SQL[_, _], userFilter: User => Boolean): Option[User] = {
-    implicit val session = scalikeJDBCSessionProvider.provideReadOnlySession
-    sqlQuery.map(wrappedResultSetToUserConverter.converter).single.apply().filter(userFilter)
+  override def by(id: UUID, userFilter: User => Boolean): Option[User] = {
+    implicit val session = readOnlySession
+    sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
+      xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
+      on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
+      xuser.id = ${id} order by xuserstatus.createdat desc,  xuserusername.createdat desc, xuserpassword.createdat
+      desc, xuseremail.createdat desc, xuserusername.createdat desc limit 1"""
+    .map(wrappedResultSetToUserConverter.converter).single.apply().filter(userFilter)
   }
 
   override def add(
@@ -61,13 +61,13 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     authenticationUserFilter: User => Boolean): Try[User] = {
 
     val (username, email) = (user.username.trim, user.email.trim)
-    DB localTx { _ =>
+    namedDB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
-      val isUsernameIsAvailable = byUsername(username, authenticationUserFilter).isEmpty
-      val isEmailAddressIsAvailable = byEmail(email, authenticationUserFilter).isEmpty
-      val isUsernameDoesNotMatchExistingUserEmail = byEmail(username, authenticationUserFilter).isEmpty
+      val isUsernameIsAvailable = byUsernameWithSession(username, authenticationUserFilter).isEmpty
+      val isEmailAddressIsAvailable = byEmailWithSession(email, authenticationUserFilter).isEmpty
+      val isUsernameDoesNotMatchExistingUserEmail = byEmailWithSession(username, authenticationUserFilter).isEmpty
 
       if (isUsernameIsAvailable & isEmailAddressIsAvailable & isUsernameDoesNotMatchExistingUserEmail) {
         sql"""insert into xuser (id, authorid, createdat) values (${uUID}, ${uUID}, ${created})""".update.apply()
@@ -81,20 +81,21 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${username})""".update.apply()
 
         val activeUsersWithThisUsernameOrEmail = uniqueUsers(
-          byUsername(username, authenticationUserFilter).toList ++
-          byEmail(email, authenticationUserFilter).toList ++
-          byEmail(username, authenticationUserFilter).toList)
+          byUsernameWithSession(username, authenticationUserFilter).toList ++
+          byEmailWithSession(email, authenticationUserFilter).toList ++
+          byEmailWithSession(username, authenticationUserFilter).toList)
 
         activeUserCheck(activeUsersWithThisUsernameOrEmail)
 
       } else {
-        failureResult
+        Failure(new RuntimeException("username or email address is not available, or username is an email address that " +
+                                     "does not match the given email address."))
       }
     }
   }
 
   override def changePassword(id: UUID, newHashedPassword:String, created:DateTime): Try[User] = {
-    DB localTx { _ =>
+    namedDB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
@@ -112,7 +113,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
   override def changeUsername(id: UUID, newUsername:String, created:DateTime, authenticationUserFilter: User => Boolean):
   Try[User] = {
 
-    DB localTx { _ =>
+    namedDB localTx { _ =>
 
       val username = newUsername.trim()
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
@@ -141,8 +142,10 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     activeUsers match {
       case addedUser :: Nil  =>
         Success(addedUser)
+      case Nil =>
+        Failure(new RuntimeException("Could not add user to the db."))
       case _ =>
-        failureResult
+        Failure(new RuntimeException("After trying to add the user, the username or email address i no longer unique."))
     }
 
   val failureResult = Failure(new RuntimeException("Username or email already exists in DB."))

@@ -1,12 +1,11 @@
 package user
 
-import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
+import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.mindrot.jbcrypt.BCrypt
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
 import scalikejdbc.DBSession
-import scalikejdbc.scalatest.AutoRollback
 import util.Password.hash
 import util.TestTimeProviderImpl
 
@@ -16,27 +15,12 @@ class UserFacadeATest
   extends FlatSpec
   with ShouldMatchers
   with Matchers
-  with AutoRollback
+  with CrauthAutoRollback
   with UserFixture
-  with TestDBConnection
-  with BeforeAndAfterEach {
-
-  override def fixture(implicit session: DBSession): Unit = {
-    super.fixture
-    sqlToAddUsers.foreach(_.update.apply())
-  }
+  with BeforeAndAfterEach
+  with TestDBConnection {
 
   val user = new TestUserImpl()
-
-  override def beforeEach() {
-    dBConfig.setUpAllDB()
-    super.beforeEach()
-  }
-
-  override def afterEach() {
-    dBConfig.closeAll()
-    super.afterEach()
-  }
 
   "changing the username" should "change the users username if the username is available" in { implicit session =>
     val userDAO = makeDAO(session)

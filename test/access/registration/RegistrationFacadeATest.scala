@@ -1,11 +1,9 @@
 package access.registration
 
-import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
+import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.mindrot.jbcrypt.BCrypt
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, Matchers, ShouldMatchers}
-import scalikejdbc.DBSession
-import scalikejdbc.scalatest.AutoRollback
 import user._
 import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
@@ -13,29 +11,14 @@ class RegistrationFacadeATest
   extends FlatSpec
   with ShouldMatchers
   with Matchers
-  with AutoRollback
+  with CrauthAutoRollback
   with UserFixture
-  with TestDBConnection
-  with BeforeAndAfterEach {
-
-  override def fixture(implicit session: DBSession) {
-    super.fixture
-    sqlToAddUsers.foreach(_.update.apply())
-  }
+  with BeforeAndAfterEach
+  with TestDBConnection {
 
   val user = new TestUserImpl()
   val testUUIDProviderImpl = TestUUIDProviderImpl
   testUUIDProviderImpl.index = 10
-
-  override def beforeEach() {
-    dBConfig.setUpAllDB()
-    super.beforeEach()
-  }
-
-  override def afterEach() {
-    dBConfig.closeAll()
-    super.afterEach()
-  }
 
   "signing up" should "add user that does not already exist" in { implicit session =>
 

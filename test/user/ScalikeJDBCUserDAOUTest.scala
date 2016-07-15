@@ -1,39 +1,23 @@
 package user
 
-import db.{TestDBConnection, TestScalikeJDBCSessionProvider}
+import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers}
 import scalikejdbc._
-import scalikejdbc.scalatest.AutoRollback
 import user.UserStatus._
 import util.Password.hash
-import util.{Password, TestTimeProviderImpl}
+import util.TestTimeProviderImpl
 
 import scala.util.Success
 
 class ScalikeJDBCUserDAOUTest
   extends FlatSpec
   with ShouldMatchers
-  with AutoRollback
+  with CrauthAutoRollback
   with UserFixture
   with BeforeAndAfterEach
   with TestDBConnection {
-
-  override def fixture(implicit session: DBSession) {
-    super.fixture
-    sqlToAddUsers.foreach(_.update.apply())
-  }
-
-  override def beforeEach() {
-    dBConfig.setUpAllDB()
-    super.beforeEach()
-  }
-
-  override def afterEach() {
-    dBConfig.closeAll()
-    super.afterEach()
-  }
 
   "retrieving a user by user username" should "return the user with that username added the latest" in { implicit session =>
     makeDAO(session).byUsername(" ALIce", authenticationUserFilter) should contain(alice)

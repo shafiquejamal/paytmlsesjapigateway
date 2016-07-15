@@ -3,28 +3,31 @@ package db
 import java.io.File
 
 import com.typesafe.config.ConfigFactory
-import org.flywaydb.core.Flyway
+import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import scalikejdbc.DBSession
-import scalikejdbc.scalatest.AutoRollback
-import user.WrappedResultSetToTestUserConverterImpl
+import user.{UserFixture, WrappedResultSetToTestUserConverterImpl}
 import util.PlayConfigParamsProvider
 
-trait TestDBConnection { this: AutoRollback =>
+trait TestDBConnection extends InitialMigration { this: CrauthAutoRollback with BeforeAndAfterEach with UserFixture  =>
 
   val converter = new WrappedResultSetToTestUserConverterImpl()
-  val dBConfig = new ScalikeJDBCTestDBConfig()
-  val configParamsProvider =
-    new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
+  override val dBConfig =
+    new ScalikeJDBCTestDBConfig(
+      new PlayConfigParamsProvider(
+        new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))))
 
   override def fixture(implicit session: DBSession) {
-    val configParams = configParamsProvider.configParams
-    val url = configParams.getOrElse("db.default.url", "")
-    val username = configParams.getOrElse("db.default.username", "")
-    val password = configParams.getOrElse("db.default.password", "")
-    val flyway = new Flyway()
-    flyway.setDataSource(url, username, password)
-    flyway.migrate()
+    migrate(dBConfig)
+    sqlToAddUsers.foreach(_.update.apply())
+  }
+
+  override def beforeEach() {
+    dBConfig.setUpAllDB()
+  }
+
+  override def afterEach() {
+    dBConfig.closeAll()
   }
 
 }

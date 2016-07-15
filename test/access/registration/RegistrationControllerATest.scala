@@ -1,13 +1,41 @@
 package access.registration
 
-import org.scalatest.{FlatSpec, ShouldMatchers}
-import org.scalatestplus.play._
+import java.io.File
+
+import com.typesafe.config.ConfigFactory
+import db._
+import org.scalatest._
+import play.api.Configuration
 import play.api.http.HeaderNames
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test._
+import scalikejdbc.NamedAutoSession
+import util.PlayConfigParamsProvider
 
-class RegistrationControllerATest extends FlatSpec with ShouldMatchers with OneAppPerTest {
+class RegistrationControllerATest
+  extends FlatSpec
+  with ShouldMatchers
+  with OneAppPerTestWithOverrides
+  with BeforeAndAfterEach
+  with InitialMigration {
+
+  override def overrideModules = Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig])
+
+  val dBConfig = new ScalikeJDBCTestDBConfig(new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))))
+
+  override def beforeEach() {
+    implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
+    dBConfig.setUpAllDB()
+    migrate(dBConfig)
+    super.beforeEach()
+  }
+
+  override def afterEach() {
+    dBConfig.closeAll()
+    super.afterEach()
+  }
 
   "Checking whether a username is available" should "return true if the username is available" in {
     val result = route(app, FakeRequest(GET, "/username/available")).get
