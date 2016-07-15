@@ -23,6 +23,7 @@ libraryDependencies ++= Seq(
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.webjars" %% "webjars-play" % "2.5.0",
   "org.webjars" % "bootstrap" % "4.0.0-alpha.2",
+  "org.webjars" % "font-awesome" % "4.6.3",
   "org.webjars" % "react" % "15.1.0",
   "com.pauldijou" % "jwt-play-json_2.11" % "0.8.0",
   "org.postgresql" % "postgresql" % "9.4.1208.jre7",

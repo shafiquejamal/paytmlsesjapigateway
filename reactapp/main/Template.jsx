@@ -17,6 +17,9 @@ export default class Template extends Component {
                         <li className="nav-item">
                             <Link to="/example2" className="nav-link">Example 2</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link to="/register" className="nav-link">Register</Link>
+                        </li>
                     </ul>
                 </nav>
 
@@ -25,7 +28,7 @@ export default class Template extends Component {
                 <div className="container">
                     <hr/>
 
-                        <footer>
+                        <footer className="col-md-12">
                             <p>&copy; Company 2015</p>
                         </footer>
                 </div>
