@@ -117,8 +117,8 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
 
       val username = newUsername.trim()
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
-      val isUsernameIsAvailable = byUsername(username, authenticationUserFilter).isEmpty
-      val isUsernameDoesNotMatchExistingUserEmail = byEmail(username, authenticationUserFilter).isEmpty
+      val isUsernameIsAvailable = byUsernameWithSession(username, authenticationUserFilter).isEmpty
+      val isUsernameDoesNotMatchExistingUserEmail = byEmailWithSession(username, authenticationUserFilter).isEmpty
 
       if (isUsernameIsAvailable & isUsernameDoesNotMatchExistingUserEmail) {
 
@@ -145,7 +145,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
       case Nil =>
         Failure(new RuntimeException("Could not add user to the db."))
       case _ =>
-        Failure(new RuntimeException("After trying to add the user, the username or email address i no longer unique."))
+        Failure(new RuntimeException("After trying to add the user, the username or email address is no longer unique."))
     }
 
   val failureResult = Failure(new RuntimeException("Username or email already exists in DB."))
