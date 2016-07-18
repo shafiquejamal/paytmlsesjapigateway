@@ -1,14 +1,31 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as Redux from 'react-redux';
 import { reduxForm } from 'redux-form';
-
-// import * as actions from 'actions';
+import { getFoo } from './RegistrationActionGenerators';
 
 // http://bootsnipp.com/snippets/featured/register-page
-class Register extends Component {
-    onSubmit(props) {
+export const Register = React.createClass({
+    getInitialState: function() {
+      return {
+        isUsernameIsAvailable: false
+      };
+    },
+    checkUsernameAvailable: function(e) {
+      var that = this;
+      getFoo(this.refs.username.value).then(
+        function (response) {
+          that.setState({
+            isUsernameIsAvailable: response
+          });
+        },
+        function (error) {
+          console.log('error', error);
+        }
+      );
+    },
+    onSubmit: function() {
 
-    }
+    },
     render() {
         const {fields: {email, username, password, confirm}, handleSubmit} = this.props;
         return (
@@ -22,17 +39,17 @@ class Register extends Component {
                             </div>
                         </div>
                         <div className="main-login main-center">
-                            <form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+                            <form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit)}>
 
                                 <div className="form-group">
                                     <label htmlFor="email" className="control-label">Your Email</label>
                                     <div className="cols-sm-10">
                                         <div className={`input-group ${email.touched && email.invalid ? 'has-danger' : ''}`}>
                                             <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
-                                            <input type="text" className="form-control" name="email" id="email"  placeholder="Enter your Email" {...email} />
+                                            <input type="text" className="form-control" name="email" id="email"  placeholder="Enter your Email"  />
                                         </div>
                                         <div className="text-help">
-                                          {email.touched ? email.error : ''}
+                                          {email.touched ? email.error : ''} {this.state.isUsernameIsAvailable ? 'true' : 'false'}
                                         </div>
                                     </div>
                                 </div>
@@ -42,7 +59,7 @@ class Register extends Component {
                                     <div className="cols-sm-10">
                                         <div className={`input-group ${username.touched && username.invalid ? 'has-danger' : ''}`}>
                                             <span className="input-group-addon"><i className="fa fa-users fa" aria-hidden="true"></i></span>
-                                            <input type="text" className="form-control" name="username" id="username"  placeholder="Choose a Username" {...username}/>
+                                            <input type="text" className="form-control" name="username" id="username" ref="username" placeholder="Choose a Username" onChange={this.checkUsernameAvailable}/>
                                         </div>
                                         <div className="text-help">
                                           {username.touched ? username.error : ''}
@@ -80,7 +97,7 @@ class Register extends Component {
                                     <button type="button" className="btn btn-primary btn-lg btn-block login-button">Register</button>
                                 </div>
                                 <div className="login-register">
-                                    <a href="index.php">Login</a>
+                                    <Link to={LOGIN_LINK}>{LOGIN_TEXT}</Link>
                                 </div>
                             </form>
                         </div>
@@ -89,7 +106,7 @@ class Register extends Component {
             </div>
         );
     }
-}
+});
 
 function validate(values) {
   const errors = {};
@@ -120,4 +137,6 @@ export default reduxForm({
   form: 'RegisterForm',
   fields: ['email', 'username', 'password', 'confirm'],
   validate
-}, null, null)(Register);
+}, (state) => {
+  return state;
+}, null)(Register);

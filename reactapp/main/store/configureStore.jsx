@@ -1,10 +1,12 @@
 import * as redux from 'redux';
 import thunk from 'redux-thunk';
 import { reducer as formReducer } from 'redux-form';
+// import { checkUsernameAvailableReducer } from '../registration/RegistrationReducers';
 
 export var configure = (initialState = {}) => {
     var reducer = redux.combineReducers({
-      form: formReducer
+      form: formReducer,
+      // isUsernameIsAvailable: checkUsernameAvailableReducer
     });
 
     // compose composes all of our middleware
