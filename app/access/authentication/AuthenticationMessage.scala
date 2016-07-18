@@ -9,8 +9,8 @@ case class AuthenticationMessage(maybeUsername:Option[String], maybeEmail:Option
 
   private val emailValidator = EmailValidator.getInstance()
 
-  require( !maybeUsername.map(_.trim).forall(_.isEmpty) || !maybeEmail.forall(_.isEmpty) )
-  require( maybeEmail.fold(true)(email => emailValidator.isValid(email)) )
+  require( maybeUsername.exists(_.trim.nonEmpty) || maybeEmail.exists(_.trim.nonEmpty) )
+  require( maybeEmail.filter(_.trim.nonEmpty).fold(true)(email => emailValidator.isValid(email)) )
   require( password.trim.nonEmpty )
 
 }
@@ -19,7 +19,7 @@ object AuthenticationMessage {
 
   implicit val AuthenticationMessageReads: Reads[AuthenticationMessage] = (
     (JsPath \ "username").readNullable[String] and
-    (JsPath \ "email").readNullable[String](email) and
+    (JsPath \ "email").readNullable[String] and
     (JsPath \ "password").read[String](minLength[String](1))
     )(AuthenticationMessage.apply _)
 

@@ -24,4 +24,12 @@ class AuthenticationMessageUTest extends FlatSpec with ShouldMatchers {
     Try (AuthenticationMessage(Some("username"), Some("new@user.com"), "password")) shouldBe a[Success[_]]
   }
 
+  it should "be formed if the username is present but the email is not" in {
+    Try (AuthenticationMessage(Some("username"), Some(" "), "password")) shouldBe a[Success[_]]
+  }
+
+  it should "be formed if the email is present but the username is not" in {
+    Try (AuthenticationMessage(Some(""), Some("new@user.com"), "password")) shouldBe a[Success[_]]
+  }
+
 }

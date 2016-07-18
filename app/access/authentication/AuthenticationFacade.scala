@@ -14,9 +14,9 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, user:User) extends Authen
 
   override def user(authenticationMessage:AuthenticationMessage): Option[User] = {
 
-    authenticationMessage.maybeEmail.flatMap { email =>
+    authenticationMessage.maybeEmail.filter(_.trim.nonEmpty).flatMap { email =>
       userDAO.byEmail(email, authenticationUserFilter).filter(passwordCheck(authenticationMessage.password))}
-        .orElse(authenticationMessage.maybeUsername.flatMap { username =>
+        .orElse(authenticationMessage.maybeUsername.filter(_.trim.nonEmpty).flatMap { username =>
           userDAO.byUsername(username, authenticationUserFilter).filter(passwordCheck(authenticationMessage.password))})
 
   }

@@ -63,14 +63,8 @@ class RegistrationControllerATest
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
       .get
     val content = contentAsJson(result)
-    val uUIDProvider = new TestUUIDProviderImpl()
-    uUIDProvider.index = 0
-    val uUID = uUIDProvider.randomUUID()
-    val claim = Json.obj("userId" -> uUID)
-    val jWTParamsProvider = new TestJWTParamsProviderImpl()
-    val expectedJWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
-    (content \ "token").asOpt[String] should contain(expectedJWT)
+    (content \ "status").asOpt[String] should contain("success")
 
     val checkEmailAvailable = contentAsJson(route(app, FakeRequest(GET, "/email/new@user.com")).get)
     (checkEmailAvailable \ "status").asOpt[Boolean] should contain(false)

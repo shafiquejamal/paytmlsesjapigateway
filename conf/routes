@@ -16,3 +16,6 @@ GET     /webjars/*file              controllers.WebJarAssets.at(file)
 POST    /register                   access.registration.RegistrationController.register
 GET     /username/:username         access.registration.RegistrationController.usernameCheck(username:String)
 GET     /email/:email               access.registration.RegistrationController.emailCheck(email:String)
+
+POST    /authenticate               access.authentication.AuthenticationController.authenticate
+POST    /change-password            user.UserController.changePassword
