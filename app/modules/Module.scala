@@ -2,6 +2,7 @@ package modules
 
 import access.authentication.{AuthenticationAPI, AuthenticationFacade}
 import access.registration.{RegistrationAPI, RegistrationFacade}
+import access.{JWTParamsProvider, JWTParamsProviderImpl}
 import com.google.inject.AbstractModule
 import db.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import net.codingwell.scalaguice.ScalaModule
@@ -19,6 +20,7 @@ class Module extends AbstractModule with ScalaModule {
     bind[UserAPI].to[UserFacade]
     bind[DBConfig].to[ScalikeJDBCDevProdDBConfig]
     bind[ConfigParamsProvider].to[PlayConfigParamsProvider]
+    bind[JWTParamsProvider].to[JWTParamsProviderImpl]
   }
 
 }

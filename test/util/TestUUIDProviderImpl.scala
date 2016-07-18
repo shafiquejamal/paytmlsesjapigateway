@@ -2,7 +2,7 @@ package util
 
 import java.util.UUID
 
-object TestUUIDProviderImpl extends UUIDProvider {
+class TestUUIDProviderImpl extends UUIDProvider {
 
   var index:Int = 0
 
@@ -10,5 +10,11 @@ object TestUUIDProviderImpl extends UUIDProvider {
     index += 1
     UUID.fromString("00000000-0000-0000-0000-" + f"$index%012d")
   }
+
+}
+
+object TestUUIDProviderImpl {
+
+  def apply() = new TestUUIDProviderImpl()
 
 }

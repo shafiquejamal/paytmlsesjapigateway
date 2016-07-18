@@ -17,7 +17,7 @@ class RegistrationFacadeATest
   with TestDBConnection {
 
   val user = new TestUserImpl()
-  val testUUIDProviderImpl = TestUUIDProviderImpl
+  val testUUIDProviderImpl = new TestUUIDProviderImpl()
   testUUIDProviderImpl.index = 10
 
   "signing up" should "add user that does not already exist" in { implicit session =>

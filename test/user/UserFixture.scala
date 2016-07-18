@@ -19,7 +19,7 @@ trait UserFixture {
   val id6 = UUID.fromString("00000000-0000-0000-0000-000000000006")
   val idNonExistentUser = UUID.fromString("90000000-0000-0000-0000-000000000000")
 
-  val uUIDProvider = TestUUIDProviderImpl
+  val uUIDProvider = new TestUUIDProviderImpl()
   uUIDProvider.index = 100
 
   val pAlice1 = hash("passwordAliceID1")
