@@ -4,12 +4,12 @@ var expect = require('expect');
 var $ = require('jQuery');
 var TestUtils = require('react-addons-test-utils');
 
-import { ManageAccount } from '../../../main/user/ManageAccount';
+import { ChangePassword } from '../../../main/user/ChangePassword';
 
 describe('ManageAccount', () => {
 
   it('should exist', () => {
-    expect(ManageAccount).toExist();
+    expect(ChangePassword).toExist();
   });
 
 });

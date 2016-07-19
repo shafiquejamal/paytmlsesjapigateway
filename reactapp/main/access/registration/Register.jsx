@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import * as Redux from 'react-redux';
-import { reduxForm } from 'redux-form';
 import { Link, hashHistory } from 'react-router';
 import validator from 'validator';
 
@@ -77,23 +76,31 @@ export const Register = React.createClass({
       }
     },
     onRegister() {
-      var { dispatch } = this.props;
-      dispatch(registerUser(email.value, username.value, password.value)).then(
-        (response) => {
-          if (response.data.status === 'success') {
-            hashHistory.push(REGISTRATION_SUCCESS_LINK)
-          }
-          else {
+      const { dispatch } = this.props;
+      const { usernameError, emailError, passwordError, confirmError } = this.state;
+      if (usernameError.value === '' && emailError.value === '' && passwordError.value === '' && confirmError.value === '') {
+        dispatch(registerUser(email.value, username.value, password.value)).then(
+          (response) => {
+            if (response.data.status === 'success') {
+              hashHistory.push(REGISTRATION_SUCCESS_LINK);
+            }
+            else {
+              this.setState({
+                registrationError: 'Sorry - we could not register you. Please email the admin to continue.'
+              });
+            }
+          },
+          (response) => {
             this.setState({
-              registrationError: 'Sorry - we could not register you. Please email the admin to continue.'
+              registrationError: 'Sorry - there is a server problem. Please email the admin to continue.'
             });
-          }
-        },
-        (response) => {
-          this.setState({
-            registrationError: 'Sorry - there is a server problem. Please email the admin to continue.'
           });
+      } else {
+        this.setState({
+          registrationError: 'Please complete all fields and ensure they are valid.'
         });
+      }
+
     },
     render() {
         return (

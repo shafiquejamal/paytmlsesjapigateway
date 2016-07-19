@@ -20,7 +20,7 @@ class AuthenticationController @Inject() (
         authenticationAPI.user(success.get).fold(Ok(Json.obj("status" -> "authentication failed"))) { user =>
           val claim = Json.obj("userId" -> user.maybeId.getOrElse(uUIDProvider.randomUUID()).toString)
           val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
-          Ok(Json.obj("token" -> jWT))
+          Ok(Json.obj("token" -> jWT, "email" -> user.email, "username" -> user.username))
         }
       case error: JsError =>
         Ok(Json.obj("status" -> "invalid data"))

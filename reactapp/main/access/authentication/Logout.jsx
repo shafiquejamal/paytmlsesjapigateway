@@ -10,7 +10,12 @@ export const Logout = React.createClass({
   render() {
     return (
       <div className="container">
-        <p>You are now logged out.</p>
+          <div className="row main">
+              <div className="col-md-4 col-md-offset-4">
+                <h1 className="title">Logged Out</h1>
+                <p>You are now logged out.</p>
+              </div>
+          </div>
       </div>
     );
   }

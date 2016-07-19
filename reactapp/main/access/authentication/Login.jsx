@@ -2,7 +2,7 @@ import React from 'react';
 import * as Redux from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 
-import { REGISTER_LINK, REGISTER_TEXT } from '../../../routes';
+import { REGISTER_LINK, REGISTER_TEXT, MANAGE_ACCOUNT_LINK } from '../../../routes';
 import { startLoggingInUser } from './authenticationActionGenerators';
 
 export const Login = React.createClass({
@@ -17,7 +17,7 @@ export const Login = React.createClass({
     dispatch(startLoggingInUser(emailOrUsername.value, password.value)).then(
       (response) => {
         if (response.data.token) {
-          hashHistory.push("/");
+          hashHistory.push(MANAGE_ACCOUNT_LINK);
         } else {
           this.setState({
             loginError: 'There was a problem logging you in. Please check your login credentials and try again.'

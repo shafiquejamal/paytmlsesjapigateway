@@ -32,7 +32,9 @@ module.exports = {
         root: __dirname,
         alias: {
             configureStore: 'reactapp/main/store/configureStore.jsx',
-            applicationStyles: 'reactapp/styles/app.scss'
+            applicationStyles: 'reactapp/styles/app.scss',
+            configuration: 'reactapp/main/configuration.jsx',
+            routes: 'reeactapp/routes.jsx'
         },
         extensions: ['', '.js', '.jsx']
     },

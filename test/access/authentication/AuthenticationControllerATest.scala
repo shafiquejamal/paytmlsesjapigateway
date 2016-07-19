@@ -54,8 +54,11 @@ class AuthenticationControllerATest
   val expectedJWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
   trait JWTChecker {
-    def checkJWT(authentication:JsValue) =
-      (contentFromRequest(authentication)  \ "token").asOpt[String] should contain(expectedJWT)
+    def checkJWT(authentication:JsValue) = {
+      (contentFromRequest(authentication) \ "token").asOpt[String] should contain(expectedJWT)
+      (contentFromRequest(authentication) \ "username").asOpt[String] should contain("alice")
+      (contentFromRequest(authentication) \ "email").asOpt[String] should contain("alice@alice.com")
+    }
   }
 
   "authentication" should "return a valid jwt if the credentials are valid - using username" in new JWTChecker {
