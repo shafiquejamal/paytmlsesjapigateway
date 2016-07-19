@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import * as Redux from 'react-redux';
 import { reduxForm } from 'redux-form';
-import { Link } from 'react-router';
+import { Link, hashHistory } from 'react-router';
 import validator from 'validator';
 
-import { LOGIN_LINK, LOGIN_TEXT } from '../../../routes';
+import { LOGIN_LINK, LOGIN_TEXT, REGISTRATION_SUCCESS_LINK } from '../../../routes';
+import { registerUser, checkAvailable } from './RegistrationActionGenerators';
 
 // http://bootsnipp.com/snippets/featured/register-page
 export const Register = React.createClass({
@@ -15,7 +16,8 @@ export const Register = React.createClass({
         emailError: '',
         usernameError: '',
         passwordError: '',
-        confirmError: ''
+        confirmError: '',
+        registrationError: '',
       };
     },
     checkEmail: function(e) {
@@ -31,15 +33,16 @@ export const Register = React.createClass({
       this.setState({ emailError: errorMessage });
     },
     checkAvailable: function(e) {
+      var { dispatch } = this.props;
       const that = this;
+      const inputValue = e.target.value;
       const checkVariable = e.target.getAttribute('data-check').toLowerCase();
       const checkVariableTitleCase = checkVariable.charAt(0).toUpperCase() + checkVariable.slice(1)
       const errorVariable = checkVariable + 'Error';
       const stateVariable = "is" + checkVariableTitleCase + "IsAvailable";
-      const inputValue = e.target.value
 
       if (inputValue !== '') {
-        this.props.checkAvailable(checkVariable, inputValue).then(
+        dispatch(checkAvailable('/' + checkVariable, inputValue)).then(
           function (response) {
             var errorMessage = inputValue === '' ? checkVariableTitleCase + ' is required' : ( response ? '' : checkVariableTitleCase + ' is already registered' )
             that.setState({
@@ -73,11 +76,26 @@ export const Register = React.createClass({
         });
       }
     },
-    onSubmit: function() {
-
+    onRegister() {
+      var { dispatch } = this.props;
+      dispatch(registerUser(email.value, username.value, password.value)).then(
+        (response) => {
+          if (response.data.status === 'success') {
+            hashHistory.push(REGISTRATION_SUCCESS_LINK)
+          }
+          else {
+            this.setState({
+              registrationError: 'Sorry - we could not register you. Please email the admin to continue.'
+            });
+          }
+        },
+        (response) => {
+          this.setState({
+            registrationError: 'Sorry - there is a server problem. Please email the admin to continue.'
+          });
+        });
     },
     render() {
-        // const {fields: {password, confirm}, handleSubmit} = this.props;
         return (
             <div className="container">
                 <div className="row main">
@@ -89,8 +107,10 @@ export const Register = React.createClass({
                             </div>
                         </div>
                         <div className="main-login main-center">
-                            <form className="form-horizontal" onSubmit={this.onSubmit}>
-
+                            <form className="form-horizontal">
+                              <div className="text-help">
+                                {this.state.registrationError}
+                              </div>
                                 <div className="form-group">
                                     <label htmlFor="email" className="control-label">Your Email</label>
                                     <div className="cols-sm-10">
@@ -122,7 +142,7 @@ export const Register = React.createClass({
                                     <div className="cols-sm-10">
                                         <div className={`input-group ${this.state.passwordError !== '' ? 'has-danger' : ''}`}>
                                             <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                                            <input type="password" className="form-control" name="password" id="password"  placeholder="Enter your Password" data-check="password" ref="password" onBlur={this.checkPassword} onChange={this.checkPassword} />
+                                            <input type="password" className="form-control" name="password" id="password" ref="password" placeholder="Enter your Password" data-check="password" ref="password" onBlur={this.checkPassword} onChange={this.checkPassword} />
                                         </div>
                                         <div className="text-help">
                                           {this.state.passwordError}
@@ -144,7 +164,7 @@ export const Register = React.createClass({
                                 </div>
 
                                 <div className="form-group ">
-                                    <button type="button" className="btn btn-primary btn-lg btn-block login-button">Register</button>
+                                    <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onRegister}>Register</button>
                                 </div>
                                 <div className="login-register">
                                     <Link to={LOGIN_LINK}>{LOGIN_TEXT}</Link>
@@ -160,4 +180,4 @@ export const Register = React.createClass({
 
 export default Redux.connect((state) => {
   return state;
-})(Register);
+}, )(Register);

@@ -1,16 +1,37 @@
 import React from 'react';
 import * as Redux from 'react-redux';
-import { reduxForm } from 'redux-form';
-import { Link } from 'react-router';
+import { Link, hashHistory } from 'react-router';
 
 import { REGISTER_LINK, REGISTER_TEXT } from '../../../routes';
+import { startLoggingInUser } from './authenticationActionGenerators';
 
 export const Login = React.createClass({
-  onSubmit: function() {
-
+  getInitialState() {
+    return {
+      loginError: ''
+    }
+  },
+  onLogin() {
+    const { dispatch } = this.props;
+    const { emailOrUsername, password } = this.refs;
+    dispatch(startLoggingInUser(emailOrUsername.value, password.value)).then(
+      (response) => {
+        if (response.data.token) {
+          hashHistory.push("/");
+        } else {
+          this.setState({
+            loginError: 'There was a problem logging you in. Please check your login credentials and try again.'
+          });
+        }
+      },
+      (response) => {
+        this.setState({
+          loginError: 'There was a problem logging you in. Please contact the admin if you wish to proceed.'
+        });
+      }
+    );
   },
   render() {
-    const {fields: {emailOrUsername, password}, handleSubmit} = this.props;
     return (
       <div className="container">
           <div className="row main">
@@ -22,17 +43,19 @@ export const Login = React.createClass({
                       </div>
                   </div>
                   <div className="main-login main-center">
-                      <form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit)}>
-
+                      <form className="form-horizontal">
+                          <div className="text-help">
+                            {this.state.loginError}
+                          </div>
                           <div className="form-group">
                               <label htmlFor="emailOrUsername" className="control-label">Your Email</label>
                               <div className="cols-sm-10">
-                                  <div className={`input-group ${emailOrUsername.touched && emailOrUsername.invalid ? 'has-danger' : ''}`}>
+                                  <div className={`input-group`}>
                                       <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
-                                      <input type="text" className="form-control" name="emailOrUsername" id="emailOrUsername"  placeholder="Enter your Email or Username"  {...emailOrUsername} />
+                                      <input type="text" className="form-control" name="emailOrUsername" id="emailOrUsername" ref="emailOrUsername"  placeholder="Enter your Email or Username" />
                                   </div>
                                   <div className="text-help">
-                                    {emailOrUsername.touched ? emailOrUsername.error : ''}
+
                                   </div>
                               </div>
                           </div>
@@ -40,18 +63,18 @@ export const Login = React.createClass({
                           <div className="form-group">
                               <label htmlFor="password" className="control-label">Password</label>
                               <div className="cols-sm-10">
-                                  <div className={`input-group ${password.touched && password.invalid ? 'has-danger' : ''}`}>
+                                  <div className={`input-group`}>
                                       <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                                      <input type="password" className="form-control" name="password" id="password"  placeholder="Enter your Password" {...password}/>
+                                      <input type="password" className="form-control" name="password" id="password" ref="password" placeholder="Enter your Password" />
                                   </div>
                                   <div className="text-help">
-                                    {password.touched ? password.error : ''}
+
                                   </div>
                               </div>
                           </div>
 
                           <div className="form-group ">
-                              <button type="button" className="btn btn-primary btn-lg btn-block login-button">Login</button>
+                              <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onLogin}>Login</button>
                           </div>
                           <div className="login-register">
                               <Link to={REGISTER_LINK}>{REGISTER_TEXT}</Link>
@@ -66,23 +89,4 @@ export const Login = React.createClass({
   }
 });
 
-function validate(values) {
-  const errors = {};
-
-  if (!values.emailOrUsername) {
-    errors.emailOrUsername = 'Enter your email address or username';
-  }
-
-  if (!values.password) {
-    errors.password = 'Enter a password';
-  }
-  return errors;
-}
-
-export default reduxForm({
-  form: 'LoginForm',
-  fields: ['emailOrUsername', 'password'],
-  validate
-}, (state) => {
-  return state;
-}, null)(Login);
+export default Redux.connect((state) => { return state; })(Login);

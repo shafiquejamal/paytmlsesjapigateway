@@ -1,12 +1,12 @@
 import * as redux from 'redux';
 import thunk from 'redux-thunk';
 import { reducer as formReducer } from 'redux-form';
-// import { checkUsernameAvailableReducer } from '../registration/RegistrationReducers';
+import { authenticationReducer } from '../access/authentication/authenticationReducers'
 
-export var configure = (initialState = {}) => {
+export var configure = (initialState = { auth: { authenticated: false } }) => {
     var reducer = redux.combineReducers({
       form: formReducer,
-      // isUsernameIsAvailable: checkUsernameAvailableReducer
+      auth: authenticationReducer
     });
 
     // compose composes all of our middleware

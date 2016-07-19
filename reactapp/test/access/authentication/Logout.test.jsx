@@ -4,12 +4,12 @@ var expect = require('expect');
 var $ = require('jQuery');
 var TestUtils = require('react-addons-test-utils');
 
-import { Register } from '../../../main/access/registration/Register';
+import { Logout } from '../../../main/access/authentication/Logout';
 
-describe('Register', () => {
+describe('Logout', () => {
 
   it('should exist', () => {
-    expect(Register).toExist();
+    expect(Logout).toExist();
   });
 
 });
