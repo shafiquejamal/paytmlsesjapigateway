@@ -1,49 +1,61 @@
-This is your new Play application
-=================================
+# Crauth
 
-This file will be packaged with your application when using `activator dist`.
+## Create. Read. Never Update. Never Delete.
 
-There are several demonstration files available in this template.
+This is a template application that has the following characteristics:
+- credentials authentication
+- ScalikeJDBC
+- ReactJS
+- Play Framework
+- Postgres
 
-Controllers
-===========
+## Requirements
 
-- HomeController.scala:
+- Java 1.8+
+- Postgres 9.3+
+- SBT
+- Node 6.3.0+
 
-  Shows how to handle simple HTTP requests.
+## How to run locally (Mac or Linux)
 
-- AsyncController.scala:
 
-  Shows how to do asynchronous programming when handling a request.
+1. In a terminal tab, clone the repository into a directory and cd into that directory:
+```
+git clone https://github.com/shafiquejamal/play-authentication.git /path/to/project
+cd /path/to/project
+```
+Set any environment variables as indicated in conf/application.conf.
 
-- CountController.scala:
+2. In conf/application.conf, set the db credentials (and any other credentials) to match what you will use on your system. Otherwise, in a terminal tab go to psql:
+```
+psql
+```
+and in the psql REPL, create two databases: 'crauth' and 'crauthtest'
 
-  Shows how to inject a component into a controller and use the component when
-  handling requests.
+3. Run SBT:
+```
+sbt
+```
+and wait for the dependencies to be downloaded
 
-Components
-==========
+4. In another terminal tab, cd into the project directory and run 'npm install':
+```
+cd /path/to/project
+npm install
+```
+When npm is done installing run
+```
+npm test
+```
+then run
+```
+webpack -w
+```
+5. After webpack is running with no errors, go back to the SBT terminal tab. In SBT run the following commands:
+```
+;test ; ~run
+```
+6. In a browswer, go to http://localhost:9000, and voila!
 
-- Module.scala:
+Changes to the .jsx files, these will automatically be reflected in the running app after reloading the webpage (assuming no errors - check the terminal tab running webpack and the browser javascript console to check for errors).
 
-  Shows how to use Guice to bind all the components needed by your application.
-
-- Counter.scala:
-
-  An example of a component that contains state, in this case a simple counter.
-
-- ApplicationTimer.scala:
-
-  An example of a component that starts when the application starts and stops
-  when the application stops.
-
-Filters
-=======
-
-- Filters.scala:
-
-  Creates the list of HTTP filters used by your application.
-
-- ExampleFilter.scala
-
-  A simple filter that adds a header to every response.
