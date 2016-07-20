@@ -6,7 +6,6 @@ import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
 import com.typesafe.config.ConfigFactory
 import db._
 import org.scalatest._
-import pdi.jwt.JwtJson
 import play.api.Configuration
 import play.api.http.HeaderNames
 import play.api.inject.bind
@@ -14,6 +13,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test._
 import scalikejdbc.NamedAutoSession
+import user.UserFixture
 import util.{PlayConfigParamsProvider, TestUUIDProviderImpl, UUIDProvider}
 
 class RegistrationControllerATest
@@ -21,7 +21,8 @@ class RegistrationControllerATest
   with ShouldMatchers
   with OneAppPerTestWithOverrides
   with BeforeAndAfterEach
-  with InitialMigration {
+  with InitialMigration
+  with UserFixture {
 
   override def overrideModules =
     Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
@@ -29,12 +30,15 @@ class RegistrationControllerATest
         bind[UUIDProvider].to[TestUUIDProviderImpl]
         )
 
-  val dBConfig = new ScalikeJDBCTestDBConfig(new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))))
+  val configParamsProvider = new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
+  val dBConfig = new ScalikeJDBCTestDBConfig(configParamsProvider)
+  val md5key = configParamsProvider.configParams(ActivationCodeGenerator.configurationKey)
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
     dBConfig.setUpAllDB()
     migrate(dBConfig)
+    sqlToAddUsers.foreach(_.update.apply())
     super.beforeEach()
   }
 
@@ -55,7 +59,7 @@ class RegistrationControllerATest
     (content \ "status").asOpt[Boolean] should contain(true)
   }
 
-  "Registering a new user" should "result a token if the username and email address are available and these " +
+  "Registering a new user" should "result in success if the username and email address are available and these " +
   "and the password are valid" in {
     val registration = Json.toJson(Map("username" -> "newuser", "email" -> "new@user.com", "password" -> "pass"))
     val result = route(app, FakeRequest(POST, "/register")
@@ -71,6 +75,53 @@ class RegistrationControllerATest
 
     val checkUsernameAvailable = contentAsJson(route(app, FakeRequest(GET, "/username/newuser")).get)
     (checkUsernameAvailable \ "status").asOpt[Boolean] should contain(false)
+  }
+
+  "Activating a new user" should "fail if the email does not represent a user in the db" in {
+    val result = route(app, FakeRequest(GET, "/activate?email=non%40matching.com&code=non-matching-code")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldEqual BAD_REQUEST
+  }
+
+  it should "fail if the email and code combination is not valid" in {
+    val wrongCode = ActivationCodeGenerator.generate(id7.toString, md5key)
+    val result = route(app, FakeRequest(GET, s"/activate?email=charlie%40charlie.com&code=$wrongCode")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldEqual BAD_REQUEST
+  }
+
+  it should "fail if the user is blocked" in {
+    val code = ActivationCodeGenerator.generate(id7.toString, md5key)
+    val result = route(app, FakeRequest(GET, s"/activate?email=diane%40diane.com&code=$code")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    (contentAsJson(result) \ "error").asOpt[String] should contain("this user is blocked")
+  }
+
+  it should "succeed if the user is admin" in {
+    val wrongCode = ActivationCodeGenerator.generate(id3.toString, md5key)
+    val result = route(app, FakeRequest(GET, s"/activate?email=bob%40bob.com&code=$wrongCode")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    (contentAsJson(result) \ "error").asOpt[String] should contain("this user is already active")
+  }
+
+  it should "succeed if the user is active" in {
+    val wrongCode = ActivationCodeGenerator.generate(id1.toString, md5key)
+    val result = route(app, FakeRequest(GET, s"/activate?email=alice%40alice.com&code=$wrongCode")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    (contentAsJson(result) \ "error").asOpt[String] should contain("this user is already active")
+  }
+
+  it should "succeed if the user is unverified and the code matches the email" in {
+    val code = ActivationCodeGenerator.generate(id4.toString, md5key)
+    val result = route(app, FakeRequest(GET, s"/activate?email=charlie%40charlie.com&code=$code")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    (contentAsJson(result) \ "status").asOpt[String] should contain("success")
   }
 
 }

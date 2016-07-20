@@ -1,9 +1,10 @@
 package modules
 
 import access.authentication.{AuthenticationAPI, AuthenticationFacade}
-import access.registration.{RegistrationAPI, RegistrationFacade}
+import access.registration.{AccountActivator, AccountActivatorImpl, RegistrationAPI, RegistrationFacade}
 import access.{JWTParamsProvider, JWTParamsProviderImpl}
 import com.google.inject.AbstractModule
+import communication.{Emailer, EmailerImpl}
 import db.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import net.codingwell.scalaguice.ScalaModule
 import user.{UserAPI, UserFacade}
@@ -21,6 +22,8 @@ class Module extends AbstractModule with ScalaModule {
     bind[DBConfig].to[ScalikeJDBCDevProdDBConfig]
     bind[ConfigParamsProvider].to[PlayConfigParamsProvider]
     bind[JWTParamsProvider].to[JWTParamsProviderImpl]
+    bind[Emailer].to[EmailerImpl]
+    bind[AccountActivator].to[AccountActivatorImpl]
   }
 
 }

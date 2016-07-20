@@ -12,14 +12,14 @@ import scala.util.{Failure, Try}
 @Singleton
 class UserFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends UserAPI {
 
-  def changeUsername(userId: UUID, changeUsernameMessage: ChangeUsernameMessage):Try[User] =
+  override def changeUsername(userId: UUID, changeUsernameMessage: ChangeUsernameMessage):Try[User] =
     userDAO.changeUsername(
       userId,
       changeUsernameMessage.newUsername,
       timeProvider.now(),
-      authenticationUserFilter)
+      changeUsernameFilter)
 
-  def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[User] = {
+  override def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[User] = {
 
     userDAO
     .by(userId, authenticationUserFilter)
@@ -30,6 +30,6 @@ class UserFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends
 
   }
 
-
+  override def findByEmailLatest(email:String): Option[User] = userDAO.byEmail(email, (user:User) => true)
 
 }

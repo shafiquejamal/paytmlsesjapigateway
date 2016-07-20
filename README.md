@@ -59,3 +59,13 @@ webpack -w
 
 Changes to the .jsx files, these will automatically be reflected in the running app after reloading the webpage (assuming no errors - check the terminal tab running webpack and the browser javascript console to check for errors).
 
+## References:
+
+Email activation approach:
+https://stackoverflow.com/questions/2362259/generating-storing-account-activation-code
+
+React and Play Framework:
+http://ticofab.io/react-js-tutorial-with-play_scala_webjars/
+
+Testing the controllers:
+http://www.michaelpollmeier.com/2015/09/25/playframework-guice-di

@@ -5,7 +5,6 @@ import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test._
 
-// http://www.michaelpollmeier.com/2015/09/25/playframework-guice-di
 trait OneAppPerTestWithOverrides extends SuiteMixin { this: Suite ⇒
 
   def overrideModules: Seq[GuiceableModule] = Nil

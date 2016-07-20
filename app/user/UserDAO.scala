@@ -13,11 +13,10 @@ trait UserDAO {
   def byEmail(email: String, userFilter: User => Boolean): Option[User]
 
   def add(
-    user: User,
-    created: DateTime,
-    uUID: UUID,
-    registrationUserFilter: User => Boolean,
-    authenticationUserFilter: User => Boolean): Try[User]
+      user: User,
+      created: DateTime,
+      uUID: UUID,
+      userFilter: User => Boolean): Try[User]
 
   def by(id: UUID, userFilter: User => Boolean): Option[User]
 
@@ -27,5 +26,7 @@ trait UserDAO {
     userFilter: User => Boolean): Try[User]
 
   def changePassword(id: UUID, newHashedPassword:String, created:DateTime): Try[User]
+
+  def addStatus(id: UUID, userStatus:UserStatus, created:DateTime): Try[User]
 
 }

@@ -10,4 +10,5 @@ trait UserAPI {
 
   def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[User]
 
+  def findByEmailLatest(email: String): Option[User]
 }

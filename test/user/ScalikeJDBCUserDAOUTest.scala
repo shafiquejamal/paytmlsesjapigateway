@@ -42,7 +42,7 @@ class ScalikeJDBCUserDAOUTest
       TestUserImpl(Some(id6), "newuser", "newuser@newuser.com", "password", Active, Some(now))
 
     makeDAO(session)
-    .add(expectedUser, now, id6, registrationUserFilter, authenticationUserFilter).success.value shouldBe expectedUser
+    .add(expectedUser, now, id6, authenticationUserFilter).success.value shouldBe expectedUser
   }
 
   "adding a user for the first time (no active existing user has this email, but an inactive one does)" should
@@ -50,7 +50,7 @@ class ScalikeJDBCUserDAOUTest
     val expectedUser =
       TestUserImpl(Some(id6), "newuser", "charlie@charlie.com", "password", Active, Some(now))
 
-    makeDAO(session).add(expectedUser, now, id6, authenticationUserFilter, authenticationUserFilter).success.value shouldBe
+    makeDAO(session).add(expectedUser, now, id6, authenticationUserFilter).success.value shouldBe
       expectedUser
   }
 
@@ -59,7 +59,7 @@ class ScalikeJDBCUserDAOUTest
     val expectedUser =
       TestUserImpl(Some(id6), "charlie", "newuser@newuser.com", "password", Active, Some(now))
 
-    makeDAO(session).add(expectedUser, now, id6, registrationUserFilter, authenticationUserFilter).success.value shouldBe
+    makeDAO(session).add(expectedUser, now, id6, authenticationUserFilter).success.value shouldBe
       expectedUser
   }
 
@@ -68,7 +68,7 @@ class ScalikeJDBCUserDAOUTest
       TestUserImpl(Some(id6), "newuser", "alice@alice.com", "password", Active, Some(now))
 
     makeDAO(session)
-    .add(duplicateActiveEmailUser, now, id6, registrationUserFilter, authenticationUserFilter)
+    .add(duplicateActiveEmailUser, now, id6, authenticationUserFilter)
     .failure.exception shouldBe a[RuntimeException]
   }
 
@@ -77,7 +77,7 @@ class ScalikeJDBCUserDAOUTest
       TestUserImpl(Some(id6), "boB", "newuser@newuser.com", "password", Active, Some(now))
 
     makeDAO(session)
-    .add(duplicateActiveUsernameUser, now, id6, registrationUserFilter, authenticationUserFilter)
+    .add(duplicateActiveUsernameUser, now, id6, authenticationUserFilter)
     .failure.exception shouldBe a[RuntimeException]
   }
 
@@ -86,7 +86,7 @@ class ScalikeJDBCUserDAOUTest
       TestUserImpl(Some(id6), "bob@bob.com", "newuser@newuser.com", "password", Active, Some(now))
 
     makeDAO(session)
-    .add(usernameIsExistingEmail, now, id6, registrationUserFilter, authenticationUserFilter)
+    .add(usernameIsExistingEmail, now, id6, authenticationUserFilter)
     .failure.exception shouldBe a[RuntimeException]
   }
 
@@ -106,11 +106,11 @@ class ScalikeJDBCUserDAOUTest
     .success.value.username shouldBe newUsername
   }
 
-  it should "fail if the username belongs to a non-inactive user" in { implicit session =>
+  it should "fail if the username belongs to a non-inactive user (active, admin, etc)" in { implicit session =>
     val userDAO = makeDAO(session)
     val newUsername = " chaRLIE "
 
-    userDAO.changeUsername(id1, newUsername, TestTimeProviderImpl.now(), authenticationUserFilter)
+    userDAO.changeUsername(id1, newUsername, TestTimeProviderImpl.now(), changeUsernameFilter)
     .failure.exception shouldBe a[RuntimeException]
   }
 
@@ -136,6 +136,17 @@ class ScalikeJDBCUserDAOUTest
 
     userDAO.changePassword(idNonExistentUser, newHashedPassword, now.plusMillis(1))
     .failure.exception shouldBe a[RuntimeException]
+  }
+
+  "adding a status" should "fail if the user does not exists" in { implicit session =>
+    val userDAO = makeDAO(session)
+    userDAO.addStatus(idNonExistentUser, Active, now).failure.exception shouldBe a[RuntimeException]
+  }
+
+  it should "succeed if the user exists" in { implicit session =>
+    val userDAO = makeDAO(session)
+    userDAO.addStatus(id4, Active, now.plusDays(2)) shouldBe a[Success[_]]
+    userDAO.by(id4, (user:User) => true).map(_.userStatus) should contain(Active)
   }
 
   private def makeDAO(session:DBSession) = 

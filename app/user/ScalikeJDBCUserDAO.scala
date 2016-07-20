@@ -45,6 +45,10 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
 
   override def by(id: UUID, userFilter: User => Boolean): Option[User] = {
     implicit val session = readOnlySession
+    byWithSession(id, userFilter)
+  }
+
+  private def byWithSession(id: UUID, userFilter: User => Boolean)(implicit session:DBSession): Option[User] = {
     sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
       xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail
       on xuseremail.xuserid = xuser.id inner join xuserpassword on xuserpassword.xuserid = xuser.id where
@@ -57,17 +61,16 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     user: User,
     created: DateTime,
     uUID: UUID,
-    registrationUserFilter: User => Boolean,
-    authenticationUserFilter: User => Boolean): Try[User] = {
+    userFilter: User => Boolean): Try[User] = {
 
     val (username, email) = (user.username.trim, user.email.trim)
     namedDB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
-      val isUsernameIsAvailable = byUsernameWithSession(username, authenticationUserFilter).isEmpty
-      val isEmailAddressIsAvailable = byEmailWithSession(email, authenticationUserFilter).isEmpty
-      val isUsernameDoesNotMatchExistingUserEmail = byEmailWithSession(username, authenticationUserFilter).isEmpty
+      val isUsernameIsAvailable = byUsernameWithSession(username, userFilter).isEmpty
+      val isEmailAddressIsAvailable = byEmailWithSession(email, userFilter).isEmpty
+      val isUsernameDoesNotMatchExistingUserEmail = byEmailWithSession(username, userFilter).isEmpty
 
       if (isUsernameIsAvailable & isEmailAddressIsAvailable & isUsernameDoesNotMatchExistingUserEmail) {
         sql"""insert into xuser (id, authorid, createdat) values (${uUID}, ${uUID}, ${created})""".update.apply()
@@ -81,11 +84,11 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
              (${uUIDProvider.randomUUID()}, ${uUID}, ${uUID}, ${created}, ${username})""".update.apply()
 
         val activeUsersWithThisUsernameOrEmail = uniqueUsers(
-          byUsernameWithSession(username, authenticationUserFilter).toList ++
-          byEmailWithSession(email, authenticationUserFilter).toList ++
-          byEmailWithSession(username, authenticationUserFilter).toList)
+          byUsernameWithSession(username, userFilter).toList ++
+          byEmailWithSession(email, userFilter).toList ++
+          byEmailWithSession(username, userFilter).toList)
 
-        activeUserCheck(activeUsersWithThisUsernameOrEmail)
+        userCheck(activeUsersWithThisUsernameOrEmail)
 
       } else {
         Failure(new RuntimeException("username or email address is not available, or username is an email address that " +
@@ -98,17 +101,35 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     namedDB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
-
-      val maybeUser = by(id, (user:User) => true)
+      val maybeUser = byWithSession(id, (user:User) => true)
 
       maybeUser.fold[Try[User]](Failure(new RuntimeException("User does not exist in DB."))){ user =>
         sql"""insert into xuserpassword (id, xuserid, authorid, createdat, password) values
           (${uUIDProvider.randomUUID()}, ${id}, ${id}, ${created}, ${newHashedPassword})""".update.apply()
-        Success(user)
+        confirmUpdate(id)
       }
     }
 
   }
+
+  override def addStatus(id: UUID, userStatus:UserStatus, created:DateTime): Try[User] = {
+    namedDB localTx { _ =>
+
+      implicit val session = scalikeJDBCSessionProvider.provideAutoSession
+      val maybeUser = byWithSession(id, (user:User) => true)
+
+      maybeUser.fold[Try[User]](Failure(new RuntimeException("User does not exist in DB."))){ user =>
+        sql"""insert into xuserstatus (id, xuserid, authorid, createdat, status) values
+          (${uUIDProvider.randomUUID()}, ${id}, ${id}, ${created}, ${userStatus.value})""".update.apply()
+        confirmUpdate(id)
+      }
+    }
+
+  }
+
+  private def confirmUpdate(id:UUID)(implicit session:DBSession):Try[User] =
+    byWithSession(id, (user:User) => true).fold[Try[User]](Failure(new RuntimeException("Could not update user")))(user =>
+      Success(user))
 
   override def changeUsername(id: UUID, newUsername:String, created:DateTime, authenticationUserFilter: User => Boolean):
   Try[User] = {
@@ -121,24 +142,22 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
       val isUsernameDoesNotMatchExistingUserEmail = byEmailWithSession(username, authenticationUserFilter).isEmpty
 
       if (isUsernameIsAvailable & isUsernameDoesNotMatchExistingUserEmail) {
-
         sql"""insert into xuserusername (id, xuserid, authorid, createdat, username) values
           (${uUIDProvider.randomUUID()}, ${id}, ${id}, ${created}, ${username})""".update.apply()
 
-        val activeUsersWithThisUsernameOrEmail = uniqueUsers(
+        val usersWithThisUsernameOrEmail = uniqueUsers(
           byUsername(username, authenticationUserFilter).toList ++
           byEmail(username, authenticationUserFilter).toList)
 
-        activeUserCheck(activeUsersWithThisUsernameOrEmail)
+        userCheck(usersWithThisUsernameOrEmail)
       } else {
         failureResult
       }
-
     }
 
   }
 
-  private def activeUserCheck(activeUsers:List[User]):Try[User] =
+  private def userCheck(activeUsers:List[User]):Try[User] =
     activeUsers match {
       case addedUser :: Nil  =>
         Success(addedUser)

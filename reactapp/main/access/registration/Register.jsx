@@ -57,9 +57,7 @@ export const Register = React.createClass({
         this.setState({
           [errorVariable]: checkVariableTitleCase + ' is required'
         });
-
       }
-
     },
     checkPassword: function(e) {
       const inputValue = e.target.value;
@@ -78,9 +76,11 @@ export const Register = React.createClass({
     onRegister() {
       const { dispatch } = this.props;
       const { usernameError, emailError, passwordError, confirmError } = this.state;
-      if (usernameError.value === '' && emailError.value === '' && passwordError.value === '' && confirmError.value === '') {
+      if (usernameError === '' && emailError === '' && passwordError === '' && confirmError === '') {
+        console.log(this.state);
         dispatch(registerUser(email.value, username.value, password.value)).then(
           (response) => {
+            console.log(response);
             if (response.data.status === 'success') {
               hashHistory.push(REGISTRATION_SUCCESS_LINK);
             }
@@ -96,6 +96,7 @@ export const Register = React.createClass({
             });
           });
       } else {
+        console.log(this.state);
         this.setState({
           registrationError: 'Please complete all fields and ensure they are valid.'
         });
@@ -123,7 +124,7 @@ export const Register = React.createClass({
                                     <div className="cols-sm-10">
                                         <div className={`input-group ${this.state.emailError !== '' ? 'has-danger' : ''}`}>
                                             <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
-                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" data-check="email" onBlur={this.checkEmail} onChange={this.checkAvailable} />
+                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" data-check="email" onBlur={this.checkAvailable} onChange={this.checkAvailable} />
                                         </div>
                                         <div className="text-help">
                                           {this.state.emailError}
