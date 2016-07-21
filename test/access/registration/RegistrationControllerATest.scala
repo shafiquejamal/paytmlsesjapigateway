@@ -27,7 +27,8 @@ class RegistrationControllerATest
   override def overrideModules =
     Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
         bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
-        bind[UUIDProvider].to[TestUUIDProviderImpl]
+        bind[UUIDProvider].to[TestUUIDProviderImpl],
+        bind[AccountActivationLinkSender].to[NoEmailVerificationAccountActivationLinkSenderImpl]
         )
 
   val configParamsProvider = new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
