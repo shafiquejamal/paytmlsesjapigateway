@@ -6,8 +6,8 @@ import com.google.inject.Inject
 import play.api.Configuration
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc._
-import user.{User, UserAPI}
 import user.UserStatus._
+import user.{User, UserAPI}
 import util.UUIDProvider
 
 import scala.util.Success
@@ -18,7 +18,7 @@ class RegistrationController @Inject() (
     jWTParamsProvider: JWTParamsProvider,
     uUIDProvider: UUIDProvider,
     configuration:Configuration,
-    accountActivator:AccountActivator)
+    accountActivator:AccountActivationLinkSender)
   extends Controller {
 
   val activationCodeKey = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
@@ -70,7 +70,8 @@ class RegistrationController @Inject() (
   private def registerUser(request: Request[JsValue], registrationMessage:RegistrationMessage) =
     registrationAPI.signUp(registrationMessage, accountActivator.statusOnRegistration) match {
       case Success(user) =>
-        accountActivator.sendActivationCode(
+        accountActivator
+        .sendActivationCode(
           user,
           configuration.getString("crauth.protocol").getOrElse("http") + "://" + request.host,
           activationCodeKey)

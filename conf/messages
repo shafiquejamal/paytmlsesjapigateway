@@ -1,0 +1,2 @@
+activation.subject=Thank you for registering - here is your activation link.
+activation.body=Please confirm your registration by clicking the following link to activate your account:\n\n{0}

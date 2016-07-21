@@ -2,7 +2,7 @@ package access.registration
 
 import user.{User, UserStatus}
 
-trait AccountActivator {
+trait AccountActivationLinkSender {
 
   def sendActivationCode(user: User, protocolAndHost: String, key: String): Unit
 

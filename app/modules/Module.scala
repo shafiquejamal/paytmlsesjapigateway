@@ -1,7 +1,8 @@
 package modules
 
 import access.authentication.{AuthenticationAPI, AuthenticationFacade}
-import access.registration.{AccountActivator, AccountActivatorImpl, RegistrationAPI, RegistrationFacade}
+import access.registration.{AccountActivationLinkSender, AccountActivationLinkSenderImpl, RegistrationAPI,
+RegistrationFacade}
 import access.{JWTParamsProvider, JWTParamsProviderImpl}
 import com.google.inject.AbstractModule
 import communication.{Emailer, EmailerImpl}
@@ -23,7 +24,7 @@ class Module extends AbstractModule with ScalaModule {
     bind[ConfigParamsProvider].to[PlayConfigParamsProvider]
     bind[JWTParamsProvider].to[JWTParamsProviderImpl]
     bind[Emailer].to[EmailerImpl]
-    bind[AccountActivator].to[AccountActivatorImpl]
+    bind[AccountActivationLinkSender].to[AccountActivationLinkSenderImpl]
   }
 
 }

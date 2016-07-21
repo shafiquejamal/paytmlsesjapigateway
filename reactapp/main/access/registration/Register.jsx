@@ -21,11 +21,11 @@ export const Register = React.createClass({
     },
     checkEmail: function(e) {
       const inputValue = e.target.value;
-      var errorMessage;
       if (inputValue !== '' && !validator.isEmail(inputValue)) {
-        errorMessage = 'Must be a valid email address';
-      }
-      this.setState({ emailError: errorMessage });
+        this.setState({ emailError: 'Must be a valid email address' });
+      } else if (!this.state.emailError) {
+        this.setState({ emailError: '' });
+      };
     },
     checkAvailable: function(e) {
       var { dispatch } = this.props;
@@ -184,4 +184,4 @@ export const Register = React.createClass({
 
 export default Redux.connect((state) => {
   return state;
-}, )(Register);
+})(Register);
