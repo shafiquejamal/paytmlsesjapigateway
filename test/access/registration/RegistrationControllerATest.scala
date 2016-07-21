@@ -61,7 +61,7 @@ class RegistrationControllerATest
 
   "Registering a new user" should "result in success if the username and email address are available and these " +
   "and the password are valid" in {
-    val registration = Json.toJson(Map("username" -> "newuser", "email" -> "new@user.com", "password" -> "pass"))
+    val registration = Json.toJson(Map("username" -> "newuser", "email" -> "spam@eigenroute.com", "password" -> "pass"))
     val result = route(app, FakeRequest(POST, "/register")
       .withJsonBody(registration)
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
@@ -70,7 +70,7 @@ class RegistrationControllerATest
 
     (content \ "status").asOpt[String] should contain("success")
 
-    val checkEmailAvailable = contentAsJson(route(app, FakeRequest(GET, "/email/new@user.com")).get)
+    val checkEmailAvailable = contentAsJson(route(app, FakeRequest(GET, "/email/spam@eigenroute.com")).get)
     (checkEmailAvailable \ "status").asOpt[Boolean] should contain(false)
 
     val checkUsernameAvailable = contentAsJson(route(app, FakeRequest(GET, "/username/newuser")).get)
