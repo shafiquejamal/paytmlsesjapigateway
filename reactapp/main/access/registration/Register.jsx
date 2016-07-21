@@ -24,10 +24,6 @@ export const Register = React.createClass({
       var errorMessage;
       if (inputValue !== '' && !validator.isEmail(inputValue)) {
         errorMessage = 'Must be a valid email address';
-      } else if (inputValue === '') {
-        errorMessage = 'Email is required';
-      } else {
-        errorMessage = '';
       }
       this.setState({ emailError: errorMessage });
     },
@@ -124,7 +120,7 @@ export const Register = React.createClass({
                                     <div className="cols-sm-10">
                                         <div className={`input-group ${this.state.emailError !== '' ? 'has-danger' : ''}`}>
                                             <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
-                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" data-check="email" onBlur={this.checkAvailable} onChange={this.checkAvailable} />
+                                            <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" data-check="email" onBlur={this.checkEmail} onChange={this.checkAvailable} />
                                         </div>
                                         <div className="text-help">
                                           {this.state.emailError}

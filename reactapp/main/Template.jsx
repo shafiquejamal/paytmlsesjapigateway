@@ -40,12 +40,6 @@ export const Template = React.createClass({
                       <li className="nav-item">
                           <Link className="nav-link" to="#">Home</Link>
                       </li>
-                      <li className="nav-item">
-                          <Link to="/example1" className="nav-link">Example 1</Link>
-                      </li>
-                      <li className="nav-item">
-                          <Link to="/example2" className="nav-link">Example 2</Link>
-                      </li>
                       {this.renderLinks()}
                     </ul>
 

@@ -3,10 +3,10 @@ import { Route, IndexRoute } from 'react-router';
 
 import Template from './main/Template';
 import LoginOrRegister from './main/LoginOrRegister';
-import Example1 from './main/Example1';
-import Example2 from './main/Example2';
 import Register from './main/access/registration/Register';
 import RegistrationSuccess from './main/access/registration/RegistrationSuccess';
+import Activate from './main/access/registration/Activate';
+import ActivationFailed from './main/access/registration/ActivationFailed';
 import Login from './main/access/authentication/Login';
 import Logout from './main/access/authentication/Logout';
 import ManageAccount from './main/user/ManageAccount';
@@ -25,6 +25,8 @@ export const MANAGE_ACCOUNT_TEXT = "My account";
 export const CHANGE_PASSWORD_LINK = "/change-password";
 export const CHANGE_PASSWORD_TEXT = "Change Password";
 export const PASSWORD_CHANGE_SUCCESSFUL_LINK = "/password-change-successful";
+export const ACTIVATE_LINK = "/activate"
+export const ACTIVATION_FAILED_LINK = "/activation-failed"
 
 const requireLoggedIn = (nextState, replace, next) => {
   if (!localStorage.getItem('token')) {
@@ -43,8 +45,6 @@ const requireLoggedOut = (nextState, replace, next) => {
 export default (
 <Route path="/" component={Template}>
     <IndexRoute component={LoginOrRegister} />
-    <Route path="example1" component={Example1} />
-    <Route path="example2" component={Example2} />
     <Route path={REGISTER_LINK} component={Register} />
     <Route path={REGISTRATION_SUCCESS_LINK} component={RegistrationSuccess} />
     <Route path={LOGIN_LINK} component={Login} onEnter={requireLoggedOut} />
@@ -52,5 +52,7 @@ export default (
     <Route path={MANAGE_ACCOUNT_LINK} component={ManageAccount} onEnter={requireLoggedIn} />
     <Route path={CHANGE_PASSWORD_LINK} component={ChangePassword} onEnter={requireLoggedIn} />
     <Route path={PASSWORD_CHANGE_SUCCESSFUL_LINK} component={PasswordChangeSuccessful} onEnter={requireLoggedIn} />
+    <Route path={ACTIVATE_LINK} component={Activate} />
+    <Route path={ACTIVATION_FAILED_LINK} component={ActivationFailed} />
 </Route>
 );

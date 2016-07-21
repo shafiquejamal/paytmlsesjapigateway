@@ -4,6 +4,7 @@ import { ROOT_URL } from '../../configuration';
 export const USERNAME_CHECK_ENDPOINT = '/username';
 export const EMAIL_CHECK_ENDPOINT = '/email';
 export const REGISTER_ENDPOINT = '/register'
+export const ACTIVATE_ENDPOINT = '/activate'
 
 export const checkAvailable = (endpoint, value) => {
   return function(dispatch, getState) {
@@ -20,6 +21,12 @@ export const checkAvailable = (endpoint, value) => {
 
 export const registerUser = (email, username, password) => {
   return function(dispatch, getState) {
-    return axios.post(`${ROOT_URL}${REGISTER_ENDPOINT}`, {email, username, password})
+    return axios.post(`${ROOT_URL}${REGISTER_ENDPOINT}`, {email, username, password});
     }
+}
+
+export const startActivatingUser = (email, code) => {
+  return function(dispatch, getState) {
+    return axios.get(`${ROOT_URL}${ACTIVATE_ENDPOINT}?email=${email}&code=${code}`);
+  }
 }

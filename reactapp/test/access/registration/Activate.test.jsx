@@ -4,12 +4,12 @@ var expect = require('expect');
 var $ = require('jQuery');
 var TestUtils = require('react-addons-test-utils');
 
-import { PasswordChangeSuccessful } from '../../main/user/PasswordChangeSuccessful';
+import { Activate } from '../../../main/access/registration/Activate';
 
-describe('PasswordChangeSuccessful', () => {
+describe('Activate', () => {
 
   it('should exist', () => {
-    expect(PasswordChangeSuccessful).toExist();
+    expect(Activate).toExist();
   });
 
 });
