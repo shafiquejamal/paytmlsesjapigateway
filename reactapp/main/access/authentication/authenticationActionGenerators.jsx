@@ -4,8 +4,15 @@ import validator from 'validator';
 import { ROOT_URL } from 'configuration';
 
 export const LOGIN_ENDPOINT = '/authenticate';
+export const PASSWORD_RESET_ENDPOINT = '/send-password-reset-link';
 export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
+
+export const sendPasswordResetLink = function(email) {
+  return (dispatch, getState) => {
+    return axios.post(`${ROOT_URL}${PASSWORD_RESET_ENDPOINT}`, {email});
+  }
+};
 
 export const startLoggingInUser = function(emailOrUsername, password) {
   var loginCredentials = {}

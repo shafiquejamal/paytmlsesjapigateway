@@ -5,7 +5,7 @@ import javax.inject.Inject
 import access.authentication.AuthenticationAPI
 import access.{AuthenticatedActionCreator, JWTParamsProvider}
 import play.api.libs.json.{JsSuccess, Json}
-import play.api.mvc.{Controller, Result}
+import play.api.mvc.{Action, Controller, Result}
 
 class UserController @Inject()(
     override val authenticationAPI: AuthenticationAPI,
@@ -15,7 +15,7 @@ class UserController @Inject()(
   extends Controller
   with AuthenticatedActionCreator {
 
-  def changePassword = AuthenticatedAction(parse.json) { request =>
+  def changePassword() = AuthenticatedAction(parse.json) { request =>
 
     request.body.validate[ChangePasswordMessage] match {
       case successChangePasswordMessage:JsSuccess[ChangePasswordMessage] =>
@@ -28,5 +28,6 @@ class UserController @Inject()(
     }
 
   }
+
 
 }

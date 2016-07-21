@@ -21,6 +21,8 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
   namedDB.autoClose(false)
   val readOnlySession = scalikeJDBCSessionProvider.provideReadOnlySession
 
+
+
   override def byUsername(username: String, userFilter: User => Boolean): Option[User] =
     byUsernameWithSession(username, userFilter)(readOnlySession)
 
@@ -123,6 +125,21 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
           (${uUIDProvider.randomUUID()}, ${id}, ${id}, ${created}, ${userStatus.value})""".update.apply()
         confirmUpdate(id)
       }
+    }
+
+  }
+
+  override def addPasswordResetCode(userId: UUID, passwordResetCode:String, created:DateTime): Try[User] = {
+    namedDB localTx { _ =>
+
+      implicit val session = scalikeJDBCSessionProvider.provideAutoSession
+      val maybeUser = byWithSession(userId, (user:User) => true)
+
+      maybeUser.fold[Try[User]](Failure(new RuntimeException("User does not exist in DB."))){ user =>
+        sql"""insert into xuserpasswordresetcode (id, xuserid, authorid, createdat, passwordresetcode) values
+          (${uUIDProvider.randomUUID()}, ${userId}, ${userId}, ${created}, ${passwordResetCode})""".update.apply()
+        confirmUpdate(userId)
+                                                                                            }
     }
 
   }

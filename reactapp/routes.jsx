@@ -9,6 +9,7 @@ import Activate from './main/access/registration/Activate';
 import ActivationFailed from './main/access/registration/ActivationFailed';
 import Login from './main/access/authentication/Login';
 import Logout from './main/access/authentication/Logout';
+import ResetPassword from './main/access/authentication/ResetPassword';
 import ManageAccount from './main/user/ManageAccount';
 import ChangePassword from './main/user/ChangePassword';
 import PasswordChangeSuccessful from './main/user/PasswordChangeSuccessful';
@@ -25,8 +26,10 @@ export const MANAGE_ACCOUNT_TEXT = "My account";
 export const CHANGE_PASSWORD_LINK = "/change-password";
 export const CHANGE_PASSWORD_TEXT = "Change Password";
 export const PASSWORD_CHANGE_SUCCESSFUL_LINK = "/password-change-successful";
-export const ACTIVATE_LINK = "/activate"
-export const ACTIVATION_FAILED_LINK = "/activation-failed"
+export const ACTIVATE_LINK = "/activate";
+export const ACTIVATION_FAILED_LINK = "/activation-failed";
+export const RESET_PASSWORD_LINK = "/reset-password";
+export const RESET_PASSWORD_TEXT = "Forgot your password?";
 
 const requireLoggedIn = (nextState, replace, next) => {
   if (!localStorage.getItem('token')) {
@@ -54,5 +57,6 @@ export default (
     <Route path={PASSWORD_CHANGE_SUCCESSFUL_LINK} component={PasswordChangeSuccessful} onEnter={requireLoggedIn} />
     <Route path={ACTIVATE_LINK} component={Activate} />
     <Route path={ACTIVATION_FAILED_LINK} component={ActivationFailed} />
+    <Route path={RESET_PASSWORD_LINK} component={ResetPassword} />
 </Route>
 );

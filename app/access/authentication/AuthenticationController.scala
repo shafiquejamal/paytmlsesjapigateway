@@ -2,16 +2,21 @@ package access.authentication
 
 import access.JWTParamsProvider
 import access.authentication.AuthenticationMessage._
+import access.authentication.ResetPasswordMessage._
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
+import user.UserAPI
+import user.UserStatus.{Active, Unverified}
 import util.UUIDProvider
 
 class AuthenticationController @Inject() (
     authenticationAPI: AuthenticationAPI,
+    userAPI: UserAPI,
     jWTParamsProvider: JWTParamsProvider,
-    uUIDProvider: UUIDProvider)
+    uUIDProvider: UUIDProvider,
+    passwordResetCodeSender: PasswordResetCodeSender)
   extends Controller {
 
   def authenticate = Action(parse.json) { request =>
@@ -25,5 +30,28 @@ class AuthenticationController @Inject() (
       case error: JsError =>
         Ok(Json.obj("status" -> "invalid data"))
     }
+  }
+
+
+  def sendPasswordResetLink() = Action(parse.json) { request =>
+    request.body.validate[ResetPasswordMessage] match {
+      case success:JsSuccess[ResetPasswordMessage] =>
+        val maybeUser = userAPI.findByEmailLatest(success.get.email)
+        maybeUser.fold[Result](Ok(Json.obj("status" -> "no user"))){ user =>
+          user.userStatus match {
+            case Active =>
+              passwordResetCodeSender.send(user.email, request.host)
+              Ok(Json.obj("status" -> "success"))
+            case Unverified =>
+              Ok(Json.obj("status" -> "unverified"))
+            case _ =>
+              Ok(Json.obj("status" -> "catch rest"))
+          }
+        }
+        // Ok
+      case error: JsError =>
+        Ok(Json.obj("status" -> "invalid data"))
+      }
+
   }
 }

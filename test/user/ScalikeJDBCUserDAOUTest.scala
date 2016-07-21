@@ -149,6 +149,13 @@ class ScalikeJDBCUserDAOUTest
     userDAO.by(id4, (user:User) => true).map(_.userStatus) should contain(Active)
   }
 
+  "adding a password reset code" should "succeed if the user exists" in { implicit session =>
+    val userDAO = makeDAO(session)
+    val passwordResetCode = "some password reset code"
+    userDAO.addPasswordResetCode(id1, passwordResetCode, now) shouldBe a[Success[_]]
+    userDAO.addPasswordResetCode(idNonExistentUser, passwordResetCode, now).failure.exception shouldBe a[RuntimeException]
+  }
+
   private def makeDAO(session:DBSession) = 
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
   

@@ -18,8 +18,7 @@ class RegistrationFacade @Inject() (
     uUIDProvider: UUIDProvider)
   extends RegistrationAPI {
 
-  override def signUp(registrationMessage: RegistrationMessage, statusOnRegistration: UserStatus):Try[User] = {
-    val temp =
+  override def signUp(registrationMessage: RegistrationMessage, statusOnRegistration: UserStatus):Try[User] =
       user.create(None,
         registrationMessage.maybeUsername.getOrElse(registrationMessage.email),
         registrationMessage.email,
@@ -27,8 +26,6 @@ class RegistrationFacade @Inject() (
         statusOnRegistration,
         Some(timeProvider.now()))
     .add(userDAO, uUIDProvider, registrationUserFilter, usernameAndEmailIsNotAvailableFilter)
-    temp
-  }
 
   override def isUsernameIsAvailable(username:String): Boolean =
     userDAO.byUsername(username, usernameAndEmailIsNotAvailableFilter).isEmpty

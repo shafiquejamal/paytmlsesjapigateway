@@ -1,2 +1,5 @@
 activation.subject=Thank you for registering - here is your activation link.
 activation.body=Please confirm your registration by clicking the following link to activate your account:\n\n{0}
+
+passwordresetlink.subject=Here is your password reset link.
+passwordresetlink.body=Please click on the following link to reset your password:\n\n{0}

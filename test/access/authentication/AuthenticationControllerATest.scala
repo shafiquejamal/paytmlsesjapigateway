@@ -5,6 +5,7 @@ import java.util.UUID
 
 import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
 import com.typesafe.config.ConfigFactory
+import communication.{Emailer, TestEmailerImpl}
 import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
@@ -29,7 +30,8 @@ class AuthenticationControllerATest
   override def overrideModules =
     Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
         bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
-        bind[UUIDProvider].to[TestUUIDProviderImpl]
+        bind[UUIDProvider].to[TestUUIDProviderImpl],
+        bind[Emailer].to[TestEmailerImpl]
        )
 
   val dBConfig =

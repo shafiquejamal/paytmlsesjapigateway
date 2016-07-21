@@ -19,4 +19,5 @@ GET     /username/:username         access.registration.RegistrationController.u
 GET     /email/:email               access.registration.RegistrationController.emailCheck(email:String)
 
 POST    /authenticate               access.authentication.AuthenticationController.authenticate
+POST    /send-password-reset-link   access.authentication.AuthenticationController.sendPasswordResetLink
 POST    /change-password            user.UserController.changePassword

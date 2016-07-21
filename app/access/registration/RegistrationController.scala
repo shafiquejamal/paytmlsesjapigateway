@@ -71,10 +71,7 @@ class RegistrationController @Inject() (
     registrationAPI.signUp(registrationMessage, accountActivator.statusOnRegistration) match {
       case Success(user) =>
         accountActivator
-        .sendActivationCode(
-          user,
-          configuration.getString("crauth.protocol").getOrElse("http") + "://" + request.host,
-          activationCodeKey)
+        .sendActivationCode(user, request.host, activationCodeKey)
         Ok(Json.obj("status" -> "success"))
       case _ =>
         Ok(Json.obj("status" -> "failed to add user"))

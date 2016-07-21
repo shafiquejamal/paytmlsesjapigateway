@@ -11,7 +11,8 @@ class EmailerImpl @Inject()(mailerClient: MailerClient) extends Emailer {
       to:Seq[String],
       bodyText:Option[String],
       cc:Seq[String] = Seq.empty,
-      bcc:Seq[String] = Seq.empty):String = mailerClient.send(Email(subject, from, to, bodyText, None, None, cc, bcc))
+      bcc:Seq[String] = Seq.empty):String =
+    mailerClient.send(Email(subject, from, to, bodyText, None, None, cc, bcc))
 
 
 }

@@ -4,6 +4,7 @@ import java.io.File
 
 import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
 import com.typesafe.config.ConfigFactory
+import communication.{Emailer, TestEmailerImpl}
 import db._
 import org.scalatest._
 import play.api.Configuration
@@ -28,10 +29,11 @@ class RegistrationControllerATest
     Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
         bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
         bind[UUIDProvider].to[TestUUIDProviderImpl],
-        bind[AccountActivationLinkSender].to[NoEmailVerificationAccountActivationLinkSenderImpl]
+        bind[Emailer].to[TestEmailerImpl]
         )
 
-  val configParamsProvider = new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
+  val configParamsProvider =
+    new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
   val dBConfig = new ScalikeJDBCTestDBConfig(configParamsProvider)
   val md5key = configParamsProvider.configParams(ActivationCodeGenerator.configurationKey)
 

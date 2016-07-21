@@ -1,5 +1,6 @@
 drop table if EXISTS xuserpassword;
 drop table if EXISTS xuserusername;
+drop table if EXISTS xuserpasswordresetcode;
 drop table if EXISTS xuseremail;
 drop table if EXISTS xuserstatus;
 drop table if EXISTS xuser;
@@ -49,3 +50,13 @@ create table xuserpassword (
   password varchar(100) not null
 );
 create index on xuserpassword (createdat);
+
+create table xuserpasswordresetcode (
+  id uuid primary key not null,
+  authorid uuid not null REFERENCES xuser (id),
+  createdat timestamp not null,
+  xuserid uuid not null REFERENCES xuser (id),
+  passwordresetcode varchar(100) not null
+);
+create index on xuserpasswordresetcode (lower(passwordresetcode));
+create index on xuserpasswordresetcode (createdat);

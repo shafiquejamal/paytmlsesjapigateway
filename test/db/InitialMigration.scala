@@ -9,6 +9,7 @@ trait InitialMigration {
     val flyway = new Flyway()
     flyway.setDataSource(dBConfig.url, dBConfig.username, dBConfig.password)
     flyway.clean()
+    flyway.repair()
     flyway.migrate()
   }
   
