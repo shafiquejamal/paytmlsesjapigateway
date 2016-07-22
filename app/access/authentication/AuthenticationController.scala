@@ -40,7 +40,7 @@ class AuthenticationController @Inject() (
         maybeUser.fold[Result](Ok(Json.obj("status" -> "no user"))){ user =>
           user.userStatus match {
             case Active =>
-              passwordResetCodeSender.send(user.email, request.host)
+              passwordResetCodeSender.send(user, request.host)
               Ok(Json.obj("status" -> "success"))
             case Unverified =>
               Ok(Json.obj("status" -> "unverified"))
