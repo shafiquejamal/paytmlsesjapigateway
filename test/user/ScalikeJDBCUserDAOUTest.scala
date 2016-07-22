@@ -20,6 +20,8 @@ class ScalikeJDBCUserDAOUTest
   with BeforeAndAfterEach
   with TestDBConnection {
 
+  val timeProvider = new TestTimeProviderImpl()
+
   "retrieving a user by user username" should "return the user with that username added the latest" in { implicit session =>
     makeDAO(session).byUsername(" ALIce", authenticationUserFilter) should contain(alice)
   }
@@ -103,7 +105,7 @@ class ScalikeJDBCUserDAOUTest
     val userDAO = makeDAO(session)
     val newUsername = "alice2"
 
-    userDAO.changeUsername(id1, newUsername, TestTimeProviderImpl.now(), authenticationUserFilter)
+    userDAO.changeUsername(id1, newUsername, timeProvider.now(), authenticationUserFilter)
     .success.value.username shouldBe newUsername
   }
 
@@ -111,7 +113,7 @@ class ScalikeJDBCUserDAOUTest
     val userDAO = makeDAO(session)
     val newUsername = " chaRLIE "
 
-    userDAO.changeUsername(id1, newUsername, TestTimeProviderImpl.now(), changeUsernameFilter)
+    userDAO.changeUsername(id1, newUsername, timeProvider.now(), changeUsernameFilter)
     .failure.exception shouldBe a[RuntimeException]
   }
 
@@ -119,7 +121,7 @@ class ScalikeJDBCUserDAOUTest
     val userDAO = makeDAO(session)
     val newUsername = " bob@bob.com "
 
-    userDAO.changeUsername(id1, newUsername, TestTimeProviderImpl.now(), authenticationUserFilter)
+    userDAO.changeUsername(id1, newUsername, timeProvider.now(), authenticationUserFilter)
     .failure.exception shouldBe a[RuntimeException]
   }
 

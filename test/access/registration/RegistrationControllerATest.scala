@@ -15,7 +15,7 @@ import play.api.test.Helpers._
 import play.api.test._
 import scalikejdbc.NamedAutoSession
 import user.UserFixture
-import util.{PlayConfigParamsProvider, TestUUIDProviderImpl, UUIDProvider}
+import util._
 
 class RegistrationControllerATest
   extends FlatSpec
@@ -29,7 +29,8 @@ class RegistrationControllerATest
     Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
         bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
         bind[UUIDProvider].to[TestUUIDProviderImpl],
-        bind[Emailer].to[TestEmailerImpl]
+        bind[Emailer].to[TestEmailerImpl],
+        bind[TimeProvider].to[TestTimeProviderImpl]
         )
 
   val configParamsProvider =

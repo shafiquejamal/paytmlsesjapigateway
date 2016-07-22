@@ -76,7 +76,7 @@ class RegistrationFacadeATest
 
   private def makeAPI(session: DBSession) = {
     val userDAO = new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-    new RegistrationFacade(userDAO, user, TestTimeProviderImpl, testUUIDProviderImpl)
+    new RegistrationFacade(userDAO, user, new TestTimeProviderImpl(), testUUIDProviderImpl)
   }
 
 }

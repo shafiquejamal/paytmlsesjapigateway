@@ -23,49 +23,37 @@ class UserFacadeATest
   val user = new TestUserImpl()
 
   "changing the username" should "change the users username if the username is available" in { implicit session =>
-    val userDAO = makeDAO(session)
-    val api = new UserFacade(userDAO, TestTimeProviderImpl)
     val newUsername = "alice2"
-    val user = api.changeUsername(id1, ChangeUsernameMessage(newUsername)).success.value
+    val user = makeAPI(session).changeUsername(id1, ChangeUsernameMessage(newUsername)).success.value
 
     user.maybeId shouldEqual alice.maybeId
     user.username shouldEqual newUsername
   }
 
   it should "fail if the username is not available" in { implicit session =>
-    val userDAO = makeDAO(session)
-    val api = new UserFacade(userDAO, TestTimeProviderImpl)
-    val newUsername = "bob@bob.com"
-
-    api.changeUsername(id1, ChangeUsernameMessage(newUsername)).failure.exception shouldBe a[RuntimeException]
+    makeAPI(session).changeUsername(id1, ChangeUsernameMessage("bob@bob.com")).failure.exception shouldBe a[RuntimeException]
   }
 
   "changing the password" should "change the password if the user exists in the DB" in { implicit session =>
-    val userDAO = makeDAO(session)
-    val api = new UserFacade(userDAO, TestTimeProviderImpl)
     val newPassword = "bobs_new_password8"
     val changePasswordMessage = ChangePasswordMessage("passwordBobID3", newPassword)
 
-    val maybeUser = api.changePassword(id3, changePasswordMessage)
+    val maybeUser = makeAPI(session).changePassword(id3, changePasswordMessage)
     maybeUser shouldBe a[Success[_]]
     maybeUser.success.value.maybeId should contain(id3)
     BCrypt.checkpw(hash(newPassword), maybeUser.success.value.hashedPassword)
   }
 
   it should "fail if the user does not exist in the DB" in { implicit session =>
-    val userDAO = makeDAO(session)
-    val api = new UserFacade(userDAO, TestTimeProviderImpl)
-
-    api.changePassword(idNonExistentUser, ChangePasswordMessage("passwordBobID3", "irrelevant")) shouldBe a[Failure[_]]
+    makeAPI(session).changePassword(idNonExistentUser, ChangePasswordMessage("passwordBobID3", "irrelevant")) shouldBe a[Failure[_]]
   }
 
   it should "fail if the given current password is wrong" in { implicit session =>
-    val userDAO = makeDAO(session)
-    val api = new UserFacade(userDAO, TestTimeProviderImpl)
-
-    api.changePassword(id3, ChangePasswordMessage("wrong_password", "irrelevant")) shouldBe a[Failure[_]]
+    makeAPI(session).changePassword(id3, ChangePasswordMessage("wrong_password", "irrelevant")) shouldBe a[Failure[_]]
   }
 
-  private def makeDAO(session:DBSession) =
-    new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
+  private def makeAPI(session:DBSession) = {
+    val userDAO = new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
+    new UserFacade(userDAO, new TestTimeProviderImpl())
+  }
 }

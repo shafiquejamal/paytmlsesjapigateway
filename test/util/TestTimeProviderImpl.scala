@@ -1,8 +1,10 @@
 package util
 
+import com.google.inject.Singleton
 import org.joda.time.DateTime
 
-object TestTimeProviderImpl extends TimeProvider {
+@Singleton
+class TestTimeProviderImpl extends TimeProvider {
 
   private var dateTime: DateTime = new DateTime(2016, 12, 30, 13, 14, 15)
 
@@ -13,4 +15,9 @@ object TestTimeProviderImpl extends TimeProvider {
 
   override def now(): DateTime = dateTime
 
+}
+
+object TestTimeProviderImpl {
+
+  def apply: TestTimeProviderImpl = new TestTimeProviderImpl()
 }

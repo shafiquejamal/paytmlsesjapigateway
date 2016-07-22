@@ -3,13 +3,12 @@ package access.authentication
 import java.util.UUID
 
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
 import scalikejdbc.DBSession
 import user._
 import util.TestTimeProviderImpl
-import org.scalatest.TryValues._
-import util.Password._
 
 import scala.util.Success
 
@@ -22,7 +21,7 @@ class AuthenticationFacadeATest
   with TestDBConnection
   with UserFixture {
 
-  val timeProvider = TestTimeProviderImpl
+  val timeProvider = new TestTimeProviderImpl()
   val passwordResetCode = "some password reset code"
   val newPassword = "some new password"
 

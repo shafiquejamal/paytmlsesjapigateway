@@ -14,7 +14,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import scalikejdbc.NamedAutoSession
-import util.{PlayConfigParamsProvider, TestUUIDProviderImpl, UUIDProvider}
+import util._
 
 class UserControllerATest
   extends FlatSpec
@@ -27,7 +27,8 @@ class UserControllerATest
   override def overrideModules =
     Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
         bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
-        bind[UUIDProvider].to[TestUUIDProviderImpl]
+        bind[UUIDProvider].to[TestUUIDProviderImpl],
+        bind[TimeProvider].to[TestTimeProviderImpl]
        )
 
   val dBConfig =

@@ -5,11 +5,10 @@ import java.util.UUID
 import com.google.inject.{Inject, Singleton}
 import user.UserStatus._
 import user.{User, UserDAO}
-import util.Password.passwordCheck
-import util.TimeProvider
 import util.Password._
+import util.TimeProvider
 
-import scala.util.{Success, Failure, Try}
+import scala.util.{Failure, Try}
 
 @Singleton
 class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends AuthenticationAPI {

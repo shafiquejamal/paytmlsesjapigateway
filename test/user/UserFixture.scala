@@ -9,7 +9,7 @@ import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 trait UserFixture {
 
-  val now = TestTimeProviderImpl.now()
+  val now = new TestTimeProviderImpl().now()
   val later = now.plusDays(1)
   val yesterday = now.minusDays(1)
   val dayBeforeYesterday = now.minusDays(2)
@@ -76,9 +76,9 @@ trait UserFixture {
     sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values
          (${uUIDProvider.randomUUID()}, ${id7}, ${now}, ${id7}, 'diane')""",
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, ${pAlice1}) """,
+         (${uUIDProvider.randomUUID()}, ${id1}, ${now.minusMillis(2)}, ${id1}, ${pAlice1}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${later}, ${id1}, ${pAlice2}) """,
+         (${uUIDProvider.randomUUID()}, ${id1}, ${now.minusMillis(1)}, ${id1}, ${pAlice2}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
          (${uUIDProvider.randomUUID()}, ${id3}, ${now}, ${id3}, ${pBob3}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values

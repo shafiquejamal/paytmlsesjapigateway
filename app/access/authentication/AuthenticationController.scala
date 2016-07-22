@@ -2,6 +2,7 @@ package access.authentication
 
 import access.JWTParamsProvider
 import access.authentication.AuthenticationMessage._
+import access.authentication.ResetPasswordLinkMessage._
 import access.authentication.ResetPasswordMessage._
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
@@ -10,6 +11,8 @@ import play.api.mvc._
 import user.UserAPI
 import user.UserStatus.{Active, Unverified}
 import util.UUIDProvider
+
+import scala.util.Success
 
 class AuthenticationController @Inject() (
     authenticationAPI: AuthenticationAPI,
@@ -34,8 +37,8 @@ class AuthenticationController @Inject() (
 
 
   def sendPasswordResetLink() = Action(parse.json) { request =>
-    request.body.validate[ResetPasswordMessage] match {
-      case success:JsSuccess[ResetPasswordMessage] =>
+    request.body.validate[ResetPasswordLinkMessage] match {
+      case success:JsSuccess[ResetPasswordLinkMessage] =>
         val maybeUser = userAPI.findByEmailLatest(success.get.email)
         maybeUser.fold[Unit](){ user =>
           user.userStatus match {
@@ -48,7 +51,20 @@ class AuthenticationController @Inject() (
         Ok
       case error: JsError =>
        BadRequest
-      }
+    }
+  }
 
+  def resetPassword() = Action(parse.json) { request =>
+    request.body.validate[ResetPasswordMessage] match {
+      case success:JsSuccess[ResetPasswordMessage] =>
+        authenticationAPI.resetPassword(success.get.email, success.get.code, success.get.newPassword) match {
+          case Success(user) =>
+            Ok
+          case _ =>
+            BadRequest
+        }
+      case _ =>
+        BadRequest
+    }
   }
 }

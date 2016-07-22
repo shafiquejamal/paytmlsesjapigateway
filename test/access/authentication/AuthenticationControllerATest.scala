@@ -17,7 +17,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import scalikejdbc.NamedAutoSession
 import user.UserFixture
-import util.{PlayConfigParamsProvider, TestUUIDProviderImpl, UUIDProvider}
+import util.{PlayConfigParamsProvider, TestTimeProviderImpl, TestUUIDProviderImpl, TimeProvider, UUIDProvider}
 
 class AuthenticationControllerATest
   extends FlatSpec
@@ -31,12 +31,14 @@ class AuthenticationControllerATest
     Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
         bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
         bind[UUIDProvider].to[TestUUIDProviderImpl],
-        bind[Emailer].to[TestEmailerImpl]
+        bind[Emailer].to[TestEmailerImpl],
+        bind[TimeProvider].to[TestTimeProviderImpl]
        )
 
   val dBConfig =
     new ScalikeJDBCTestDBConfig(
       new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))))
+  val newPassword = "some new password"
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
@@ -124,6 +126,42 @@ class AuthenticationControllerATest
       .get
     status(result) shouldBe BAD_REQUEST
   }
+
+  "resetting the password" should "succeed if the code matches the email in the db" in new JWTChecker {
+    val message = Json.obj("email" -> "alice@alice.com", "code" -> passwordResetCodeAlice2, "newPassword" -> newPassword)
+    val result =
+      route(app, FakeRequest(POST, "/reset-password")
+      .withJsonBody(message)
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldBe OK
+
+    val authentication =
+      Json.toJson(Map("username" -> " alice ", "email" -> "some-non-existent-email@email.com", "password" -> newPassword))
+
+    checkJWT(authentication)
+  }
+
+  it should "fail if the code does not match the email in the db" in {
+    val message = Json.obj("email" -> "alice@alice.com", "code" -> passwordResetCodeAlice1, "newPassword" -> newPassword)
+    val result =
+      route(app, FakeRequest(POST, "/reset-password")
+      .withJsonBody(message)
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldBe BAD_REQUEST
+  }
+
+  it should "fail if the message is malformed" in {
+    val message = Json.obj("bad" -> "alice@alice.com", "code" -> passwordResetCodeAlice1, "newPassword" -> newPassword)
+    val result =
+      route(app, FakeRequest(POST, "/reset-password")
+      .withJsonBody(message)
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldBe BAD_REQUEST
+  }
+
 
   private def contentFromRequest(postData:JsValue, path:String = "/authenticate"):JsValue =
     contentAsJson(route(app, FakeRequest(POST, path)

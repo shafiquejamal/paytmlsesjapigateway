@@ -11,9 +11,13 @@ import user.UserStatus.Active
 import user.{TestUserImpl, UserFixture}
 import util.TestTimeProviderImpl
 
-class PasswordResetCodeSenderImplUTest extends FlatSpec with ShouldMatchers with MockFactory with UserFixture {
+class PasswordResetCodeSenderImplUTest
+  extends FlatSpec
+  with ShouldMatchers
+  with MockFactory
+  with UserFixture {
 
-  val timeProvider = TestTimeProviderImpl
+  val timeProvider = new TestTimeProviderImpl()
   val configuration =
     new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))
   val authenticationAPI = mock[AuthenticationAPI]
