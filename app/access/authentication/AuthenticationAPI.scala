@@ -13,5 +13,7 @@ trait AuthenticationAPI {
   def user(authenticationMessage: AuthenticationMessage): Option[User]
 
   def storePasswordResetCode(email: String, passwordResetCode: String): Try[User]
+
+  def retrievePasswordResetCode(email: String): Option[PasswordResetCodeAndDate]
   
 }

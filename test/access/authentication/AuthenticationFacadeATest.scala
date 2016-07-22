@@ -26,7 +26,7 @@ class AuthenticationFacadeATest
 
   "retrieving a user by ID" should "retrieve the latest added user with the given parent ID if that user is" +
     " active, otherwise return empty" in { implicit session =>
-    val api = makeAPI(session:DBSession)
+    val api = makeAPI(session)
 
     api.userById(UUID.fromString("00000000-0000-0000-0000-000000000001")).flatMap(_.maybeId) shouldBe alice.maybeId
     api.userById(UUID.fromString("00000000-0000-0000-0000-000000000004")) shouldBe empty
@@ -34,7 +34,7 @@ class AuthenticationFacadeATest
 
   "retrieving a user using username or email" should "retrieve the user with the matching username or email if that user" +
     " is active and the password matches, otherwise return empty" in { implicit session =>
-    val api = makeAPI(session:DBSession)
+    val api = makeAPI(session)
 
     api.user(AuthenticationMessage(Some("aLIce"), Some("wrong@email.com"), "passwordAliceID2"))
       .flatMap(_.maybeId) shouldBe alice.maybeId
@@ -47,13 +47,19 @@ class AuthenticationFacadeATest
   }
 
   "storing a password reset code" should "fail if the user does not exist" in { implicit session =>
-    val api = makeAPI(session:DBSession)
+    val api = makeAPI(session)
     api.storePasswordResetCode("nonexistent@user.com", passwordResetCode).failure.exception shouldBe a[RuntimeException]
   }
 
   "storing a password reset code" should "succeed otherwise" in { implicit session =>
-    val api = makeAPI(session:DBSession)
+    val api = makeAPI(session)
     api.storePasswordResetCode("alice@alice.com", passwordResetCode) shouldBe a[Success[_]]
+  }
+
+  "retrieving a password reset code" should "succeed if one exists" in { implicit session =>
+    val api = makeAPI(session)
+    api.retrievePasswordResetCode("alice@alice.com") should
+      contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
   }
 
   private def makeAPI(session:DBSession):AuthenticationAPI = {

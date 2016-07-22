@@ -29,5 +29,11 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
      )
    )
 
+ override def retrievePasswordResetCode(email: String): Option[PasswordResetCodeAndDate] =
+   userDAO.byEmail(email, (user:User) => true).fold[Option[PasswordResetCodeAndDate]](None)(user =>
+    user.maybeId.fold[Option[PasswordResetCodeAndDate]](None)(id =>
+      userDAO.passwordResetCode(id)
+    )
+  )
 
 }
