@@ -1,5 +1,6 @@
 package user
 
+import access.authentication.PasswordResetCodeAndDate
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
@@ -154,6 +155,16 @@ class ScalikeJDBCUserDAOUTest
     val passwordResetCode = "some password reset code"
     userDAO.addPasswordResetCode(id1, passwordResetCode, now) shouldBe a[Success[_]]
     userDAO.addPasswordResetCode(idNonExistentUser, passwordResetCode, now).failure.exception shouldBe a[RuntimeException]
+  }
+
+  "retrieving an activation code with the created at date" should "fail if there is none" in { implicit session =>
+    val userDAO = makeDAO(session)
+    userDAO.passwordResetCode(id3) shouldBe empty
+  }
+
+  it should "return the latest added one if there are multiple" in { implicit session =>
+    val userDAO = makeDAO(session)
+    userDAO.passwordResetCode(id1) should contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
   }
 
   private def makeDAO(session:DBSession) = 

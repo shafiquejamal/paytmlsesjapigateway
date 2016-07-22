@@ -32,7 +32,8 @@ trait UserFixture {
   val pCharlie5 = hash("passwordCharlieID5")
   val pDiane7 = hash("passwordDianeID7")
 
-  val passwordResetCodeAlice = "some password reset code for alice"
+  val passwordResetCodeAlice1 = "some password reset code for alice earlier"
+  val passwordResetCodeAlice2 = "some password reset code for alice later"
 
   val alice =
     TestUserImpl(Some(id1), "alice", "alice@alice.com", pAlice2, userStatus = Active, Some(now))
@@ -86,7 +87,9 @@ trait UserFixture {
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
          (${uUIDProvider.randomUUID()}, ${id7}, ${yesterday}, ${id7}, ${pDiane7}) """,
     sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday}, ${id7}, ${passwordResetCodeAlice}) """
+         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday}, ${id1}, ${passwordResetCodeAlice1}) """,
+    sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode) values
+         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday.plusMillis(1)}, ${id1}, ${passwordResetCodeAlice2}) """
 
   )
 

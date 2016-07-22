@@ -2,6 +2,7 @@ package user
 
 import java.util.UUID
 
+import access.authentication.PasswordResetCodeAndDate
 import com.google.inject.{Inject, Singleton}
 import db.{DBConfig, ScalikeJDBCSessionProvider}
 import org.joda.time.DateTime
@@ -21,7 +22,12 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
   namedDB.autoClose(false)
   val readOnlySession = scalikeJDBCSessionProvider.provideReadOnlySession
 
-
+  override def passwordResetCode(userId: UUID): Option[PasswordResetCodeAndDate] = {
+    implicit val session = readOnlySession
+    sql"""select passwordresetcode, createdat from xuserpasswordresetcode where xuserid=$userId
+            order by createdat desc limit 1"""
+    .map(PasswordResetCodeAndDate.converter).single.apply()
+  }
 
   override def byUsername(username: String, userFilter: User => Boolean): Option[User] =
     byUsernameWithSession(username, userFilter)(readOnlySession)
