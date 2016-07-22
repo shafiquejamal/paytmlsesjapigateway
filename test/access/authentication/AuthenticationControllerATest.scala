@@ -105,8 +105,28 @@ class AuthenticationControllerATest
     (contentFromRequest(authentication) \ "status").asOpt[String] should contain("invalid data")
   }
 
-  private def contentFromRequest(postData:JsValue):JsValue =
-    contentAsJson(route(app, FakeRequest(POST, "/authenticate")
+  "sending a password reset code" should "succeed" in {
+    val message = Json.obj("email" -> "some@user.com")
+    val result =
+      route(app, FakeRequest(POST, "/send-password-reset-link")
+      .withJsonBody(message)
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldBe OK
+  }
+
+  it should "fail if the message is bad" in {
+    val message = Json.obj("garbage" -> "some@user.com")
+    val result =
+      route(app, FakeRequest(POST, "/send-password-reset-link")
+      .withJsonBody(message)
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldBe BAD_REQUEST
+  }
+
+  private def contentFromRequest(postData:JsValue, path:String = "/authenticate"):JsValue =
+    contentAsJson(route(app, FakeRequest(POST, path)
                .withJsonBody(postData)
                .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
                .get)

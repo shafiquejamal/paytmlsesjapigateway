@@ -8,7 +8,8 @@ export const ResetPassword = React.createClass({
   getInitialState() {
     return {
       error: '',
-      emailError: ''
+      emailError: '',
+      linkSentMessage: ''
     }
   },
   onSendPasswordResetLink(e) {
@@ -18,10 +19,13 @@ export const ResetPassword = React.createClass({
     const email = this.refs.email.value;
     dispatch(sendPasswordResetLink(email)).then(
       (response) => {
-        console.log('success', response);
+        this.setState({
+          linkSentMessage: 'If the email is registered and the user account has been activated, then the password reset link was sent - please check your email.',
+          error: ''
+        });
       },
       (response) => {
-        console.log('failure', response);
+        this.setState({error: 'There was an error sending the password reset link. Please contact the admin to continue.', linkSentMessage: ''});
       }
     );
   },
@@ -40,6 +44,9 @@ export const ResetPassword = React.createClass({
                       <form className="form-horizontal">
                           <div className="text-help">
                             {this.state.error}
+                          </div>
+                          <div className="text-link-sent">
+                            {this.state.linkSentMessage}
                           </div>
                           <div className="form-group">
                               <label htmlFor="email" className="control-label">Your Email</label>

@@ -37,20 +37,17 @@ class AuthenticationController @Inject() (
     request.body.validate[ResetPasswordMessage] match {
       case success:JsSuccess[ResetPasswordMessage] =>
         val maybeUser = userAPI.findByEmailLatest(success.get.email)
-        maybeUser.fold[Result](Ok(Json.obj("status" -> "no user"))){ user =>
+        maybeUser.fold[Unit](){ user =>
           user.userStatus match {
             case Active =>
               passwordResetCodeSender.send(user, request.host)
-              Ok(Json.obj("status" -> "success"))
             case Unverified =>
-              Ok(Json.obj("status" -> "unverified"))
             case _ =>
-              Ok(Json.obj("status" -> "catch rest"))
           }
         }
-        // Ok
+        Ok
       case error: JsError =>
-        Ok(Json.obj("status" -> "invalid data"))
+       BadRequest
       }
 
   }

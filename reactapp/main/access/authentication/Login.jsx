@@ -2,7 +2,7 @@ import React from 'react';
 import * as Redux from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 
-import { REGISTER_LINK, REGISTER_TEXT, RESET_PASSWORD_LINK, RESET_PASSWORD_TEXT } from '../../../routes';
+import { REGISTER_LINK, REGISTER_TEXT, RESET_PASSWORD_LINK, RESET_PASSWORD_TEXT, MANAGE_ACCOUNT_LINK } from '../../../routes';
 import { startLoggingInUser } from './authenticationActionGenerators';
 
 export const Login = React.createClass({
