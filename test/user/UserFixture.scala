@@ -34,6 +34,7 @@ trait UserFixture {
 
   val passwordResetCodeAlice1 = "some password reset code for alice earlier"
   val passwordResetCodeAlice2 = "some password reset code for alice later"
+  val inactivePasswordResetCodeBob1 = "some inactive password reset code for bob"
 
   val alice =
     TestUserImpl(Some(id1), "alice", "alice@alice.com", pAlice2, userStatus = Active, Some(now))
@@ -86,10 +87,12 @@ trait UserFixture {
          (${uUIDProvider.randomUUID()}, ${id4}, ${yesterday}, ${id4}, ${pCharlie5}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
          (${uUIDProvider.randomUUID()}, ${id7}, ${yesterday}, ${id7}, ${pDiane7}) """,
-    sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday}, ${id1}, ${passwordResetCodeAlice1}) """,
-    sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday.plusMillis(1)}, ${id1}, ${passwordResetCodeAlice2}) """
+    sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode, active) values
+         (${uUIDProvider.randomUUID()}, ${id3}, ${yesterday}, ${id3}, ${inactivePasswordResetCodeBob1}, false) """,
+    sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode, active) values
+         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday}, ${id1}, ${passwordResetCodeAlice1}, true) """,
+    sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode, active) values
+         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday.plusMillis(1)}, ${id1}, ${passwordResetCodeAlice2}, true) """
 
   )
 

@@ -30,8 +30,10 @@ trait UserDAO {
 
   def addStatus(id: UUID, userStatus:UserStatus, created:DateTime): Try[User]
 
-  def addPasswordResetCode(userId: UUID, passwordResetCode:String, created:DateTime): Try[User]
+  def addPasswordResetCode(userId: UUID, passwordResetCode:String, created:DateTime, active:Boolean): Try[User]
 
   def passwordResetCode(userId: UUID): Option[PasswordResetCodeAndDate]
+
+  def passwordResetCode(userId: UUID, code:String): Option[PasswordResetCodeAndDate]
 
 }

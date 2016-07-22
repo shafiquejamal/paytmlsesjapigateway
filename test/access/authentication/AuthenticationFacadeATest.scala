@@ -9,6 +9,7 @@ import scalikejdbc.DBSession
 import user._
 import util.TestTimeProviderImpl
 import org.scalatest.TryValues._
+import util.Password._
 
 import scala.util.Success
 
@@ -23,6 +24,7 @@ class AuthenticationFacadeATest
 
   val timeProvider = TestTimeProviderImpl
   val passwordResetCode = "some password reset code"
+  val newPassword = "some new password"
 
   "retrieving a user by ID" should "retrieve the latest added user with the given parent ID if that user is" +
     " active, otherwise return empty" in { implicit session =>
@@ -60,6 +62,34 @@ class AuthenticationFacadeATest
     val api = makeAPI(session)
     api.retrievePasswordResetCode("alice@alice.com") should
       contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
+  }
+
+  "resetting the password" should "succeed if the id and code match what is in the database and the code is valid" in
+  { implicit session =>
+    val api = makeAPI(session)
+
+    timeProvider.setNow(timeProvider.now().plusDays(1))
+
+    api.resetPassword("alice@alice.com", passwordResetCodeAlice2, newPassword) shouldBe a[Success[_]]
+    api.user(AuthenticationMessage(None, Some("alice@alice.com"), newPassword)).map(_.email) should contain("alice@alice.com")
+
+    timeProvider.setNow(timeProvider.now().minusDays(1))
+  }
+
+  it should "fail if the id and code do not match what is in the database" in { implicit session =>
+    val api = makeAPI(session)
+
+    api.resetPassword("alice@alice.com", passwordResetCodeAlice1, newPassword).failure.exception shouldBe
+    a[RuntimeException]
+    api.user(AuthenticationMessage(None, Some("alice@alice.com"), newPassword)) shouldBe empty
+  }
+
+  it should "fail if the email is of a non-existent user" in { implicit session =>
+    val api = makeAPI(session)
+
+    api.resetPassword("non@existent.com", passwordResetCodeAlice1, newPassword).failure.exception shouldBe
+    a[RuntimeException]
+    api.user(AuthenticationMessage(None, Some("non@existent.com"), newPassword)) shouldBe empty
   }
 
   private def makeAPI(session:DBSession):AuthenticationAPI = {

@@ -24,9 +24,14 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
 
   override def passwordResetCode(userId: UUID): Option[PasswordResetCodeAndDate] = {
     implicit val session = readOnlySession
-    sql"""select passwordresetcode, createdat from xuserpasswordresetcode where xuserid=$userId
+    sql"""select passwordresetcode, createdat, active from xuserpasswordresetcode where xuserid=$userId
             order by createdat desc limit 1"""
-    .map(PasswordResetCodeAndDate.converter).single.apply()
+      .map(rs => (PasswordResetCodeAndDate.converter(rs), rs.boolean("active"))).single.apply()
+      .filter(_._2).map(_._1)
+  }
+
+  override def passwordResetCode(userId: UUID, code:String): Option[PasswordResetCodeAndDate] = {
+    passwordResetCode(userId: UUID).filter(_.code == code)
   }
 
   override def byUsername(username: String, userFilter: User => Boolean): Option[User] =
@@ -135,15 +140,15 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
 
   }
 
-  override def addPasswordResetCode(userId: UUID, passwordResetCode:String, created:DateTime): Try[User] = {
+  override def addPasswordResetCode(userId: UUID, passwordResetCode:String, created:DateTime, active:Boolean): Try[User] = {
     namedDB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
       val maybeUser = byWithSession(userId, (user:User) => true)
 
       maybeUser.fold[Try[User]](Failure(new RuntimeException("User does not exist in DB."))){ user =>
-        sql"""insert into xuserpasswordresetcode (id, xuserid, authorid, createdat, passwordresetcode) values
-          (${uUIDProvider.randomUUID()}, ${userId}, ${userId}, ${created}, ${passwordResetCode})""".update.apply()
+        sql"""insert into xuserpasswordresetcode (id, xuserid, authorid, createdat, passwordresetcode, active) values
+          (${uUIDProvider.randomUUID()}, ${userId}, ${userId}, ${created}, ${passwordResetCode}, ${active})""".update.apply()
         confirmUpdate(userId)
                                                                                             }
     }

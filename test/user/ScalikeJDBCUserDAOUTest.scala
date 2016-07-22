@@ -153,18 +153,45 @@ class ScalikeJDBCUserDAOUTest
   "adding a password reset code" should "succeed if the user exists" in { implicit session =>
     val userDAO = makeDAO(session)
     val passwordResetCode = "some password reset code"
-    userDAO.addPasswordResetCode(id1, passwordResetCode, now) shouldBe a[Success[_]]
-    userDAO.addPasswordResetCode(idNonExistentUser, passwordResetCode, now).failure.exception shouldBe a[RuntimeException]
+    userDAO.addPasswordResetCode(id1, passwordResetCode, now, active = true) shouldBe a[Success[_]]
+    userDAO.addPasswordResetCode(idNonExistentUser, passwordResetCode, now, active = true)
+    .failure.exception shouldBe a[RuntimeException]
   }
 
-  "retrieving an activation code with the created at date" should "fail if there is none" in { implicit session =>
+  "retrieving an activation code with the created at date" should "return none if there is none" in { implicit session =>
+    val userDAO = makeDAO(session)
+    userDAO.passwordResetCode(id4) shouldBe empty
+  }
+
+  "retrieving an activation code with the created at date" should "return none if the lastest one is inactive" in
+  { implicit session =>
     val userDAO = makeDAO(session)
     userDAO.passwordResetCode(id3) shouldBe empty
   }
 
   it should "return the latest added one if there are multiple" in { implicit session =>
     val userDAO = makeDAO(session)
+
     userDAO.passwordResetCode(id1) should contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
+
+    userDAO.addPasswordResetCode(id1, "new code", now, active = false)
+
+    userDAO.passwordResetCode(id1) shouldBe empty
+  }
+
+  "retrieving an activation code by userid and email" should "return empty if the activation code does not match the" +
+  "code in the database for that user" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.passwordResetCode(id1) should contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
+    userDAO.passwordResetCode(id1, "wrong code") shouldBe empty
+  }
+
+  it should "return the code and date if the code matches" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.passwordResetCode(id1, passwordResetCodeAlice2) should
+    contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
   }
 
   private def makeDAO(session:DBSession) = 

@@ -56,7 +56,8 @@ create table xuserpasswordresetcode (
   authorid uuid not null REFERENCES xuser (id),
   createdat timestamp not null,
   xuserid uuid not null REFERENCES xuser (id),
-  passwordresetcode varchar(100) not null
+  passwordresetcode varchar(100) not null,
+  active boolean not null
 );
 create index on xuserpasswordresetcode (lower(passwordresetcode));
 create index on xuserpasswordresetcode (createdat);

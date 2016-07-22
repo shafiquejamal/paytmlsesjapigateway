@@ -7,8 +7,9 @@ import user.UserStatus._
 import user.{User, UserDAO}
 import util.Password.passwordCheck
 import util.TimeProvider
+import util.Password._
 
-import scala.util.{Failure, Try}
+import scala.util.{Success, Failure, Try}
 
 @Singleton
 class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends AuthenticationAPI {
@@ -25,7 +26,7 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
  override def storePasswordResetCode(email:String, passwordResetCode:String): Try[User] =
    userDAO.byEmail(email, (user:User) => true).fold[Try[User]](Failure(new RuntimeException("User does not exist")))(user =>
      user.maybeId.fold[Try[User]](Failure(new RuntimeException("User does not exist")))(id =>
-      userDAO.addPasswordResetCode(id, passwordResetCode, timeProvider.now())
+      userDAO.addPasswordResetCode(id, passwordResetCode, timeProvider.now(), active = true)
      )
    )
 
@@ -35,5 +36,16 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
       userDAO.passwordResetCode(id)
     )
   )
+
+ override def resetPassword(email:String, code:String, newPassword:String): Try[User] =
+   userDAO.byEmail(email, authenticationUserFilter)
+   .fold[Try[User]](Failure(new RuntimeException("User does not exist"))){ retrievedUser =>
+     retrievedUser.maybeId.fold[Try[User]](Failure(new RuntimeException("User does not exist"))){userId =>
+       userDAO.passwordResetCode(userId, code)
+       .fold[Try[User]](Failure(new RuntimeException("Code does not exist for this user"))){ _ =>
+         userDAO.changePassword(userId, hash(newPassword), timeProvider.now())
+       }
+     }
+   }
 
 }
