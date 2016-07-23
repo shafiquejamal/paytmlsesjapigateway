@@ -82,48 +82,54 @@ class RegistrationControllerATest
   }
 
   "Activating a new user" should "fail if the email does not represent a user in the db" in {
-    val result = route(app, FakeRequest(GET, "/activate?email=non%40matching.com&code=non-matching-code")
-      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+    val result = route(app, FakeRequest(POST, "/activate")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
+      .withJsonBody(Json.obj("email" -> "non@matching.com", "code" -> "non-matching-code")))
       .get
     status(result) shouldEqual BAD_REQUEST
   }
 
   it should "fail if the email and code combination is not valid" in {
     val wrongCode = ActivationCodeGenerator.generate(id7.toString, md5key)
-    val result = route(app, FakeRequest(GET, s"/activate?email=charlie%40charlie.com&code=$wrongCode")
-      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+    val result = route(app, FakeRequest(POST, s"/activate")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
+      .withJsonBody(Json.obj("email" -> "charlie@charlie.com", "code" -> wrongCode)))
       .get
     status(result) shouldEqual BAD_REQUEST
   }
 
   it should "fail if the user is blocked" in {
     val code = ActivationCodeGenerator.generate(id7.toString, md5key)
-    val result = route(app, FakeRequest(GET, s"/activate?email=diane%40diane.com&code=$code")
-      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+    val result = route(app, FakeRequest(POST, s"/activate")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
+      .withJsonBody(Json.obj("email" -> "diane@diane.com", "code" -> code)))
       .get
     (contentAsJson(result) \ "error").asOpt[String] should contain("this user is blocked")
   }
 
   it should "succeed if the user is admin" in {
-    val wrongCode = ActivationCodeGenerator.generate(id3.toString, md5key)
-    val result = route(app, FakeRequest(GET, s"/activate?email=bob%40bob.com&code=$wrongCode")
-      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+    val code = ActivationCodeGenerator.generate(id3.toString, md5key)
+    val result = route(app, FakeRequest(POST, s"/activate")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
+      .withJsonBody(Json.obj("email" -> "bob@bob.com", "code" -> code)))
       .get
     (contentAsJson(result) \ "error").asOpt[String] should contain("this user is already active")
   }
 
   it should "succeed if the user is active" in {
-    val wrongCode = ActivationCodeGenerator.generate(id1.toString, md5key)
-    val result = route(app, FakeRequest(GET, s"/activate?email=alice%40alice.com&code=$wrongCode")
-      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+    val code = ActivationCodeGenerator.generate(id1.toString, md5key)
+    val result = route(app, FakeRequest(POST, s"/activate")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
+      .withJsonBody(Json.obj("email" -> "alice@alice.com", "code" -> code)))
       .get
     (contentAsJson(result) \ "error").asOpt[String] should contain("this user is already active")
   }
 
   it should "succeed if the user is unverified and the code matches the email" in {
     val code = ActivationCodeGenerator.generate(id4.toString, md5key)
-    val result = route(app, FakeRequest(GET, s"/activate?email=charlie%40charlie.com&code=$code")
-      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+    val result = route(app, FakeRequest(POST, s"/activate?email=charlie%40charlie.com&code=$code")
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
+      .withJsonBody(Json.obj("email" -> "charlie@charlie.com", "code" -> code)))
       .get
     (contentAsJson(result) \ "status").asOpt[String] should contain("success")
   }

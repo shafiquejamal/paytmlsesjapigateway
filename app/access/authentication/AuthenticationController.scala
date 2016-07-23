@@ -2,7 +2,7 @@ package access.authentication
 
 import access.JWTParamsProvider
 import access.authentication.AuthenticationMessage._
-import access.authentication.ResetPasswordLinkMessage._
+import access.authentication.EmailMessage._
 import access.authentication.ResetPasswordMessage._
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
@@ -37,8 +37,8 @@ class AuthenticationController @Inject() (
 
 
   def sendPasswordResetLink() = Action(parse.json) { request =>
-    request.body.validate[ResetPasswordLinkMessage] match {
-      case success:JsSuccess[ResetPasswordLinkMessage] =>
+    request.body.validate[EmailMessage] match {
+      case success:JsSuccess[EmailMessage] =>
         val maybeUser = userAPI.findByEmailLatest(success.get.email)
         maybeUser.fold[Unit](){ user =>
           user.userStatus match {

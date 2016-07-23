@@ -4,7 +4,7 @@ import org.apache.commons.validator.routines.EmailValidator
 import play.api.libs.json.Reads._
 import play.api.libs.json.{JsPath, Reads}
 
-case class ResetPasswordLinkMessage(email: String) {
+case class EmailMessage(email: String) {
 
   private val emailValidator = EmailValidator.getInstance()
 
@@ -13,9 +13,9 @@ case class ResetPasswordLinkMessage(email: String) {
 
 }
 
-object ResetPasswordLinkMessage {
+object EmailMessage {
 
-  implicit val ResetPasswordMessageReads: Reads[ResetPasswordLinkMessage] =
-    (JsPath \ "email").read[String](email).map(ResetPasswordLinkMessage.apply)
+  implicit val EmailMessageReads: Reads[EmailMessage] =
+    (JsPath \ "email").read[String](email).map(EmailMessage.apply)
 
 }

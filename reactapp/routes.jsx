@@ -41,14 +41,14 @@ const requireLoggedIn = (nextState, replace, next) => {
     replace(LOGIN_LINK);
   }
   next();
-}
+};
 
 const requireLoggedOut = (nextState, replace, next) => {
   if (localStorage.getItem('token')) {
     replace(LOGOUT_LINK);
   }
   next();
-}
+};
 
 export default (
 <Route path="/" component={Template}>

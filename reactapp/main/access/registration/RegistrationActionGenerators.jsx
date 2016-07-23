@@ -34,6 +34,6 @@ export const registerUser = (email, username, password) => {
 
 export const startActivatingUser = (email, code) => {
   return function(dispatch, getState) {
-    return axios.get(`${ROOT_URL}${ACTIVATE_ENDPOINT}?email=${email}&code=${code}`);
+    return axios.post(`${ROOT_URL}${ACTIVATE_ENDPOINT}`, {email, code});
   }
 }

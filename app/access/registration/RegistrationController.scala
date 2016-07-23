@@ -1,7 +1,7 @@
 package access.registration
 
 import access.JWTParamsProvider
-import access.authentication.ResetPasswordLinkMessage
+import access.authentication.EmailMessage
 import access.registration.RegistrationMessage._
 import com.google.inject.Inject
 import play.api.Configuration
@@ -41,20 +41,27 @@ class RegistrationController @Inject() (
     Ok(Json.obj("status" -> registrationAPI.isUsernameIsAvailable(username)))
   }
 
-  def activate(email:String, code:String) = Action {
-    userAPI.findByEmailLatest(email).fold[Result](BadRequest) { user =>
-      val userId = user.maybeId.map(_.toString).getOrElse("")
-      if (ActivationCodeGenerator.checkCode(userId, code, activationCodeKey)) {
-        activateUser(user, code)
-      } else {
-        BadRequest
+  def activate() = Action(parse.json) { request =>
+    request.body.validate[ActivateAccountMessage] match {
+      case success:JsSuccess[ActivateAccountMessage] =>
+        val (email, code) = (success.get.email, success.get.code)
+        userAPI.findByEmailLatest(email).fold[Result](BadRequest) { user =>
+          val userId = user.maybeId.map(_.toString).getOrElse("")
+          if (ActivationCodeGenerator.checkCode(userId, code, activationCodeKey)) {
+            activateUser(user, code)
+          } else {
+            BadRequest
+          }
       }
+      case error:JsError =>
+        BadRequest
     }
+
   }
 
   def resendActivationLink() = Action(parse.json) { request =>
-    request.body.validate[ResetPasswordLinkMessage] match {
-      case success:JsSuccess[ResetPasswordLinkMessage] =>
+    request.body.validate[EmailMessage] match {
+      case success:JsSuccess[EmailMessage] =>
         userAPI
         .findUnverifiedUser(success.get.email)
         .foreach( user => accountActivationLinkSender.sendActivationCode(user, request.host, activationCodeKey))
