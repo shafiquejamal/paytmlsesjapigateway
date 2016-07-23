@@ -10,7 +10,7 @@ import scalikejdbc.DBSession
 import user._
 import util.TestTimeProviderImpl
 
-import scala.util.Success
+import scala.util.{Failure, Success}
 
 class AuthenticationFacadeATest
   extends FlatSpec
@@ -63,7 +63,8 @@ class AuthenticationFacadeATest
       contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
   }
 
-  "resetting the password" should "succeed if the id and code match what is in the database and the code is valid" in
+  "resetting the password" should "succeed if the id and code match what is in the database and the code is valid, " +
+  "and it should invalidate the code" in
   { implicit session =>
     val api = makeAPI(session)
 
@@ -71,6 +72,8 @@ class AuthenticationFacadeATest
 
     api.resetPassword("alice@alice.com", passwordResetCodeAlice2, newPassword) shouldBe a[Success[_]]
     api.user(AuthenticationMessage(None, Some("alice@alice.com"), newPassword)).map(_.email) should contain("alice@alice.com")
+    api.resetPassword("alice@alice.com", passwordResetCodeAlice2, "another new password")
+    .failure.exception shouldBe a[RuntimeException]
 
     timeProvider.setNow(timeProvider.now().minusDays(1))
   }

@@ -42,6 +42,7 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
      retrievedUser.maybeId.fold[Try[User]](Failure(new RuntimeException("User does not exist"))){userId =>
        userDAO.passwordResetCode(userId, code)
        .fold[Try[User]](Failure(new RuntimeException("Code does not exist for this user"))){ _ =>
+         userDAO.addPasswordResetCode(userId, code, timeProvider.now(), active = false)
          userDAO.changePassword(userId, hash(newPassword), timeProvider.now())
        }
      }

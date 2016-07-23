@@ -69,3 +69,9 @@ http://ticofab.io/react-js-tutorial-with-play_scala_webjars/
 
 Testing the controllers:
 http://www.michaelpollmeier.com/2015/09/25/playframework-guice-di
+
+Twitter Bootstrap:
+http://bootsnipp.com/snippets/featured/register-page
+
+React JS:
+Udemy.com courses by Adrew Mead and Stephen Grider

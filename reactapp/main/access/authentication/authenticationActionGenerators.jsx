@@ -3,14 +3,22 @@ import validator from 'validator';
 
 import { ROOT_URL } from 'configuration';
 
-export const LOGIN_ENDPOINT = '/authenticate';
-export const PASSWORD_RESET_ENDPOINT = '/send-password-reset-link';
+const LOGIN_ENDPOINT = '/authenticate';
+const REQUEST_PASSWORD_RESET_ENDPOINT = '/send-password-reset-link';
+const PASSWORD_RESET_ENDPOINT = '/reset-password';
 export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
 
+export const startResettingPassword = function(email, code, newPassword) {
+  return (dispatch, getState) => {
+    return axios.post(`${ROOT_URL}${PASSWORD_RESET_ENDPOINT}`,
+      {email, code, newPassword});
+  }
+}
+
 export const sendPasswordResetLink = function(email) {
   return (dispatch, getState) => {
-    return axios.post(`${ROOT_URL}${PASSWORD_RESET_ENDPOINT}`, {email});
+    return axios.post(`${ROOT_URL}${REQUEST_PASSWORD_RESET_ENDPOINT}`, {email});
   }
 };
 

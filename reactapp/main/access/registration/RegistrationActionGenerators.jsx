@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { ROOT_URL } from '../../configuration';
 
-export const USERNAME_CHECK_ENDPOINT = '/username';
-export const EMAIL_CHECK_ENDPOINT = '/email';
-export const REGISTER_ENDPOINT = '/register'
-export const ACTIVATE_ENDPOINT = '/activate'
+const USERNAME_CHECK_ENDPOINT = '/username';
+const EMAIL_CHECK_ENDPOINT = '/email';
+const REGISTER_ENDPOINT = '/register'
+const ACTIVATE_ENDPOINT = '/activate'
 
 export const checkAvailable = (endpoint, value) => {
   return function(dispatch, getState) {

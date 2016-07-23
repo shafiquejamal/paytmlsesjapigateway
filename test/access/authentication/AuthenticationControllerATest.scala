@@ -127,20 +127,40 @@ class AuthenticationControllerATest
     status(result) shouldBe BAD_REQUEST
   }
 
-  "resetting the password" should "succeed if the code matches the email in the db" in new JWTChecker {
+  "resetting the password" should "succeed if the code matches the email in the db, and fail if the code is used a " +
+  "second time" in new JWTChecker {
     val message = Json.obj("email" -> "alice@alice.com", "code" -> passwordResetCodeAlice2, "newPassword" -> newPassword)
     val result =
       route(app, FakeRequest(POST, "/reset-password")
       .withJsonBody(message)
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
       .get
+
     status(result) shouldBe OK
 
     val authentication =
       Json.toJson(Map("username" -> " alice ", "email" -> "some-non-existent-email@email.com", "password" -> newPassword))
 
     checkJWT(authentication)
+
+    val anotherNewPassword = "another new password"
+    val messageSecondUse =
+      Json.obj("email" -> "alice@alice.com", "code" -> passwordResetCodeAlice2, "newPassword" -> anotherNewPassword)
+    val resultSecondUse =
+      route(app, FakeRequest(POST, "/reset-password")
+      .withJsonBody(messageSecondUse)
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+
+    status(resultSecondUse) shouldBe BAD_REQUEST
+
+    val authenticationSecondUse =
+      Json.toJson(Map("username" -> " alice ", "email" -> "some-non-existent-email@email.com",
+        "password" -> anotherNewPassword))
+
+    (contentFromRequest(authenticationSecondUse) \ "token").asOpt[String] shouldBe empty
   }
+
 
   it should "fail if the code does not match the email in the db" in {
     val message = Json.obj("email" -> "alice@alice.com", "code" -> passwordResetCodeAlice1, "newPassword" -> newPassword)
@@ -161,6 +181,8 @@ class AuthenticationControllerATest
       .get
     status(result) shouldBe BAD_REQUEST
   }
+
+
 
 
   private def contentFromRequest(postData:JsValue, path:String = "/authenticate"):JsValue =

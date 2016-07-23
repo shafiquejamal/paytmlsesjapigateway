@@ -1,77 +1,110 @@
-import React from 'react';
+import React, { Component } from 'react';
 import * as Redux from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 
-import { sendPasswordResetLink } from './authenticationActionGenerators';
+import { startResettingPassword } from './authenticationActionGenerators';
 
 export const ResetPassword = React.createClass({
-  getInitialState() {
-    return {
-      error: '',
-      emailError: '',
-      linkSentMessage: ''
-    }
-  },
-  onSendPasswordResetLink(e) {
-    e.preventDefault();
-    const { dispatch } = this.props;
-    console.log(this.state);
-    const email = this.refs.email.value;
-    dispatch(sendPasswordResetLink(email)).then(
-      (response) => {
+    getInitialState: function() {
+      return {
+        resetPasswordError: '',
+        newpasswordError: '',
+        confirmError: ''
+      };
+    },
+    checkPassword: function(e) {
+      const inputValue = e.target.value;
+      const checkVariable = e.target.getAttribute('data-check').toLowerCase();
+      const checkVariableTitleCase = checkVariable.charAt(0).toUpperCase() + checkVariable.slice(1)
+      const errorVariable = checkVariable + 'Error';
+      // debugger;
+      this.setState({
+          [errorVariable]: inputValue === '' ? 'This field is required' : ''
+      });
+      if ((checkVariable === 'confirm' || checkVariable === 'newpassword' ) && this.refs.newpassword.value !== this.refs.confirm.value) {
         this.setState({
-          linkSentMessage: 'If the email is registered and the user account has been activated, then the password reset link was sent - please check your email.',
-          error: ''
+          confirmError: 'Passwords do not match'
         });
-      },
-      (response) => {
-        this.setState({error: 'There was an error sending the password reset link. Please contact the admin to continue.', linkSentMessage: ''});
+      } else {
+        this.setState({
+          confirmError: ''
+        });
       }
-    );
-  },
-  render() {
-    return (
-      <div className="container">
-          <div className="row main">
-              <div className="col-md-4 col-md-offset-4">
-                  <div className="panel-heading">
-                      <div className="panel-title text-center">
-                          <h1 className="title">Send Password Reset Link</h1>
-                          <hr />
-                      </div>
-                  </div>
-                  <div className="main-login main-center">
-                      <form className="form-horizontal">
-                          <div className="text-help">
-                            {this.state.error}
-                          </div>
-                          <div className="text-link-sent">
-                            {this.state.linkSentMessage}
-                          </div>
-                          <div className="form-group">
-                              <label htmlFor="email" className="control-label">Your Email</label>
-                              <div className="cols-sm-10">
-                                  <div className={`input-group`}>
-                                      <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
-                                      <input type="text" className="form-control" name="email" id="email" ref="email"  placeholder="Enter your email address" />
-                                  </div>
-                                  <div className="text-help">
-                                    {this.state.emailError}
-                                  </div>
+    },
+    onResetPassword() {
+      const {newpasswordError, confirmError} = this.state;
+      const { dispatch } = this.props;
+      const { email, code } = this.props.location.query;
+      if (newpasswordError === '' && confirmError === '' ) {
+        dispatch(startResettingPassword(email, code, this.refs.newpassword.value)).then(
+          (response) => {
+            console.log('success', response);
+            this.setState({
+              resetPasswordError: 'The password reset was successful. Please log in with your new password.'
+            });
+          },
+          (response) => {
+            console.log('failure', response);
+            this.setState({
+              resetPasswordError: 'Sorry, your password could not be reset. Are you sure you activated your account? If so, please contact the admin. Maybe the link has expired? If so, request a new link.'
+            });
+          });
+      }
+    },
+    render() {
+        return (
+            <div className="container">
+                <div className="row main">
+                    <div className="col-md-4 col-md-offset-4">
+                        <div className="panel-heading">
+                            <div className="panel-title text-center">
+                                <h1 className="title">Reset Password</h1>
+                                <hr />
+                            </div>
+                        </div>
+                        <div className="main-login main-center">
+                            <form className="form-horizontal">
+                              <div className="text-help">
+                                {this.state.resetPasswordError}
                               </div>
-                          </div>
+                                <div className="form-group">
+                                    <label htmlFor="newpassword" className="control-label">New Password</label>
+                                    <div className="cols-sm-10">
+                                        <div className={`input-group ${this.state.newpasswordError !== '' ? 'has-danger' : ''}`}>
+                                            <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                            <input type="password" className="form-control" name="newpassword" id="newpassword" ref="newpassword" placeholder="Enter your new password" data-check="newpassword" ref="newpassword" onBlur={this.checkPassword} onChange={this.checkPassword} />
+                                        </div>
+                                        <div className="text-help">
+                                          {this.state.newpasswordError}
+                                        </div>
+                                    </div>
+                                </div>
 
-                          <div className="form-group ">
-                              <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onSendPasswordResetLink}>Send Password Reset Link</button>
-                          </div>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-    );
+                                <div className="form-group">
+                                    <label htmlFor="confirm" className="control-label">Confirm New Password</label>
+                                    <div className="cols-sm-10">
+                                        <div className={`input-group ${this.state.confirmError !== ''  ? 'has-danger' : ''}`}>
+                                            <span className="input-group-addon"><i className="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                            <input type="password" className="form-control" name="confirm" id="confirm"  placeholder="Confirm your new password" data-check="confirm" ref="confirm" onBlur={this.checkPassword} onChange={this.checkPassword} />
+                                        </div>
+                                        <div className="text-help">
+                                          {this.state.confirmError}
+                                        </div>
+                                    </div>
+                                </div>
 
-  }
+                                <div className="form-group ">
+                                    <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onResetPassword}>Reset Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 });
 
-export default Redux.connect((state) => { return state; })(ResetPassword);
+export default Redux.connect((state) => {
+  return state;
+}, )(ResetPassword);
