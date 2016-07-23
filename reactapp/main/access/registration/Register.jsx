@@ -36,23 +36,27 @@ export const Register = React.createClass({
       const stateVariable = "is" + checkVariableTitleCase + "IsAvailable";
 
       if (inputValue !== '') {
-        dispatch(checkAvailable('/' + checkVariable, inputValue)).then(
-          function (response) {
-            var errorMessage = inputValue === '' ? checkVariableTitleCase + ' is required' : ( response ? '' : checkVariableTitleCase + ' is already registered' )
-            that.setState({
-              [stateVariable]: response,
-              [errorVariable]: errorMessage
-            });
-          },
-          function (error) {
-            console.log('error', error);
-          }
-        );
+        if ((checkVariable == 'email' && validator.isEmail(inputValue)) || checkVariable == 'username') {
+          dispatch(checkAvailable('/' + checkVariable, inputValue)).then(
+            function (response) {
+              var errorMessage = inputValue === '' ? checkVariableTitleCase + ' is required' : ( response ? '' : checkVariableTitleCase + ' is already registered' )
+              that.setState({
+                [stateVariable]: response,
+                [errorVariable]: errorMessage
+              });
+            },
+            function (error) {
+              console.log('error', error);
+            }
+          );
+        }
       } else {
         this.setState({
           [errorVariable]: checkVariableTitleCase + ' is required'
         });
       }
+
+
     },
     checkPassword: function(e) {
       const inputValue = e.target.value;

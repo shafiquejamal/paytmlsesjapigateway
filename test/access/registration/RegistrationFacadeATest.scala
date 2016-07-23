@@ -56,7 +56,8 @@ class RegistrationFacadeATest
     api.isUsernameIsAvailable("zoe") shouldBe true
   }
 
-  "checking for email" should "return true only if there is no active user with the given email" in { implicit session =>
+  "checking for email" should "return true only if there is no active user with the given email" +
+  "or the email is not valid" in { implicit session =>
     val api = makeAPI(session)
     api.isEmailIsAvailable("charlie@charlie.com") shouldBe false
     api.isEmailIsAvailable("alIcE@alice.com") shouldBe false

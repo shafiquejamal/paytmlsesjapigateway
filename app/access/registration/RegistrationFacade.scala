@@ -3,6 +3,7 @@ package access.registration
 import java.util.UUID
 
 import com.google.inject.{Inject, Singleton}
+import org.apache.commons.validator.routines.EmailValidator
 import user.UserStatus.{Active, _}
 import user.{User, UserDAO, UserStatus}
 import util.Password.hash
@@ -30,8 +31,9 @@ class RegistrationFacade @Inject() (
   override def isUsernameIsAvailable(username:String): Boolean =
     userDAO.byUsername(username, usernameAndEmailIsNotAvailableFilter).isEmpty
 
-  override def isEmailIsAvailable(email:String): Boolean =
-    userDAO.byEmail(email, usernameAndEmailIsNotAvailableFilter).isEmpty
+  override def isEmailIsAvailable(email:String): Boolean = {
+    !EmailValidator.getInstance().isValid(email) || userDAO.byEmail(email, usernameAndEmailIsNotAvailableFilter).isEmpty
+  }
 
   override def activate(userId:UUID): Try[User] = userDAO.addStatus(userId, Active, timeProvider.now())
 
