@@ -3,10 +3,9 @@ import * as Redux from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 import validator from 'validator';
 
-import { LOGIN_LINK, LOGIN_TEXT, REGISTRATION_SUCCESS_LINK } from '../../../routes';
+import { LOGIN_LINK, LOGIN_TEXT, REGISTRATION_SUCCESS_LINK, RESEND_ACTIVATION_LINK, RESEND_ACTIVATION_TEXT } from '../../../routes';
 import { registerUser, checkAvailable } from './RegistrationActionGenerators';
 
-// http://bootsnipp.com/snippets/featured/register-page
 export const Register = React.createClass({
     getInitialState: function() {
       return {
@@ -171,7 +170,7 @@ export const Register = React.createClass({
                                     <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onRegister}>Register</button>
                                 </div>
                                 <div className="login-register">
-                                    <Link to={LOGIN_LINK}>{LOGIN_TEXT}</Link>
+                                    <Link to={LOGIN_LINK}>{LOGIN_TEXT}</Link> <Link to={RESEND_ACTIVATION_LINK}>{RESEND_ACTIVATION_TEXT}</Link>
                                 </div>
                             </form>
                         </div>

@@ -32,4 +32,7 @@ class UserFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends
 
   override def findByEmailLatest(email:String): Option[User] = userDAO.byEmail(email, (user:User) => true)
 
+  override def findUnverifiedUser(email:String): Option[User] =
+    userDAO.byEmail(email, (user:User) => user.userStatus == Unverified)
+
 }

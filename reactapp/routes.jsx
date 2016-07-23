@@ -4,6 +4,7 @@ import { Route, IndexRoute } from 'react-router';
 import Template from './main/Template';
 import LoginOrRegister from './main/LoginOrRegister';
 import Register from './main/access/registration/Register';
+import ResendActivation from './main/access/registration/ResendActivation';
 import RegistrationSuccess from './main/access/registration/RegistrationSuccess';
 import Activate from './main/access/registration/Activate';
 import ActivationFailed from './main/access/registration/ActivationFailed';
@@ -32,6 +33,8 @@ export const ACTIVATION_FAILED_LINK = "/activation-failed";
 export const REQUEST_RESET_PASSWORD_LINK = "/request-reset-password";
 export const REQUEST_RESET_PASSWORD_TEXT = "Forgot your password?";
 export const RESET_PASSWORD_LINK = "/reset-password";
+export const RESEND_ACTIVATION_LINK = "/resend-activation-link";
+export const RESEND_ACTIVATION_TEXT = "Re-send activation link";
 
 const requireLoggedIn = (nextState, replace, next) => {
   if (!localStorage.getItem('token')) {
@@ -61,5 +64,6 @@ export default (
     <Route path={ACTIVATION_FAILED_LINK} component={ActivationFailed} />
     <Route path={REQUEST_RESET_PASSWORD_LINK} component={RequestResetPassword} />
     <Route path={RESET_PASSWORD_LINK} component={ResetPassword} />
+    <Route path={RESEND_ACTIVATION_LINK} component={ResendActivation} />
 </Route>
 );

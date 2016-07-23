@@ -14,6 +14,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 GET     /webjars/*file              controllers.WebJarAssets.at(file)
 
 POST    /register                   access.registration.RegistrationController.register
+POST    /resend-activation-link     access.registration.RegistrationController.resendActivationLink
 GET     /activate                   access.registration.RegistrationController.activate(email:String, code:String)
 GET     /username/:username         access.registration.RegistrationController.usernameCheck(username:String)
 GET     /email/:email               access.registration.RegistrationController.emailCheck(email:String)

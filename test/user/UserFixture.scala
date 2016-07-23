@@ -49,6 +49,7 @@ trait UserFixture {
     sql"insert into xuser  (id, authorid, createdat) values (${id4}, ${id4}, ${now})",
     sql"insert into xuser  (id, authorid, createdat) values (${id5}, ${id5}, ${now})",
     sql"insert into xuser  (id, authorid, createdat) values (${id7}, ${id7}, ${now})",
+
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
          (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, ${Active.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
@@ -59,6 +60,7 @@ trait UserFixture {
          (${uUIDProvider.randomUUID()}, ${id4}, ${yesterday}, ${id4}, ${Unverified.value})""",
     sql"""insert into xuserstatus  (id, authorid, createdat, xuserid, status) values
          (${uUIDProvider.randomUUID()}, ${id7}, ${yesterday}, ${id7}, ${Blocked.value})""",
+
     sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values
          (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, 'alice@alice.com')""",
     sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values
@@ -67,6 +69,7 @@ trait UserFixture {
          (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, 'charlie@charlie.com')""",
     sql"""insert into xuseremail  (id, authorid, createdat, xuserid, email) values
          (${uUIDProvider.randomUUID()}, ${id7}, ${now}, ${id7}, 'diane@diane.com')""",
+
     sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values
          (${uUIDProvider.randomUUID()}, ${id1}, ${now}, ${id1}, 'alice')""",
     sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values
@@ -75,6 +78,7 @@ trait UserFixture {
          (${uUIDProvider.randomUUID()}, ${id4}, ${now}, ${id4}, 'charlie')""",
     sql"""insert into xuserusername  (id, authorid, createdat, xuserid, username) values
          (${uUIDProvider.randomUUID()}, ${id7}, ${now}, ${id7}, 'diane')""",
+
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
          (${uUIDProvider.randomUUID()}, ${id1}, ${now.minusMillis(2)}, ${id1}, ${pAlice1}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
@@ -87,6 +91,7 @@ trait UserFixture {
          (${uUIDProvider.randomUUID()}, ${id4}, ${yesterday}, ${id4}, ${pCharlie5}) """,
     sql"""insert into xuserpassword  (id, authorid, createdat, xuserid, password) values
          (${uUIDProvider.randomUUID()}, ${id7}, ${yesterday}, ${id7}, ${pDiane7}) """,
+
     sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode, active) values
          (${uUIDProvider.randomUUID()}, ${id3}, ${yesterday}, ${id3}, ${inactivePasswordResetCodeBob1}, false) """,
     sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode, active) values

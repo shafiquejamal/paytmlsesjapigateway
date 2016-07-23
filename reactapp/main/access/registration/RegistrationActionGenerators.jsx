@@ -5,6 +5,13 @@ const USERNAME_CHECK_ENDPOINT = '/username';
 const EMAIL_CHECK_ENDPOINT = '/email';
 const REGISTER_ENDPOINT = '/register'
 const ACTIVATE_ENDPOINT = '/activate'
+const RESEND_ACTIVATION_LINK_ENDPOINT = '/resend-activation-link'
+
+export const resendActivationLink = (email) => {
+  return function(dispatch, getState) {
+    return axios.post(`${ROOT_URL}${RESEND_ACTIVATION_LINK_ENDPOINT}`, {email});
+  }
+}
 
 export const checkAvailable = (endpoint, value) => {
   return function(dispatch, getState) {

@@ -128,4 +128,20 @@ class RegistrationControllerATest
     (contentAsJson(result) \ "status").asOpt[String] should contain("success")
   }
 
+  "resending an activation link" should "succeed if the message is well formed" in {
+    val result = route(app, FakeRequest(POST, "/resend-activation-link")
+      .withJsonBody(Json.obj("email"->"spam@eigenroute.com"))
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldBe OK
+  }
+
+  it should "fail if the message is badly formed" in {
+    val result = route(app, FakeRequest(POST, "/resend-activation-link")
+      .withJsonBody(Json.obj("bad"->"spam@eigenroute.com"))
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
+      .get
+    status(result) shouldBe BAD_REQUEST
+  }
+
 }

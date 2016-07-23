@@ -2,7 +2,7 @@ import React from 'react';
 import * as Redux from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 
-import { REGISTER_LINK, REGISTER_TEXT, REQUEST_RESET_PASSWORD_LINK, REQUEST_RESET_PASSWORD_TEXT, MANAGE_ACCOUNT_LINK } from '../../../routes';
+import { REGISTER_LINK, REGISTER_TEXT, REQUEST_RESET_PASSWORD_LINK, REQUEST_RESET_PASSWORD_TEXT, MANAGE_ACCOUNT_LINK, RESEND_ACTIVATION_LINK, RESEND_ACTIVATION_TEXT } from '../../../routes';
 import { startLoggingInUser } from './authenticationActionGenerators';
 
 export const Login = React.createClass({
@@ -77,7 +77,7 @@ export const Login = React.createClass({
                               <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onLogin}>Login</button>
                           </div>
                           <div className="login-register">
-                              <Link to={REGISTER_LINK}>{REGISTER_TEXT}</Link> <Link to={REQUEST_RESET_PASSWORD_LINK}>{REQUEST_RESET_PASSWORD_TEXT}</Link>
+                              <Link to={REGISTER_LINK}>{REGISTER_TEXT}</Link> <Link to={REQUEST_RESET_PASSWORD_LINK}>{REQUEST_RESET_PASSWORD_TEXT}</Link> <Link to={RESEND_ACTIVATION_LINK}>{RESEND_ACTIVATION_TEXT}</Link>
                           </div>
                       </form>
                   </div>

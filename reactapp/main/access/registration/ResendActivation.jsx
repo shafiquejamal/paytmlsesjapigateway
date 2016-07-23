@@ -2,9 +2,9 @@ import React from 'react';
 import * as Redux from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 
-import { sendPasswordResetLink } from './authenticationActionGenerators';
+import { resendActivationLink } from './RegistrationActionGenerators';
 
-export const RequestResetPassword = React.createClass({
+export const ResendActivation = React.createClass({
   getInitialState() {
     return {
       error: '',
@@ -16,15 +16,15 @@ export const RequestResetPassword = React.createClass({
     e.preventDefault();
     const { dispatch } = this.props;
     const email = this.refs.email.value;
-    dispatch(sendPasswordResetLink(email)).then(
+    dispatch(resendActivationLink(email)).then(
       (response) => {
         this.setState({
-          linkSentMessage: 'If the email is registered and the user account has been activated, then the password reset link was sent - please check your email.',
+          linkSentMessage: 'If the email is registered and the user account has not been activated, then the password reset link was re-sent - please check your email.',
           error: ''
         });
       },
       (response) => {
-        this.setState({error: 'There was an error sending the password reset link. Please contact the admin to continue.', linkSentMessage: ''});
+        this.setState({error: 'There was an error re-sending the activation link. Please contact the admin to continue.', linkSentMessage: ''});
       }
     );
   },
@@ -35,7 +35,7 @@ export const RequestResetPassword = React.createClass({
               <div className="col-md-4 col-md-offset-4">
                   <div className="panel-heading">
                       <div className="panel-title text-center">
-                          <h1 className="title">Send Password Reset Link</h1>
+                          <h1 className="title">Re-send Activation Link</h1>
                           <hr />
                       </div>
                   </div>
@@ -61,7 +61,7 @@ export const RequestResetPassword = React.createClass({
                           </div>
 
                           <div className="form-group ">
-                              <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onSendPasswordResetLink}>Send Password Reset Link</button>
+                              <button type="button" className="btn btn-primary btn-lg btn-block login-button" onClick={this.onSendPasswordResetLink}>Re-send Activation Link</button>
                           </div>
                       </form>
                   </div>
@@ -73,4 +73,4 @@ export const RequestResetPassword = React.createClass({
   }
 });
 
-export default Redux.connect((state) => { return state; })(RequestResetPassword);
+export default Redux.connect((state) => { return state; })(ResendActivation);

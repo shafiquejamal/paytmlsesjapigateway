@@ -52,6 +52,27 @@ class UserFacadeATest
     makeAPI(session).changePassword(id3, ChangePasswordMessage("wrong_password", "irrelevant")) shouldBe a[Failure[_]]
   }
 
+  "finding a user by email" should "succeed if the email matches any user (blocked, active, univerified)" in { implicit session =>
+    makeAPI(session).findByEmailLatest("diane@diane.com").map(_.username) should contain("diane")
+    makeAPI(session).findByEmailLatest("charlie@charlie.com").map(_.username) should contain("charlie")
+    makeAPI(session).findByEmailLatest("alice@alice.com").map(_.username) should contain("alice")
+    makeAPI(session).findByEmailLatest("bob@bob.com").map(_.username) should contain("bob")
+  }
+
+  it should "fail if the email does not match any user in the database" in { implicit session =>
+    makeAPI(session).findByEmailLatest("non@existent.com").map(_.username) shouldBe empty
+  }
+
+  "finding an unverified user by email" should "return the matching unverified user" in { implicit session =>
+    makeAPI(session).findUnverifiedUser("charlie@charlie.com").map(_.username) should contain("charlie")
+  }
+
+  it should "fail if the user is non-unverified" in { implicit session =>
+    makeAPI(session).findUnverifiedUser("diane@diane.com").map(_.username) shouldBe empty
+    makeAPI(session).findUnverifiedUser("alice@alice.com").map(_.username) shouldBe empty
+    makeAPI(session).findUnverifiedUser("bob@bob.com").map(_.username) shouldBe empty
+  }
+
   private def makeAPI(session:DBSession) = {
     val userDAO = new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
     new UserFacade(userDAO, new TestTimeProviderImpl())

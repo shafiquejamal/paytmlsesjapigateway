@@ -1,6 +1,7 @@
 package access.registration
 
 import access.JWTParamsProvider
+import access.authentication.ResetPasswordLinkMessage
 import access.registration.RegistrationMessage._
 import com.google.inject.Inject
 import play.api.Configuration
@@ -18,7 +19,7 @@ class RegistrationController @Inject() (
     jWTParamsProvider: JWTParamsProvider,
     uUIDProvider: UUIDProvider,
     configuration:Configuration,
-    accountActivator:AccountActivationLinkSender)
+    accountActivationLinkSender:AccountActivationLinkSender)
   extends Controller {
 
   val activationCodeKey = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
@@ -28,7 +29,7 @@ class RegistrationController @Inject() (
       case success:JsSuccess[RegistrationMessage] =>
         registerUser(request, success.get)
       case error:JsError =>
-        BadRequest("could not form access.registration message")
+        BadRequest
     }
   }
 
@@ -51,6 +52,18 @@ class RegistrationController @Inject() (
     }
   }
 
+  def resendActivationLink() = Action(parse.json) { request =>
+    request.body.validate[ResetPasswordLinkMessage] match {
+      case success:JsSuccess[ResetPasswordLinkMessage] =>
+        userAPI
+        .findUnverifiedUser(success.get.email)
+        .foreach( user => accountActivationLinkSender.sendActivationCode(user, request.host, activationCodeKey))
+        Ok
+      case error:JsError =>
+        BadRequest
+    }
+  }
+
   private def activateUser(user:User, code:String) = {
     user.userStatus match {
       case Unverified | Deactivated =>
@@ -68,9 +81,9 @@ class RegistrationController @Inject() (
   }
 
   private def registerUser(request: Request[JsValue], registrationMessage:RegistrationMessage) =
-    registrationAPI.signUp(registrationMessage, accountActivator.statusOnRegistration) match {
+    registrationAPI.signUp(registrationMessage, accountActivationLinkSender.statusOnRegistration) match {
       case Success(user) =>
-        accountActivator
+        accountActivationLinkSender
         .sendActivationCode(user, request.host, activationCodeKey)
         Ok(Json.obj("status" -> "success"))
       case _ =>
