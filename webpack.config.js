@@ -45,7 +45,6 @@ module.exports = {
         alias: {
             configureStore: 'reactapp/main/store/configureStore.jsx',
             applicationStyles: 'reactapp/styles/app.scss',
-            configuration: 'reactapp/main/configuration.jsx',
             routes: 'reeactapp/routes.jsx'
         },
         extensions: ['', '.js', '.jsx']

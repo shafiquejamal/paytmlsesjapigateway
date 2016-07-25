@@ -1,7 +1,7 @@
 import axios from 'axios';
 import validator from 'validator';
 
-import { ROOT_URL } from 'configuration';
+import { ROOT_URL } from '../../ConfigurationPaths';
 
 const LOGIN_ENDPOINT = '/authenticate';
 const REQUEST_PASSWORD_RESET_ENDPOINT = '/send-password-reset-link';

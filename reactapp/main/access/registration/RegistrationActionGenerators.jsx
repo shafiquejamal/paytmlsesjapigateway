@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ROOT_URL } from '../../configuration';
+import { ROOT_URL } from '../../ConfigurationPaths';
 
 const USERNAME_CHECK_ENDPOINT = '/username';
 const EMAIL_CHECK_ENDPOINT = '/email';

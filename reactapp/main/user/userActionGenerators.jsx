@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { ROOT_URL } from 'configuration';
+import { ROOT_URL } from '../ConfigurationPaths';
 
 const CHANGE_PASSWORD_ENDPOINT = '/change-password ';
 
