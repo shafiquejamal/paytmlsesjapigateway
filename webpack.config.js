@@ -3,6 +3,7 @@ var path = require('path');
 var envFile = require('node-env-file');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.CRAUTH_PROTOCOL = process.env.CRAUTH_PROTOCOL || 'https';
 
 try {
     envFile(path.join(__dirname, 'reactconfig/' + process.env.NODE_ENV + '.env'));
