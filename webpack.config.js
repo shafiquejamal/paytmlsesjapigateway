@@ -4,6 +4,7 @@ var envFile = require('node-env-file');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 process.env.CRAUTH_PROTOCOL = process.env.CRAUTH_PROTOCOL || 'https';
+process.env.CRAUTH_API_SERVER = process.env.CRAUTH_API_SERVER || 'localhost:9000';
 
 try {
     envFile(path.join(__dirname, 'reactconfig/' + process.env.NODE_ENV + '.env'));
@@ -32,7 +33,8 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                CRAUTH_PROTOCOL: JSON.stringify(process.env.CRAUTH_PROTOCOL)
+                CRAUTH_PROTOCOL: JSON.stringify(process.env.CRAUTH_PROTOCOL),
+                CRAUTH_API_SERVER: JSON.stringify(process.env.CRAUTH_API_SERVER)
             }
         })
     ],
