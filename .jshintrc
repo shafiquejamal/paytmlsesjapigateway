@@ -2,5 +2,7 @@
   "-W099": true,
   "-W030": true,
   "evil" : true,
-  "asi": true
+  "asi": true,
+  "shadow": true,
+  "newcap": false
 }
