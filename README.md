@@ -1,5 +1,10 @@
 # Crauth
 
+## Demo
+
+https://crauth.eigenroute.com/
+(I'm using a self-signed SSL certificate for now - I will get a proper one)
+
 ## Create. Read. Never Update. Never Delete.
 
 This is a template application that has the following characteristics:
