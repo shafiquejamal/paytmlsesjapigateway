@@ -33,7 +33,7 @@ class UserControllerATest
 
   val dBConfig =
     new ScalikeJDBCTestDBConfig(
-      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))))
+      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())))
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))

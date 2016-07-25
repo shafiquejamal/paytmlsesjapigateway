@@ -15,7 +15,7 @@ trait TestDBConnection extends InitialMigration { this: CrauthAutoRollback with 
   override val dBConfig =
     new ScalikeJDBCTestDBConfig(
       new PlayConfigParamsProvider(
-        new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))))
+        new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())))
 
   override def fixture(implicit session: DBSession) {
     migrate(dBConfig)

@@ -37,7 +37,7 @@ class AuthenticationControllerATest
 
   val dBConfig =
     new ScalikeJDBCTestDBConfig(
-      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")))))
+      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())))
   val newPassword = "some new password"
 
   override def beforeEach() {

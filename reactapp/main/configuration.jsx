@@ -1,1 +1,3 @@
-export const ROOT_URL = 'http://localhost:9000';
+const PROTOCOL = process.env.CRAUTH_PROTOCOL;
+
+export const ROOT_URL = `${PROTOCOL}://localhost:9000`;

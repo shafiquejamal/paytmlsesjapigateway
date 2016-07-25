@@ -20,7 +20,7 @@ trait DBConfig {
       maxSize = configParams.get(s"$prefix.poolMaxSize").map(_.toInt).getOrElse(20),
       connectionTimeoutMillis = configParams.get(s"$prefix.poolMaxSize").map(_.toLong).getOrElse(1000),
       validationQuery = configParams.getOrElse(s"$prefix.poolValidationQuery", "select 1 as one"),
-      connectionPoolFactoryName = configParams.getOrElse(s"$prefix.poolFactoryName", ""),
+      connectionPoolFactoryName = configParams.getOrElse(s"$prefix.connectionPoolFactoryName", ""),
       driverName = driver,
       warmUpTime = configParams.get(s"$prefix.poolWarmUpTimeMillis").map(_.toLong).getOrElse(1000),
       timeZone = configParams.get(s"$prefix.timeZone").orNull[String]

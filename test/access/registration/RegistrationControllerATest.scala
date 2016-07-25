@@ -34,7 +34,7 @@ class RegistrationControllerATest
         )
 
   val configParamsProvider =
-    new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf"))))
+    new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve()))
   val dBConfig = new ScalikeJDBCTestDBConfig(configParamsProvider)
   val md5key = configParamsProvider.configParams(ActivationCodeGenerator.configurationKey)
 
