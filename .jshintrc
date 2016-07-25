@@ -4,5 +4,7 @@
   "evil" : true,
   "asi": true,
   "shadow": true,
-  "newcap": false
+  "newcap": false,
+  "-W401": false,
+  "-W018": false
 }
