@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import * as Redux from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 
-import { PASSWORD_CHANGE_SUCCESSFUL_LINK } from '../../routes';
+import { PASSWORD_CHANGE_SUCCESSFUL_LINK, LOGIN_LINK } from '../../routes';
 import { startChangingPassword } from './userActionGenerators';
+import { startLoggingOutUser } from '../access/authentication/authenticationActionGenerators';
 
-// http://bootsnipp.com/snippets/featured/register-page
 export const ChangePassword = React.createClass({
     getInitialState: function() {
       return {
@@ -18,9 +18,7 @@ export const ChangePassword = React.createClass({
     checkPassword: function(e) {
       const inputValue = e.target.value;
       const checkVariable = e.target.getAttribute('data-check').toLowerCase();
-      const checkVariableTitleCase = checkVariable.charAt(0).toUpperCase() + checkVariable.slice(1)
       const errorVariable = checkVariable + 'Error';
-      // debugger;
       this.setState({
           [errorVariable]: inputValue === '' ? 'This field is required' : ''
       });
@@ -49,9 +47,14 @@ export const ChangePassword = React.createClass({
             }
           },
           (response) => {
-            this.setState({
-              changePasswordError: 'Sorry, your password could not be changed. Please contact the admin.'
-            });
+            if (response.status === 401) {
+              dispatch(startLoggingOutUser());
+              hashHistory.push(LOGIN_LINK);
+            } else {
+              this.setState({
+                changePasswordError: 'Sorry, your password could not be changed. Please contact the admin.'
+              });
+            }
           });
       }
     },
@@ -124,4 +127,4 @@ export const ChangePassword = React.createClass({
 
 export default Redux.connect((state) => {
   return state;
-}, )(ChangePassword);
+})(ChangePassword);

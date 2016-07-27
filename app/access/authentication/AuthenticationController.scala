@@ -10,7 +10,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import user.UserAPI
 import user.UserStatus.{Active, Unverified}
-import util.UUIDProvider
+import util.{TimeProvider, UUIDProvider}
 
 import scala.util.Success
 
@@ -19,14 +19,18 @@ class AuthenticationController @Inject() (
     userAPI: UserAPI,
     jWTParamsProvider: JWTParamsProvider,
     uUIDProvider: UUIDProvider,
-    passwordResetCodeSender: PasswordResetCodeSender)
+    passwordResetCodeSender: PasswordResetCodeSender,
+    timeProvider: TimeProvider)
   extends Controller {
 
   def authenticate = Action(parse.json) { request =>
     request.body.validate[AuthenticationMessage] match {
       case success: JsSuccess[AuthenticationMessage] =>
         authenticationAPI.user(success.get).fold(Ok(Json.obj("status" -> "authentication failed"))) { user =>
-          val claim = Json.obj("userId" -> user.maybeId.getOrElse(uUIDProvider.randomUUID()).toString)
+          val claim =
+            Json.obj(
+              "userId" -> user.maybeId.getOrElse(uUIDProvider.randomUUID()).toString,
+              "iat" -> timeProvider.now())
           val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
           Ok(Json.obj("token" -> jWT, "email" -> user.email, "username" -> user.username))
         }

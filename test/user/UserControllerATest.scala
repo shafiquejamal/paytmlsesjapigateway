@@ -48,15 +48,17 @@ class UserControllerATest
     super.afterEach()
   }
 
+  val timeProvider = new TestTimeProviderImpl()
   val jWTParamsProvider = new TestJWTParamsProviderImpl()
-  val claim = Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"))
+  val claim = Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"), "iat" -> timeProvider.now())
   val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
   "changing the password" should "succeed if the existing password is valid" in {
     val content =
       contentAsJson(route(app, FakeRequest(POST, "/change-password")
         .withHeaders(("Authorization", jWT))
-        .withJsonBody(Json.obj("currentPassword" -> "passwordAliceID2", "newPassword" -> "some-new-password"))
+        .withJsonBody(Json.obj("currentPassword" -> "passwordAliceID2", "newPassword" -> "some-new-password",
+          "iat" -> timeProvider.now()))
       ).get)
 
     (content \ "status").asOpt[String] should contain("success")
@@ -73,13 +75,14 @@ class UserControllerATest
   }
 
   it should "fail if valid data is not sent" in {
-    val content =
-      contentAsJson(route(app, FakeRequest(POST, "/change-password")
+    val result =
+      route(app, FakeRequest(POST, "/change-password")
         .withHeaders(("Authorization", jWT))
-        .withJsonBody(Json.obj("currentPassword" -> 1, "newPassword" -> "some-new-password"))
-      ).get)
+        .withJsonBody(Json.obj("currentPassword" -> 1, "newPassword" -> "some-new-password")))
+        .get
 
-    (content \ "status").asOpt[String] should contain("invalid data")
+    status(result) shouldBe OK
+    (contentAsJson(result) \ "status").asOpt[String] should contain("invalid data")
   }
 
   it should "fail if there is the authorization credentials are incorrect" in {
@@ -92,7 +95,7 @@ class UserControllerATest
       .withHeaders(("Authorization", wrongJWT))
       .withJsonBody(Json.obj("currentPassword" -> 1, "newPassword" -> "some-new-password"))).get
 
-    status(result) shouldBe 401
+    status(result) shouldBe UNAUTHORIZED
     contentAsString(result) shouldBe empty
   }
 

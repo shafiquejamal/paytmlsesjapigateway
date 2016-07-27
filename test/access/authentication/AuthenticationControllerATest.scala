@@ -39,6 +39,7 @@ class AuthenticationControllerATest
     new ScalikeJDBCTestDBConfig(
       new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())))
   val newPassword = "some new password"
+  val timeProvider = new TestTimeProviderImpl()
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
@@ -54,7 +55,9 @@ class AuthenticationControllerATest
   }
 
   val jWTParamsProvider = new TestJWTParamsProviderImpl()
-  val claim = Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"))
+  val claim =
+    Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"),
+             "iat" -> timeProvider.now())
   val expectedJWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
   trait JWTChecker {

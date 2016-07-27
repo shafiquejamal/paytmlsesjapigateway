@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { ROOT_URL } from '../ConfigurationPaths';
 
-const CHANGE_PASSWORD_ENDPOINT = '/change-password ';
+const CHANGE_PASSWORD_ENDPOINT = '/change-password';
 
 export const startChangingPassword = function(currentPassword, newPassword) {
   return (dispatch, getState) => {
