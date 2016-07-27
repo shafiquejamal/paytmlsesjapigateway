@@ -6,11 +6,11 @@ import scala.util.Try
 
 trait UserAPI {
 
-  def changeUsername(userId: UUID, changeUsernameMessage: ChangeUsernameMessage): Try[User]
+  def changeUsername(userId: UUID, changeUsernameMessage: ChangeUsernameMessage): Try[UserMessage]
 
-  def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[User]
+  def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[UserMessage]
 
-  def findByEmailLatest(email: String): Option[User]
+  def findByEmailLatest(email: String): Option[UserMessage]
 
-  def findUnverifiedUser(email: String): Option[User]
+  def findUnverifiedUser(email: String): Option[UserMessage]
 }

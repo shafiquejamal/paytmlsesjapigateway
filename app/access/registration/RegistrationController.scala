@@ -8,7 +8,7 @@ import play.api.Configuration
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc._
 import user.UserStatus._
-import user.{User, UserAPI}
+import user.{UserAPI, UserMessage}
 import util.UUIDProvider
 
 import scala.util.Success
@@ -71,7 +71,7 @@ class RegistrationController @Inject() (
     }
   }
 
-  private def activateUser(user:User, code:String) = {
+  private def activateUser(user:UserMessage, code:String) = {
     user.userStatus match {
       case Unverified | Deactivated =>
         registrationAPI.activate(user.maybeId.get) match {

@@ -1,10 +1,10 @@
 package access.registration
 
-import user.{User, UserStatus}
+import user.{UserMessage, UserStatus}
 
 class NoEmailVerificationAccountActivationLinkSenderImpl extends AccountActivationLinkSender {
 
-  override def sendActivationCode(user: User, host: String, key: String): Unit = {}
+  override def sendActivationCode(user: UserMessage, host: String, key: String): Unit = {}
 
   override val statusOnRegistration = UserStatus.Active
 

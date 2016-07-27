@@ -1,7 +1,6 @@
 package access.registration
 
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
-import org.mindrot.jbcrypt.BCrypt
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, Matchers, ShouldMatchers}
@@ -33,7 +32,6 @@ class RegistrationFacadeATest
     result.toOption.foreach { user =>
       user.username shouldBe "some user name"
       user.email shouldBe "test@user.com"
-      BCrypt.checkpw(password, user.hashedPassword) shouldBe true
     }
 
     val duplicateUsername = RegistrationMessage(Some("some useR name"), "un@ique.com", password)

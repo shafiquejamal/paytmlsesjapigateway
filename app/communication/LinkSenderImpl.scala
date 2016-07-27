@@ -5,7 +5,7 @@ import java.net.URLEncoder._
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import user.User
+import user.UserMessage
 
 class LinkSenderImpl @Inject()(
     emailer: Emailer,
@@ -14,7 +14,13 @@ class LinkSenderImpl @Inject()(
   extends LinkSender
   with I18nSupport {
 
-  def send(user:User, host:String, code:String, route:String, subjectMessageKey:String, bodyTextMessageKey:String):Unit = {
+  def send(
+      user:UserMessage,
+      host:String,
+      code:String,
+      route:String,
+      subjectMessageKey:String,
+      bodyTextMessageKey:String):Unit = {
 
     val protocolAndHost = configuration.getString("crauth.protocol").getOrElse("http") + "://" + host
     val urlEncodedEmailAddress = encode(user.email, "UTF-8")

@@ -1,12 +1,10 @@
 package user
 
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
-import org.mindrot.jbcrypt.BCrypt
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
 import scalikejdbc.DBSession
-import util.Password.hash
 import util.TestTimeProviderImpl
 
 import scala.util.{Failure, Success}
@@ -41,7 +39,6 @@ class UserFacadeATest
     val maybeUser = makeAPI(session).changePassword(id3, changePasswordMessage)
     maybeUser shouldBe a[Success[_]]
     maybeUser.success.value.maybeId should contain(id3)
-    BCrypt.checkpw(hash(newPassword), maybeUser.success.value.hashedPassword)
   }
 
   it should "fail if the user does not exist in the DB" in { implicit session =>

@@ -3,8 +3,9 @@ package access.authentication
 import java.util.UUID
 
 import com.google.inject.{Inject, Singleton}
+import user.UserMessage._
 import user.UserStatus._
-import user.{User, UserDAO}
+import user.{User, UserDAO, UserMessage}
 import util.Password._
 import util.TimeProvider
 
@@ -13,16 +14,18 @@ import scala.util.{Failure, Try}
 @Singleton
 class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends AuthenticationAPI {
 
-  override def userById(id:UUID): Option[User] = userDAO.by(id, authenticationUserFilter)
+  override def userById(id:UUID): Option[UserMessage] = userDAO.by(id, authenticationUserFilter)
 
-  override def user(authenticationMessage:AuthenticationMessage): Option[User] = {
-    authenticationMessage.maybeEmail.filter(_.trim.nonEmpty).flatMap { email =>
+  override def user(authenticationMessage:AuthenticationMessage): Option[UserMessage] = {
+    val maybeUserByEmail:Option[UserMessage] = authenticationMessage.maybeEmail.filter(_.trim.nonEmpty).flatMap { email =>
       userDAO.byEmail(email, authenticationUserFilter).filter(passwordCheck(authenticationMessage.password))}
-        .orElse(authenticationMessage.maybeUsername.filter(_.trim.nonEmpty).flatMap { username =>
-          userDAO.byUsername(username, authenticationUserFilter).filter(passwordCheck(authenticationMessage.password))})
+    lazy val maybeUserByUsername = authenticationMessage.maybeUsername.filter(_.trim.nonEmpty).flatMap { username =>
+          userDAO.byUsername(username, authenticationUserFilter).filter(passwordCheck(authenticationMessage.password))}
+
+    maybeUserByEmail.orElse(maybeUserByUsername)
   }
 
- override def storePasswordResetCode(email:String, passwordResetCode:String): Try[User] =
+ override def storePasswordResetCode(email:String, passwordResetCode:String): Try[UserMessage] =
    userDAO.byEmail(email, (user:User) => true).fold[Try[User]](Failure(new RuntimeException("User does not exist")))(user =>
      user.maybeId.fold[Try[User]](Failure(new RuntimeException("User does not exist")))(id =>
       userDAO.addPasswordResetCode(id, passwordResetCode, timeProvider.now(), active = true)
@@ -36,7 +39,7 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
     )
   )
 
- override def resetPassword(email:String, code:String, newPassword:String): Try[User] =
+ override def resetPassword(email:String, code:String, newPassword:String): Try[UserMessage] =
    userDAO.byEmail(email, authenticationUserFilter)
    .fold[Try[User]](Failure(new RuntimeException("User does not exist"))){ retrievedUser =>
      retrievedUser.maybeId.fold[Try[User]](Failure(new RuntimeException("User does not exist"))){userId =>

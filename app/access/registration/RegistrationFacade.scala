@@ -5,7 +5,7 @@ import java.util.UUID
 import com.google.inject.{Inject, Singleton}
 import org.apache.commons.validator.routines.EmailValidator
 import user.UserStatus.{Active, _}
-import user.{User, UserDAO, UserStatus}
+import user.{User, UserDAO, UserMessage, UserStatus}
 import util.Password.hash
 import util.{TimeProvider, UUIDProvider}
 
@@ -19,7 +19,7 @@ class RegistrationFacade @Inject() (
     uUIDProvider: UUIDProvider)
   extends RegistrationAPI {
 
-  override def signUp(registrationMessage: RegistrationMessage, statusOnRegistration: UserStatus):Try[User] =
+  override def signUp(registrationMessage: RegistrationMessage, statusOnRegistration: UserStatus):Try[UserMessage] =
       user.create(None,
         registrationMessage.maybeUsername.getOrElse(registrationMessage.email),
         registrationMessage.email,
@@ -35,6 +35,6 @@ class RegistrationFacade @Inject() (
     !EmailValidator.getInstance().isValid(email) || userDAO.byEmail(email, usernameAndEmailIsNotAvailableFilter).isEmpty
   }
 
-  override def activate(userId:UUID): Try[User] = userDAO.addStatus(userId, Active, timeProvider.now())
+  override def activate(userId:UUID): Try[UserMessage] = userDAO.addStatus(userId, Active, timeProvider.now())
 
 }

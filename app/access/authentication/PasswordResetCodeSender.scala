@@ -1,9 +1,9 @@
 package access.authentication
 
-import user.User
+import user.UserMessage
 
 trait PasswordResetCodeSender {
 
-  def send(user: User, host: String): Unit
+  def send(user: UserMessage, host: String): Unit
 
 }

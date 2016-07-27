@@ -3,6 +3,7 @@ package user
 import java.util.UUID
 
 import com.google.inject.{Inject, Singleton}
+import user.UserMessage._
 import user.UserStatus._
 import util.Password._
 import util.TimeProvider
@@ -12,14 +13,14 @@ import scala.util.{Failure, Try}
 @Singleton
 class UserFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends UserAPI {
 
-  override def changeUsername(userId: UUID, changeUsernameMessage: ChangeUsernameMessage):Try[User] =
+  override def changeUsername(userId: UUID, changeUsernameMessage: ChangeUsernameMessage):Try[UserMessage] =
     userDAO.changeUsername(
       userId,
       changeUsernameMessage.newUsername,
       timeProvider.now(),
       changeUsernameFilter)
 
-  override def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[User] = {
+  override def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[UserMessage] = {
 
     userDAO
     .by(userId, authenticationUserFilter)
@@ -30,9 +31,9 @@ class UserFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends
 
   }
 
-  override def findByEmailLatest(email:String): Option[User] = userDAO.byEmail(email, (user:User) => true)
+  override def findByEmailLatest(email:String): Option[UserMessage] = userDAO.byEmail(email, (user:User) => true)
 
-  override def findUnverifiedUser(email:String): Option[User] =
+  override def findUnverifiedUser(email:String): Option[UserMessage] =
     userDAO.byEmail(email, (user:User) => user.userStatus == Unverified)
 
 }

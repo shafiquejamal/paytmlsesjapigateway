@@ -7,13 +7,9 @@ import util.UUIDProvider
 
 import scala.util.Try
 
-trait User {
+trait User extends UserFields {
 
-  def maybeId: Option[UUID]
-  def username: String
-  def email: String
   def hashedPassword: String
-  def userStatus: UserStatus
   def maybeCreated:Option[DateTime] = None
 
   def add(

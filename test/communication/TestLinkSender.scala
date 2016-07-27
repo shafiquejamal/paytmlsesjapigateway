@@ -1,10 +1,10 @@
 package communication
 
-import user.User
+import user.UserMessage
 
 class TestLinkSender extends LinkSender {
 
-  def send(user: User,
+  def send(user: UserMessage,
     host: String,
     code: String,
     route: String,

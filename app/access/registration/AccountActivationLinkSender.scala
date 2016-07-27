@@ -1,10 +1,10 @@
 package access.registration
 
-import user.{User, UserStatus}
+import user.{UserMessage, UserStatus}
 
 trait AccountActivationLinkSender {
 
-  def sendActivationCode(user: User, host: String, key: String): Unit
+  def sendActivationCode(user: UserMessage, host: String, key: String): Unit
 
   def statusOnRegistration: UserStatus
 
