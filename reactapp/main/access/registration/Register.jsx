@@ -46,7 +46,6 @@ export const Register = React.createClass({
               });
             },
             function (error) {
-              console.log('error', error);
             }
           );
         }
@@ -76,10 +75,8 @@ export const Register = React.createClass({
       const { dispatch } = this.props;
       const { usernameError, emailError, passwordError, confirmError } = this.state;
       if (usernameError === '' && emailError === '' && passwordError === '' && confirmError === '') {
-        console.log(this.state);
         dispatch(registerUser(email.value, username.value, password.value)).then(
           (response) => {
-            console.log(response);
             if (response.data.status === 'success') {
               hashHistory.push(REGISTRATION_SUCCESS_LINK);
             }
@@ -95,7 +92,6 @@ export const Register = React.createClass({
             });
           });
       } else {
-        console.log(this.state);
         this.setState({
           registrationError: 'Please complete all fields and ensure they are valid.'
         });

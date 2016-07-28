@@ -38,13 +38,11 @@ export const ResetPassword = React.createClass({
       if (newpasswordError === '' && confirmError === '' ) {
         dispatch(startResettingPassword(email, code, this.refs.newpassword.value)).then(
           (response) => {
-            console.log('success', response);
             this.setState({
               resetPasswordError: 'The password reset was successful. Please log in with your new password.'
             });
           },
           (response) => {
-            console.log('failure', response);
             this.setState({
               resetPasswordError: 'Sorry, your password could not be reset. Are you sure you activated your account? If so, please contact the admin. Maybe the link has expired? If so, request a new link.'
             });

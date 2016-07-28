@@ -20,7 +20,6 @@ export const checkAvailable = (endpoint, value) => {
         return response.data.status;
       },
       (response) => {
-        console.log('failure', response);
       }
     );
   }

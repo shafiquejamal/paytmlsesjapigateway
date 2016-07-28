@@ -17,7 +17,6 @@ export const ManageAccount = React.createClass({
                           <div className="cols-sm-10">
                             <div className="form-group">
                               <div className={`input-group`}>
-                                {console.log(this.props)}
                                 <p>Username: {this.props.auth.username}</p>
                                 <p>Email: {this.props.auth.email}</p>
                                   <div className="login-register">
