@@ -1,7 +1,8 @@
-package controllers
+package home
 
 import javax.inject._
 
+import controllers.WebJarAssets
 import org.webjars.play.RequireJS
 import play.api.mvc._
 
