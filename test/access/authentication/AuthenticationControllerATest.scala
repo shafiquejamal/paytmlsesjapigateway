@@ -1,15 +1,12 @@
 package access.authentication
 
-import java.io.File
 import java.util.UUID
 
 import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
-import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
 import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
-import play.api.Configuration
 import play.api.http.HeaderNames
 import play.api.inject._
 import play.api.libs.json.{JsValue, Json}
@@ -17,7 +14,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import scalikejdbc.NamedAutoSession
 import user.UserFixture
-import util.{PlayConfigParamsProvider, TestTimeProviderImpl, TestUUIDProviderImpl, TimeProvider, UUIDProvider}
+import util.{TestTimeProviderImpl, TestUUIDProviderImpl, TimeProvider, UUIDProvider}
 
 class AuthenticationControllerATest
   extends FlatSpec
@@ -35,9 +32,7 @@ class AuthenticationControllerATest
         bind[TimeProvider].to[TestTimeProviderImpl]
        )
 
-  val dBConfig =
-    new ScalikeJDBCTestDBConfig(
-      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())))
+  val dBConfig = new ScalikeJDBCTestDBConfig()
   val newPassword = "some new password"
   val timeProvider = new TestTimeProviderImpl()
 
@@ -184,8 +179,6 @@ class AuthenticationControllerATest
       .get
     status(result) shouldBe BAD_REQUEST
   }
-
-
 
 
   private def contentFromRequest(postData:JsValue, path:String = "/authenticate"):JsValue =

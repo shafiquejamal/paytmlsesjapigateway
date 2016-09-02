@@ -28,7 +28,8 @@ libraryDependencies ++= Seq(
   "com.pauldijou" % "jwt-play-json_2.11" % "0.8.0",
   "org.postgresql" % "postgresql" % "9.4.1208.jre7",
   "commons-validator" % "commons-validator" % "1.5.1",
-  "com.typesafe.play" %% "play-mailer" % "5.0.0"
+  "com.typesafe.play" %% "play-mailer" % "5.0.0",
+  "com.typesafe" % "config" % "1.3.0"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"

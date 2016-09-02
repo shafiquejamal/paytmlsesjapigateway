@@ -1,14 +1,11 @@
 package user
 
-import java.io.File
 import java.util.UUID
 
 import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
-import com.typesafe.config.ConfigFactory
 import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
-import play.api.Configuration
 import play.api.inject._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -31,9 +28,7 @@ class UserControllerATest
         bind[TimeProvider].to[TestTimeProviderImpl]
        )
 
-  val dBConfig =
-    new ScalikeJDBCTestDBConfig(
-      new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())))
+  val dBConfig = new ScalikeJDBCTestDBConfig()
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))

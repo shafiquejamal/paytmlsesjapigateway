@@ -1,13 +1,10 @@
 package access.registration
 
-import java.io.File
-
 import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
 import db._
 import org.scalatest._
-import play.api.Configuration
 import play.api.http.HeaderNames
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -33,10 +30,9 @@ class RegistrationControllerATest
         bind[TimeProvider].to[TestTimeProviderImpl]
         )
 
-  val configParamsProvider =
-    new PlayConfigParamsProvider(new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve()))
-  val dBConfig = new ScalikeJDBCTestDBConfig(configParamsProvider)
-  val md5key = configParamsProvider.configParams(ActivationCodeGenerator.configurationKey)
+
+  val dBConfig = new ScalikeJDBCTestDBConfig()
+  val md5key = ConfigFactory.load.getString(ActivationCodeGenerator.configurationKey)
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
