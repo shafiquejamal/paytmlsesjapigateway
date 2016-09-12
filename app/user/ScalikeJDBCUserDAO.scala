@@ -110,7 +110,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     }
   }
 
-  override def changePassword(id: UUID, newHashedPassword:String, created:DateTime): Try[User] = {
+  override def changePassword(id: UUID, newHashedPassword:String, created:DateTime): Try[User] =
     namedDB localTx { _ =>
 
       implicit val session = scalikeJDBCSessionProvider.provideAutoSession
@@ -122,8 +122,6 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
         confirmUpdate(id)
       }
     }
-
-  }
 
   override def addStatus(id: UUID, userStatus:UserStatus, created:DateTime): Try[User] = {
     namedDB localTx { _ =>
@@ -203,7 +201,20 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
   override def allLogoutDate(id: UUID):Option[DateTime] = {
     implicit val session = readOnlySession
     sql"""select alllogoutdate from xuseralllogoutdate where xuserid = ${id} order by alllogoutdate desc limit 1"""
-    .map { foo => foo.jodaDateTime("alllogoutdate") }.single.apply()
+    .map { _.jodaDateTime("alllogoutdate") }.single.apply()
   }
+
+  override def addAllLogoutDate(id: UUID, allLogoutDate: DateTime, created:DateTime):Try[User] =
+    namedDB localTx { _ =>
+
+      implicit val session = scalikeJDBCSessionProvider.provideAutoSession
+      val maybeUser = byWithSession(id, (user:User) => true)
+
+      maybeUser.fold[Try[User]](Failure(new RuntimeException("User does not exist in DB."))){ user =>
+        sql"""insert into xuseralllogoutdate (id, xuserid, authorid, createdat, alllogoutdate) values
+          (${uUIDProvider.randomUUID()}, ${id}, ${id}, ${created}, ${allLogoutDate})""".update.apply()
+        confirmUpdate(id)}
+    }
+
 
 }

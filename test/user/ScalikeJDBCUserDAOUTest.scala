@@ -204,6 +204,16 @@ class ScalikeJDBCUserDAOUTest
     userDAO.allLogoutDate(id1) shouldBe empty
   }
 
+  "adding an all logout date" should "add an all logout date for the given user if that user exists" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.addAllLogoutDate(idNonExistentUser, now, now.plusDays(1)).failure.exception shouldBe a[RuntimeException]
+
+    userDAO.allLogoutDate(id1) shouldBe empty
+    userDAO.addAllLogoutDate(id1, now, now.plusDays(1)).success.value.maybeId should contain(id1)
+    userDAO.allLogoutDate(id1) should contain(now)
+  }
+
   private def makeDAO(session:DBSession) =
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
   
