@@ -2,6 +2,7 @@ package access.authentication
 
 import java.util.UUID
 
+import org.joda.time.DateTime
 import user.UserMessage
 
 import scala.util.Try
@@ -17,5 +18,7 @@ trait AuthenticationAPI {
   def retrievePasswordResetCode(email: String): Option[PasswordResetCodeAndDate]
 
   def resetPassword(email: String, code: String, newPassword: String): Try[UserMessage]
+
+  def allLogoutDate(id: UUID):Option[DateTime]
   
 }

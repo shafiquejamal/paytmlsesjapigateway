@@ -45,7 +45,7 @@ class UserControllerATest
 
   val timeProvider = new TestTimeProviderImpl()
   val jWTParamsProvider = new TestJWTParamsProviderImpl()
-  val claim = Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"), "iat" -> timeProvider.now())
+  val claim = Json.obj("userId" -> id1, "iat" -> timeProvider.now())
   val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
   "changing the password" should "succeed if the existing password is valid" in {
@@ -89,6 +89,20 @@ class UserControllerATest
       route(app, FakeRequest(POST, "/change-password")
       .withHeaders(("Authorization", wrongJWT))
       .withJsonBody(Json.obj("currentPassword" -> 1, "newPassword" -> "some-new-password"))).get
+
+    status(result) shouldBe UNAUTHORIZED
+    contentAsString(result) shouldBe empty
+  }
+
+  it should "fail if the iat is before the last allLogout date" in {
+    val claim = Json.obj("userId" -> id3, "iat" -> yesterday.minusMillis(1))
+    val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+
+    val result = route(app, FakeRequest(POST, "/change-password")
+      .withHeaders(("Authorization", jWT))
+      .withJsonBody(Json.obj("currentPassword" -> "passwordBobID3", "newPassword" -> "some-new-password",
+        "iat" -> timeProvider.now()))
+      ).get
 
     status(result) shouldBe UNAUTHORIZED
     contentAsString(result) shouldBe empty

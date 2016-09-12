@@ -11,7 +11,7 @@ trait UserFixture {
 
   val now = new TestTimeProviderImpl().now()
   val later = now.plusDays(1)
-  val yesterday = now.minusDays(1)
+  val yesterday = now.minusDays(1).plusMillis(1)
   val dayBeforeYesterday = now.minusDays(2)
   val id1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
   val id2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
@@ -97,7 +97,12 @@ trait UserFixture {
     sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode, active) values
          (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday}, ${id1}, ${passwordResetCodeAlice1}, true) """,
     sql"""insert into xuserpasswordresetcode  (id, authorid, createdat, xuserid, passwordresetcode, active) values
-         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday.plusMillis(1)}, ${id1}, ${passwordResetCodeAlice2}, true) """
+         (${uUIDProvider.randomUUID()}, ${id1}, ${yesterday.plusMillis(1)}, ${id1}, ${passwordResetCodeAlice2}, true) """,
+
+    sql"""insert into xuseralllogoutdate (id, authorid, createdat, xuserid, alllogoutdate) values
+         (${uUIDProvider.randomUUID()}, ${id3}, ${yesterday.plusMillis(1)}, ${id3}, ${yesterday})""",
+    sql"""insert into xuseralllogoutdate (id, authorid, createdat, xuserid, alllogoutdate) values
+         (${uUIDProvider.randomUUID()}, ${id3}, ${yesterday}, ${id3}, ${yesterday.plusMillis(1)})"""
 
   )
 

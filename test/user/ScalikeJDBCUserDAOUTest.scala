@@ -196,7 +196,15 @@ class ScalikeJDBCUserDAOUTest
     contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
   }
 
-  private def makeDAO(session:DBSession) = 
+  "getting the latest allLogoutDate" should "return empty if there is no entry for that user, and return the latest " +
+  "allLogout date if there are multiple allLogout dates." in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.allLogoutDate(id3) should contain(yesterday.plusMillis(1))
+    userDAO.allLogoutDate(id1) shouldBe empty
+  }
+
+  private def makeDAO(session:DBSession) =
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
   
 }

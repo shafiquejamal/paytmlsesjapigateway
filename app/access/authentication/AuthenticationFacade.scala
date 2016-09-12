@@ -3,6 +3,7 @@ package access.authentication
 import java.util.UUID
 
 import com.google.inject.{Inject, Singleton}
+import org.joda.time.DateTime
 import user.UserMessage._
 import user.UserStatus._
 import user.{User, UserDAO, UserMessage}
@@ -50,5 +51,7 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
        }
      }
    }
+
+  override def allLogoutDate(id: UUID):Option[DateTime] = userDAO.allLogoutDate(id)
 
 }

@@ -200,4 +200,10 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
   private def uniqueUsers(fetchedUsers:List[User]):List[User] =
     fetchedUsers.groupBy(_.maybeId).flatMap{ case (maybeId, users) => users.headOption }.toList
 
+  override def allLogoutDate(id: UUID):Option[DateTime] = {
+    implicit val session = readOnlySession
+    sql"""select alllogoutdate from xuseralllogoutdate where xuserid = ${id} order by alllogoutdate desc limit 1"""
+    .map { foo => foo.jodaDateTime("alllogoutdate") }.single.apply()
+  }
+
 }

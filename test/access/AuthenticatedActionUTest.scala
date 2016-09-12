@@ -42,12 +42,13 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   val controller =
     new ExampleController(mockedAuthenticationAPI, jWTParamsProvider, configuration, new TestTimeProviderImpl())
   val timeProvider = new TestTimeProviderImpl
-  val claimNotExpired = Json.obj("userId" -> uUUID, "iat" -> timeProvider.now().minusDays(1))
+  val now = timeProvider.now()
+  val claimNotExpired = Json.obj("userId" -> uUUID, "iat" -> now.minusDays(1))
+  val user = new TestUserImpl().copy(maybeId = Some(uUUID))
 
 
   "The secured api" should "allow access if the claim is correct, the token has not expired, and the api returns a user" in {
-
-    val user = new TestUserImpl().copy(maybeId = Some(uUUID))
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(None)
     (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(Some(user))
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", token)) )
@@ -57,6 +58,7 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   }
 
   it should "deny access if the api does not return a user" in {
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(None)
     (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(None)
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", token)) )
@@ -81,9 +83,17 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   }
 
   it should "deny access if the claim represents a valid user, but the token has expired" in {
-    val user = new TestUserImpl().copy(maybeId = Some(uUUID))
     val claimExpired = Json.obj("userId" -> uUUID, "iat" -> timeProvider.now().minusDays(3))
     val token = JwtJson.encode(claimExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", token)) )
+
+    status(result) shouldBe 401
+    contentAsString(result) shouldBe empty
+  }
+
+  it should "deny access if the token is issued before the last allLogout date" in {
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(Some(now))
+    val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", token)) )
 
     status(result) shouldBe 401
