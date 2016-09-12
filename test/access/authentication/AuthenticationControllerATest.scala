@@ -185,7 +185,7 @@ class AuthenticationControllerATest
     val claim = Json.obj("userId" -> id1, "iat" -> timeProvider.now())
     val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
-    val result = route(app, FakeRequest(POST, "/sign-out-all-devices")
+    val result = route(app, FakeRequest(POST, "/logout-all-devices")
       .withHeaders(("Authorization", jWT))
       .withJsonBody(Json.obj("currentPassword" -> "passwordBobID3", "newPassword" -> "some-new-password",
       "iat" -> timeProvider.now()))).get
@@ -200,7 +200,7 @@ class AuthenticationControllerATest
     val claim = Json.obj("userId" -> idNonExistentUser, "iat" -> timeProvider.now())
     val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
-    val result = route(app, FakeRequest(POST, "/sign-out-all-devices")
+    val result = route(app, FakeRequest(POST, "/logout-all-devices")
       .withHeaders(("Authorization", jWT))
       .withJsonBody(Json.obj("currentPassword" -> "", "newPassword" -> "some-new-password",
       "iat" -> timeProvider.now()))).get

@@ -8,6 +8,7 @@ const REQUEST_PASSWORD_RESET_ENDPOINT = '/send-password-reset-link';
 const PASSWORD_RESET_ENDPOINT = '/reset-password';
 export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
+const LOGOUT_ALL_DEVICES_ENDPOINT = '/logout-all-devices';
 
 export const startResettingPassword = function(email, code, newPassword) {
   return (dispatch, getState) => {
@@ -52,6 +53,15 @@ export const startLoggingInUser = function(emailOrUsername, password) {
     );
   }
 };
+
+export const startLoggingOutAllDevices = function() {
+  return (dispatch, getState) => {
+    axios.post(`${ROOT_URL}${LOGOUT_ALL_DEVICES_ENDPOINT}`,
+      { no: 'data'},
+      { headers: { authorization: localStorage.getItem('token') }});
+    dispatch(startLoggingOutUser());
+  }
+}
 
 export const startLoggingOutUser = function() {
   return (dispatch, getState) => {

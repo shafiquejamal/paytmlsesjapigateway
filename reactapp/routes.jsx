@@ -10,6 +10,7 @@ import Activate from './main/access/registration/Activate';
 import ActivationFailed from './main/access/registration/ActivationFailed';
 import Login from './main/access/authentication/Login';
 import Logout from './main/access/authentication/Logout';
+import LogoutAllDevices from './main/access/authentication/LogoutAllDevices';
 import RequestResetPassword from './main/access/authentication/RequestResetPassword';
 import ResetPassword from './main/access/authentication/ResetPassword';
 import ManageAccount from './main/user/ManageAccount';
@@ -35,6 +36,8 @@ export const REQUEST_RESET_PASSWORD_TEXT = "Forgot your password?";
 export const RESET_PASSWORD_LINK = "/reset-password";
 export const RESEND_ACTIVATION_LINK = "/resend-activation-link";
 export const RESEND_ACTIVATION_TEXT = "Re-send activation link";
+export const LOGOUT_ALL_DEVICES_LINK = "/logout-all-devices";
+export const LOGOUT_ALL_DEVICES_TEXT = "Logout-all-devices";
 
 const requireLoggedIn = (nextState, replace, next) => {
   if (!localStorage.getItem('token')) {
@@ -57,6 +60,7 @@ export default (
     <Route path={REGISTRATION_SUCCESS_LINK} component={RegistrationSuccess} />
     <Route path={LOGIN_LINK} component={Login} onEnter={requireLoggedOut} />
     <Route path={LOGOUT_LINK} component={Logout} />
+    <Route path={LOGOUT_ALL_DEVICES_LINK} component={LogoutAllDevices} />
     <Route path={MANAGE_ACCOUNT_LINK} component={ManageAccount} onEnter={requireLoggedIn} />
     <Route path={CHANGE_PASSWORD_LINK} component={ChangePassword} onEnter={requireLoggedIn} />
     <Route path={PASSWORD_CHANGE_SUCCESSFUL_LINK} component={PasswordChangeSuccessful} onEnter={requireLoggedIn} />
