@@ -54,4 +54,6 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
 
   override def allLogoutDate(id: UUID):Option[DateTime] = userDAO.allLogoutDate(id)
 
+  override def logoutAllDevices(id: UUID):Try[UserMessage] =
+    userDAO.addAllLogoutDate(id, timeProvider.now(), timeProvider.now())
 }

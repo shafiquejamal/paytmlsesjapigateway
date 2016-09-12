@@ -10,7 +10,7 @@ import scalikejdbc.DBSession
 import user._
 import util.TestTimeProviderImpl
 
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 class AuthenticationFacadeATest
   extends FlatSpec
@@ -92,6 +92,21 @@ class AuthenticationFacadeATest
     api.resetPassword("non@existent.com", passwordResetCodeAlice1, newPassword).failure.exception shouldBe
     a[RuntimeException]
     api.user(AuthenticationMessage(None, Some("non@existent.com"), newPassword)) shouldBe empty
+  }
+
+  "retrieving the allLogoutDate" should "yield the latest allLogoutDate" in { implicit session =>
+    val api = makeAPI(session)
+
+    api.allLogoutDate(id1) shouldBe empty
+    api.allLogoutDate(id3) should contain(yesterday.plusMillis(1))
+  }
+
+  "logging out all devices" should "succeed if the user exists" in { implicit session =>
+    val api = makeAPI(session)
+
+    api.allLogoutDate(id1) shouldBe empty
+    api.logoutAllDevices(id1).success.value.maybeId should contain (id1)
+    api.allLogoutDate(id1) should contain(now)
   }
 
   private def makeAPI(session:DBSession):AuthenticationAPI = {

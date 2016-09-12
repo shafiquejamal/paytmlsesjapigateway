@@ -19,6 +19,7 @@ trait AuthenticationAPI {
 
   def resetPassword(email: String, code: String, newPassword: String): Try[UserMessage]
 
-  def allLogoutDate(id: UUID):Option[DateTime]
-  
+  def allLogoutDate(id: UUID): Option[DateTime]
+
+  def logoutAllDevices(id: UUID): Try[UserMessage]
 }
