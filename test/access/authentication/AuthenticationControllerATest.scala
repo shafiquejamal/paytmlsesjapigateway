@@ -159,7 +159,6 @@ class AuthenticationControllerATest
     (contentFromRequest(authenticationSecondUse) \ "token").asOpt[String] shouldBe empty
   }
 
-
   it should "fail if the code does not match the email in the db" in {
     val message = Json.obj("email" -> "alice@alice.com", "code" -> passwordResetCodeAlice1, "newPassword" -> newPassword)
     val result =
@@ -180,6 +179,34 @@ class AuthenticationControllerATest
     status(result) shouldBe BAD_REQUEST
   }
 
+  "Logging out of all devices" should "succeed if the user exists" in {
+    val timeProvider = new TestTimeProviderImpl()
+    val jWTParamsProvider = new TestJWTParamsProviderImpl()
+    val claim = Json.obj("userId" -> id1, "iat" -> timeProvider.now())
+    val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+
+    val result = route(app, FakeRequest(POST, "/sign-out-all-devices")
+      .withHeaders(("Authorization", jWT))
+      .withJsonBody(Json.obj("currentPassword" -> "passwordBobID3", "newPassword" -> "some-new-password",
+      "iat" -> timeProvider.now()))).get
+
+    status(result) shouldBe OK
+    (contentAsJson(result) \ "status").asOpt[String] should contain("success")
+  }
+
+  it should "fail if the user does not exist" in {
+    val timeProvider = new TestTimeProviderImpl()
+    val jWTParamsProvider = new TestJWTParamsProviderImpl()
+    val claim = Json.obj("userId" -> idNonExistentUser, "iat" -> timeProvider.now())
+    val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+
+    val result = route(app, FakeRequest(POST, "/sign-out-all-devices")
+      .withHeaders(("Authorization", jWT))
+      .withJsonBody(Json.obj("currentPassword" -> "", "newPassword" -> "some-new-password",
+      "iat" -> timeProvider.now()))).get
+
+    status(result) shouldBe UNAUTHORIZED
+  }
 
   private def contentFromRequest(postData:JsValue, path:String = "/authenticate"):JsValue =
     contentAsJson(route(app, FakeRequest(POST, path)

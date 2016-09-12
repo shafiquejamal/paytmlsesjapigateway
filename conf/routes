@@ -18,4 +18,5 @@ GET     /email/:email               access.registration.RegistrationController.e
 POST    /authenticate               access.authentication.AuthenticationController.authenticate
 POST    /send-password-reset-link   access.authentication.AuthenticationController.sendPasswordResetLink
 POST    /reset-password             access.authentication.AuthenticationController.resetPassword
+POST    /sign-out-all-devices       access.authentication.AuthenticationController.logoutAllDevices
 POST    /change-password            user.UserController.changePassword

@@ -1,27 +1,29 @@
 package access.authentication
 
-import access.JWTParamsProvider
 import access.authentication.AuthenticationMessage._
 import access.authentication.EmailMessage._
 import access.authentication.ResetPasswordMessage._
+import access.{AuthenticatedActionCreator, JWTParamsProvider}
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
+import play.Configuration
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import user.UserAPI
 import user.UserStatus.{Active, Unverified}
 import util.{TimeProvider, UUIDProvider}
 
-import scala.util.Success
+import scala.util.{Failure, Success}
 
 class AuthenticationController @Inject() (
-    authenticationAPI: AuthenticationAPI,
+    override val authenticationAPI: AuthenticationAPI,
     userAPI: UserAPI,
-    jWTParamsProvider: JWTParamsProvider,
+    override val jWTParamsProvider: JWTParamsProvider,
     uUIDProvider: UUIDProvider,
     passwordResetCodeSender: PasswordResetCodeSender,
-    timeProvider: TimeProvider)
-  extends Controller {
+    override val timeProvider: TimeProvider,
+    override val configuration: Configuration)
+  extends Controller with AuthenticatedActionCreator {
 
   def authenticate = Action(parse.json) { request =>
     request.body.validate[AuthenticationMessage] match {
@@ -39,6 +41,14 @@ class AuthenticationController @Inject() (
     }
   }
 
+  def logoutAllDevices = AuthenticatedAction(parse.json) { request =>
+    authenticationAPI.logoutAllDevices(request.userId) match {
+      case Success(_) =>
+        Ok(Json.obj("status" -> "success"))
+      case Failure(failure) =>
+        Ok(Json.obj("status" -> failure.getMessage))
+    }
+  }
 
   def sendPasswordResetLink() = Action(parse.json) { request =>
     request.body.validate[EmailMessage] match {
