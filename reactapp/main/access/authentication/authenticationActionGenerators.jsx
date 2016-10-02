@@ -58,7 +58,7 @@ export const startLoggingOutAllDevices = function() {
   return (dispatch, getState) => {
     axios.post(`${ROOT_URL}${LOGOUT_ALL_DEVICES_ENDPOINT}`,
       { no: 'data'},
-      { headers: { authorization: localStorage.getItem('token') }});
+      { headers: { authorization: "Bearer " + localStorage.getItem('token') }});
     dispatch(startLoggingOutUser());
   }
 }

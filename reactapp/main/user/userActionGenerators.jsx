@@ -8,6 +8,6 @@ export const startChangingPassword = function(currentPassword, newPassword) {
   return (dispatch, getState) => {
     return axios.post(`${ROOT_URL}${CHANGE_PASSWORD_ENDPOINT}`,
       {currentPassword, newPassword},
-      { headers: { authorization: localStorage.getItem('token') }});
+      { headers: { authorization: "Bearer " + localStorage.getItem('token') }});
   };
 };

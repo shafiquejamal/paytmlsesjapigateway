@@ -186,7 +186,7 @@ class AuthenticationControllerATest
     val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
     val result = route(app, FakeRequest(POST, "/logout-all-devices")
-      .withHeaders(("Authorization", jWT))
+      .withHeaders(("Authorization", "Bearer " + jWT))
       .withJsonBody(Json.obj("currentPassword" -> "passwordBobID3", "newPassword" -> "some-new-password",
       "iat" -> timeProvider.now()))).get
 

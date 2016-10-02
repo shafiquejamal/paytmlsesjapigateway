@@ -51,7 +51,7 @@ class UserControllerATest
   "changing the password" should "succeed if the existing password is valid" in {
     val content =
       contentAsJson(route(app, FakeRequest(POST, "/change-password")
-        .withHeaders(("Authorization", jWT))
+        .withHeaders(("Authorization", "Bearer " + jWT))
         .withJsonBody(Json.obj("currentPassword" -> "passwordAliceID2", "newPassword" -> "some-new-password",
           "iat" -> timeProvider.now()))
       ).get)
@@ -62,7 +62,7 @@ class UserControllerATest
   it should "fail if the existing password does not match" in {
     val content =
       contentAsJson(route(app, FakeRequest(POST, "/change-password")
-        .withHeaders(("Authorization", jWT))
+        .withHeaders(("Authorization",  "Bearer " + jWT))
         .withJsonBody(Json.obj("currentPassword" -> "wrong password", "newPassword" -> "some-new-password"))
       ).get)
 
@@ -72,7 +72,7 @@ class UserControllerATest
   it should "fail if valid data is not sent" in {
     val result =
       route(app, FakeRequest(POST, "/change-password")
-        .withHeaders(("Authorization", jWT))
+        .withHeaders(("Authorization",  "Bearer " + jWT))
         .withJsonBody(Json.obj("currentPassword" -> 1, "newPassword" -> "some-new-password")))
         .get
 
@@ -99,7 +99,7 @@ class UserControllerATest
     val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
     val result = route(app, FakeRequest(POST, "/change-password")
-      .withHeaders(("Authorization", jWT))
+      .withHeaders(("Authorization",  "Bearer " + jWT))
       .withJsonBody(Json.obj("currentPassword" -> "passwordBobID3", "newPassword" -> "some-new-password",
         "iat" -> timeProvider.now()))
       ).get
