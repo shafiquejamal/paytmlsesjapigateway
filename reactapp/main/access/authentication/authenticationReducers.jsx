@@ -16,9 +16,9 @@ export const authenticationReducer = (state = {}, action) => {
         authenticated: false,
         email: undefined,
         username: undefined
-      }
+      };
      break;
     default:
       return state;
-  };
-}
+  }
+};

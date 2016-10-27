@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import * as Redux from 'react-redux';
 
-import { REGISTER_LINK, REGISTER_TEXT, LOGIN_LINK, LOGIN_TEXT, LOGOUT_LINK, LOGOUT_TEXT, MANAGE_ACCOUNT_LINK, MANAGE_ACCOUNT_TEXT } from '../routes';
+import { REGISTER_LINK, REGISTER_TEXT, LOGIN_LINK, LOGIN_TEXT, LOGOUT_LINK, LOGOUT_TEXT, MANAGE_ACCOUNT_LINK, MANAGE_ACCOUNT_TEXT, CHAT_LINK, CHAT_TEXT } from '../routes';
 
 export const Template = React.createClass({
     renderLinks() {
@@ -26,6 +26,9 @@ export const Template = React.createClass({
             </li>,
             <li className="nav-item" key="LOGOUT_TEXT">
                 <Link to={LOGOUT_LINK} className="nav-link">{LOGOUT_TEXT}</Link>
+            </li>,
+            <li className="nav-item" key="CHAT_TEXT">
+              <Link to={CHAT_LINK} className="nav-link">{CHAT_TEXT}</Link>
             </li>
           ]
         );
