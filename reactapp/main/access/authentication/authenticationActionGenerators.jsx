@@ -24,7 +24,7 @@ export const sendPasswordResetLink = function(email) {
 };
 
 export const startLoggingInUser = function(emailOrUsername, password) {
-  var loginCredentials = {}
+  var loginCredentials = {};
   return (dispatch, getState) => {
     if (validator.isEmail(emailOrUsername)) {
       loginCredentials = {

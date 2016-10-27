@@ -23,32 +23,39 @@ trait AuthenticatedActionCreator {
   val configuration: Configuration
   val timeProvider: TimeProvider
 
-  object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest] {
-
-    def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]):Future[Result] =
-      request.headers.get("Authorization").map(_.drop(7)).filterNot(_.trim.isEmpty)
-      .fold[Future[Result]](Future.successful(Unauthorized)) { token =>
-        JwtJson.decodeJson(token, secretKey, Seq(algorithm)) match {
-        case Success(claim) =>
-          claim.value.get("iat").flatMap(_.asOpt[DateTime]).fold[Future[Result]](Future.successful(Unauthorized)){ iat =>
-            val tokenExpired = iat.isBefore(timeProvider.now().minusDays(configuration.getInt("crauth.jwtValidityDays")))
-            if (tokenExpired)
-              Future.successful(Unauthorized)
-            else {
-              val userId = UUID.fromString(claim.value.get("userId").flatMap(_.asOpt[String]).getOrElse(""))
-              val tokenIssuedAfterLastAllLogout = authenticationAPI.allLogoutDate(userId).fold[Boolean](true)(iat.isAfter)
-              if (tokenIssuedAfterLastAllLogout)
-                authenticationAPI.userById(userId).fold[Future[Result]](Future.successful(Unauthorized))(user =>
-                  block(new AuthenticatedRequest(userId, request))
-                )
-              else
-                Future.successful(Unauthorized)
-            }
+  def decodeAndValidateToken[A, T](
+      token: String,
+      block: => (UUID) => T,
+      unauthorized: => T): T =
+    JwtJson.decodeJson(token, secretKey, Seq(algorithm)) match {
+      case Success(claim) =>
+        claim.value.get("iat").flatMap(_.asOpt[DateTime]).fold[T](unauthorized) { iat =>
+          val tokenExpired = iat.isBefore(timeProvider.now().minusDays(configuration.getInt("crauth.jwtValidityDays")))
+          if (tokenExpired)
+            unauthorized
+          else {
+            val userId = UUID.fromString(claim.value.get("userId").flatMap(_.asOpt[String]).getOrElse(""))
+            val tokenIssuedAfterLastAllLogout = authenticationAPI.allLogoutDate(userId).fold[Boolean](true)(iat.isAfter)
+            if (tokenIssuedAfterLastAllLogout)
+              authenticationAPI.userById(userId).fold[T](unauthorized)(user => block(userId))
+            else
+              unauthorized
           }
-        case _ =>
-          Future.successful(Unauthorized)
         }
-      }
+      case _ =>
+        unauthorized
     }
 
+  object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest] {
+
+    def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
+      request.headers.get("Authorization").map(_.drop(7)).filterNot(_.trim.isEmpty)
+      .fold[Future[Result]](Future.successful(Unauthorized)) { token =>
+        decodeAndValidateToken(
+          token,
+          (userId: UUID) => block(new AuthenticatedRequest(userId, request)),
+          Future.successful(Unauthorized))
+      }
+
+  }
 }

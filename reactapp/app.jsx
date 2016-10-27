@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, hashHistory } from 'react-router';
 import promise from 'redux-promise';
-import WSInstance from './main/chat/ChatWS';
+import WSInstance from './main/WS';
 import * as ChatActions from './main/chat/chatActionGenerators';
 import * as ActionTypes from './main/chat/chatActionTypes';
 import { WS_ROOT_URL } from './main/ConfigurationPaths';
