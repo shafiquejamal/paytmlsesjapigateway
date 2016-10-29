@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc"             % "2.4.2",
   "org.scalikejdbc" %% "scalikejdbc-config"      % "2.4.2",
   "org.scalikejdbc" %% "scalikejdbc-test"   % "2.4.2"   % "test",
+  "com.typesafe.akka" %% "akka-testkit" % "2.3.11" % "test",
   "org.flywaydb" %% "flyway-play" % "3.0.0",
   "com.h2database"  %  "h2"                % "1.4.191",
   "ch.qos.logback"  %  "logback-classic"   % "1.1.3",

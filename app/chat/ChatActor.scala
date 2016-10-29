@@ -12,7 +12,7 @@ class ChatActor(out: ActorRef) extends Actor with ActorLogging {
       out ! msg
     case msg: String =>
       log.info(s"String message received: $msg")
-      out ! msg
+      out ! s"${out.toString}: $msg"
   }
 
 }
@@ -20,7 +20,7 @@ class ChatActor(out: ActorRef) extends Actor with ActorLogging {
 
 object ChatActor {
 
-  def props(out: ActorRef) = Props(new ChatActor(out))
+  def props(client: ActorRef) = Props(new ChatActor(client))
 
 }
 

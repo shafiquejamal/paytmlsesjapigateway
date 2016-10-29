@@ -1,21 +1,38 @@
 package chat
 
-import akka.actor.ActorSystem
-import akka.stream.Materializer
-import com.google.inject.Inject
-import play.api.libs.json.JsValue
-import play.api.mvc._
-import play.api.libs.streams._
+import java.util.UUID
 
-class ChatController @Inject() (implicit system: ActorSystem, materializer: Materializer) extends Controller {
+import access.JWTParamsProvider
+import access.authentication.AuthenticationAPI
+import akka.actor.ActorSystem
+import akka.stream.{Materializer, OverflowStrategy}
+import com.google.inject.Inject
+import play.Configuration
+import play.api.mvc._
+import util.{UUIDProvider, TimeProvider}
+
+class ChatController @Inject() (
+    authenticationAPI: AuthenticationAPI,
+    jWTParamsProvider: JWTParamsProvider,
+    uUIDProvider: UUIDProvider,
+    configuration: Configuration,
+    timeProvider: TimeProvider,
+    system: ActorSystem,
+    materializer: Materializer) extends Controller {
 
   def chat(token: String) = WebSocket.accept[String, String] { request =>
-    println(s"token=$token")
-    println("request")
-    println(request.headers)
-    println(request.queryString.get("encoding").mkString("\n"))
-    println(request.id)
-    ActorFlow.actorRef(client => ChatActor.props(client))
+
+    implicit val mat = materializer
+    implicit val actorRefFactory = system
+
+    new ChatAuthenticator(authenticationAPI, jWTParamsProvider, configuration, timeProvider)
+    .decodeAndValidateToken(
+      token,
+      (uUID: UUID) => BetterActorFlow.namedActorRef( client =>
+        ChatActor.props(client), 16, OverflowStrategy.dropNew, uUID.toString + "_" + uUIDProvider.randomUUID().toString),
+      null
+    )
+
   }
 
 }

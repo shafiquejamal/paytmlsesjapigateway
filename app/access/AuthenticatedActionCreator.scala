@@ -23,7 +23,7 @@ trait AuthenticatedActionCreator {
   val configuration: Configuration
   val timeProvider: TimeProvider
 
-  def decodeAndValidateToken[A, T](
+  def decodeAndValidateToken[T](
       token: String,
       block: => (UUID) => T,
       unauthorized: => T): T =

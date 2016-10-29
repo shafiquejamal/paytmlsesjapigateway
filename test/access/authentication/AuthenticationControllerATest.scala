@@ -25,12 +25,13 @@ class AuthenticationControllerATest
   with UserFixture {
 
   override def overrideModules =
-    Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
-        bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
-        bind[UUIDProvider].to[TestUUIDProviderImpl],
-        bind[Emailer].to[TestEmailerImpl],
-        bind[TimeProvider].to[TestTimeProviderImpl]
-       )
+    Seq(
+      bind[DBConfig].to[ScalikeJDBCTestDBConfig],
+      bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
+      bind[UUIDProvider].to[TestUUIDProviderImpl],
+      bind[Emailer].to[TestEmailerImpl],
+      bind[TimeProvider].to[TestTimeProviderImpl]
+    )
 
   val dBConfig = new ScalikeJDBCTestDBConfig()
   val newPassword = "some new password"
