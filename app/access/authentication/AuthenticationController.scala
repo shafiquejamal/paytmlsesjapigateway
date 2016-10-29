@@ -23,7 +23,8 @@ class AuthenticationController @Inject() (
     passwordResetCodeSender: PasswordResetCodeSender,
     override val timeProvider: TimeProvider,
     override val configuration: Configuration)
-  extends Controller with AuthenticatedActionCreator {
+  extends Controller
+  with AuthenticatedActionCreator {
 
   def authenticate = Action(parse.json) { request =>
     request.body.validate[AuthenticationMessage] match {

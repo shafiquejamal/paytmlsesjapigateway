@@ -210,9 +210,11 @@ class AuthenticationControllerATest
   }
 
   private def contentFromRequest(postData:JsValue, path:String = "/authenticate"):JsValue =
-    contentAsJson(route(app, FakeRequest(POST, path)
-               .withJsonBody(postData)
-               .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json"))
-               .get)
+    contentAsJson(
+      route(app, FakeRequest(POST, path)
+      .withJsonBody(postData)
+      .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
+      ).get
+    )
 
 }
