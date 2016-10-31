@@ -8,14 +8,18 @@ import user.UserMessage._
 import user.UserStatus._
 import user.{User, UserDAO, UserMessage}
 import util.Password._
-import util.TimeProvider
+import util.{TimeProvider, UUIDProvider}
 
 import scala.util.{Failure, Try}
 
 @Singleton
-class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends AuthenticationAPI {
+class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider, uUIDProvider: UUIDProvider)
+  extends AuthenticationAPI {
 
   override def userById(id:UUID): Option[UserMessage] = userDAO.by(id, authenticationUserFilter)
+
+  override def validateOneTime(id: UUID, iat: DateTime): Option[UserMessage] =
+    userDAO.validateOneTime(id, iat, authenticationUserFilter, timeProvider.now(), uUIDProvider.randomUUID())
 
   override def user(authenticationMessage:AuthenticationMessage): Option[UserMessage] = {
     val maybeUserByEmail:Option[UserMessage] = authenticationMessage.maybeEmail.filter(_.trim.nonEmpty).flatMap { email =>

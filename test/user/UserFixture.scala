@@ -102,7 +102,14 @@ trait UserFixture {
     sql"""insert into xuseralllogoutdate (id, authorid, createdat, xuserid, alllogoutdate) values
          (${uUIDProvider.randomUUID()}, ${id3}, ${yesterday.plusMillis(1)}, ${id3}, ${yesterday})""",
     sql"""insert into xuseralllogoutdate (id, authorid, createdat, xuserid, alllogoutdate) values
-         (${uUIDProvider.randomUUID()}, ${id3}, ${yesterday}, ${id3}, ${yesterday.plusMillis(1)})"""
+         (${uUIDProvider.randomUUID()}, ${id3}, ${yesterday}, ${id3}, ${yesterday.plusMillis(1)})""",
+
+    sql"""insert into xuseriatsingleusetoken (id, authorid, xuserid, createdat, iat) values
+         (${uUIDProvider.randomUUID()}, ${id4}, ${id4}, ${now}, ${yesterday})""",
+    sql"""insert into xuseriatsingleusetoken (id, authorid, xuserid, createdat, iat) values
+         (${uUIDProvider.randomUUID()}, ${id3}, ${id3}, ${now}, ${dayBeforeYesterday})""",
+    sql"""insert into xuseriatsingleusetoken (id, authorid, xuserid, createdat, iat) values
+         (${uUIDProvider.randomUUID()}, ${id3}, ${id3}, ${now}, ${yesterday})"""
 
   )
 

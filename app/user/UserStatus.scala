@@ -23,10 +23,10 @@ object UserStatus {
 
   def toUserStatus(value:Int):UserStatus = allUserStatuses.find(_.value == value).getOrElse(Blocked)
 
-  val registrationUserFilter = (user:User) => usernameAndEmailAvailable.contains(user.userStatus)
-  val authenticationUserFilter = (user:User) => hasAccess.contains(user.userStatus)
-  val changeUsernameFilter = (user:User) => allUserStatuses.contains(user.userStatus)
-  val usernameAndEmailIsAvailableFilter = (user:User) => usernameAndEmailAvailable.contains(user.userStatus)
-  val usernameAndEmailIsNotAvailableFilter = (user:User) => usernameAndEmailNotAvailable.contains(user.userStatus)
+  val registrationUserFilter = (user: User) => usernameAndEmailAvailable.contains(user.userStatus)
+  val authenticationUserFilter = (statusField: StatusField) => hasAccess.contains(statusField.userStatus)
+  val changeUsernameFilter = (user: User) => allUserStatuses.contains(user.userStatus)
+  val usernameAndEmailIsAvailableFilter = (user: User) => usernameAndEmailAvailable.contains(user.userStatus)
+  val usernameAndEmailIsNotAvailableFilter = (user: User) => usernameAndEmailNotAvailable.contains(user.userStatus)
 
 }

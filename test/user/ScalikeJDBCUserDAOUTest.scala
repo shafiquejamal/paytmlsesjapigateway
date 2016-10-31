@@ -214,6 +214,44 @@ class ScalikeJDBCUserDAOUTest
     userDAO.allLogoutDate(id1) should contain(now)
   }
 
+  "validating a single use token" should "return true if there are no existing single use tokens for this " +
+  "user" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.validateOneTime(
+      id1, now, authenticationUserFilter, now, uUIDProvider.randomUUID()).flatMap(_.maybeId) should contain(id1)
+    userDAO.validateOneTime(id1, now, authenticationUserFilter, now, uUIDProvider.randomUUID()) shouldBe empty
+  }
+
+  it should "return false if the user is not valid" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.validateOneTime(id4, now, authenticationUserFilter, now, uUIDProvider.randomUUID()) shouldBe empty
+    userDAO.validateOneTime(idNonExistentUser, now, authenticationUserFilter, now, uUIDProvider.randomUUID())
+    .shouldBe(empty)
+  }
+
+  it should "return true if the latest existing token iat is earlier than the query iat" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.validateOneTime(
+      id3, now, authenticationUserFilter, now, uUIDProvider.randomUUID()).flatMap(_.maybeId) should contain(id3)
+    userDAO.validateOneTime(id3, now, authenticationUserFilter, now, uUIDProvider.randomUUID()) shouldBe empty
+  }
+
+  it should "return false if the latest existing token iat is the same as the query iat" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.validateOneTime(id3, yesterday, authenticationUserFilter, now, uUIDProvider.randomUUID()) shouldBe empty
+  }
+
+  it should "return false if the latest existing token iat is later than the query iat" in { implicit session =>
+    val userDAO = makeDAO(session)
+
+    userDAO.validateOneTime(
+      id3, dayBeforeYesterday, authenticationUserFilter, now, uUIDProvider.randomUUID()) shouldBe empty
+  }
+
   private def makeDAO(session:DBSession) =
     new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
   

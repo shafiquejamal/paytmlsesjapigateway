@@ -37,19 +37,19 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   val mockedAuthenticationAPI = mock[AuthenticationAPI]
 
   val uUIDProvider = new TestUUIDProviderImpl()
-  val uUUID = uUIDProvider.randomUUID()
+  val uUID = uUIDProvider.randomUUID()
   val configuration = new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
   val controller =
     new ExampleController(mockedAuthenticationAPI, jWTParamsProvider, configuration, new TestTimeProviderImpl())
   val timeProvider = new TestTimeProviderImpl
   val now = timeProvider.now()
-  val claimNotExpired = Json.obj("userId" -> uUUID, "iat" -> now.minusDays(1))
-  val user = new TestUserImpl().copy(maybeId = Some(uUUID))
+  val claimNotExpired = Json.obj("userId" -> uUID, "iat" -> now.minusDays(1))
+  val user = new TestUserImpl().copy(maybeId = Some(uUID))
 
 
   "The secured api" should "allow access if the claim is correct, the token has not expired, and the api returns a user" in {
-    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(None)
-    (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(Some(user))
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    (mockedAuthenticationAPI.userById _ ).expects(uUID).returning(Some(user))
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", "Bearer " + token)) )
 
@@ -58,8 +58,8 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   }
 
   it should "deny access if the api does not return a user" in {
-    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(None)
-    (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(None)
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    (mockedAuthenticationAPI.userById _ ).expects(uUID).returning(None)
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", "Bearer " + token)) )
 
@@ -91,7 +91,7 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   }
 
   it should "deny access if the claim represents a valid user, but the token has expired" in {
-    val claimExpired = Json.obj("userId" -> uUUID, "iat" -> timeProvider.now().minusDays(3))
+    val claimExpired = Json.obj("userId" -> uUID, "iat" -> timeProvider.now().minusDays(3))
     val token = JwtJson.encode(claimExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", "Bearer " + token)) )
 
@@ -100,7 +100,7 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   }
 
   it should "deny access if the token is issued before the last allLogout date" in {
-    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(Some(now))
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(Some(now))
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", "Bearer " + token)) )
 
@@ -109,40 +109,86 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   }
 
   "Decoding and validating the token" should "return the unauthorized block if the api does not return a user" in {
-    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(None)
-    (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(None)
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    (mockedAuthenticationAPI.userById _ ).expects(uUID).returning(None)
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
-    controller.decodeAndValidateToken[String](token, (_) => "success", "failure") shouldEqual "failure"
+    controller
+    .decodeAndValidateToken[String](token, (_) => "success", "failure", AllowedTokens(MultiUse)) shouldEqual "failure"
   }
 
   it should "return the success block if the claim is correct, the token has not expired, and the api returns a user" in {
-    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(None)
-    (mockedAuthenticationAPI.userById _ ).expects(uUUID).returning(Some(user))
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    (mockedAuthenticationAPI.userById _ ).expects(uUID).returning(Some(user))
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
-    controller.decodeAndValidateToken[String](token, (_) => "success", "failure") shouldEqual "success"
+    controller
+    .decodeAndValidateToken[String](token, (_) => "success", "failure", AllowedTokens(MultiUse)) shouldEqual "success"
+  }
+
+  it should "return the unauthorized block if the token is a single use token, and MultiUse only is specified" in {
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    val singleUseClaim = Json.obj("userId" -> uUID, "iat" -> now.minusDays(1), "tokenUse" -> "single")
+    val token = JwtJson.encode(singleUseClaim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+
+    controller
+    .decodeAndValidateToken[String](token, (_) => "success", "failure", AllowedTokens(MultiUse)) shouldEqual "failure"
+  }
+
+  it should "return the authorized block if the token is a single use token, and SingleUse only is specified" in {
+    val iat = now.minusDays(1)
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    (mockedAuthenticationAPI.validateOneTime _).expects(uUID, iat).returning(Some(user))
+    val singleUseClaim = Json.obj("userId" -> uUID, "iat" -> iat, "tokenUse" -> "single")
+    val token = JwtJson.encode(singleUseClaim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+
+    controller
+    .decodeAndValidateToken[String](token, (_) => "success", "failure", AllowedTokens(SingleUse)) shouldEqual "success"
+  }
+
+  it should "return the authorized block if the token is a single use token, and SingleUse or MultiUser is specified - " +
+  "single use token provided" in {
+    val iat = now.minusDays(1)
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    (mockedAuthenticationAPI.validateOneTime _).expects(uUID, iat).returning(Some(user))
+    val singleUseClaim = Json.obj("userId" -> uUID, "iat" -> iat, "tokenUse" -> "single")
+    val token = JwtJson.encode(singleUseClaim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+
+    controller
+    .decodeAndValidateToken[String](
+      token, (_) => "success", "failure", AllowedTokens(Vector(SingleUse, MultiUse))) shouldEqual "success"
+  }
+
+  it should "return the authorized block if the token is a single use token, and SingleUse or MultiUser is specified - " +
+  "multi use token provided" in {
+    val iat = now.minusDays(1)
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(None)
+    (mockedAuthenticationAPI.userById _).expects(uUID).returning(Some(user))
+    val singleUseClaim = Json.obj("userId" -> uUID, "iat" -> iat)
+    val token = JwtJson.encode(singleUseClaim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+
+    controller.decodeAndValidateToken[String](
+      token, (_) => "success", "failure", AllowedTokens(Vector(SingleUse, MultiUse))) shouldEqual "success"
   }
 
   it should "return the unauthorized block if the token is not valid" in {
     val token = JwtJson.encode(claimNotExpired, "wrong secret key", jWTParamsProvider.algorithm)
-    val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", "Bearer " + token)) )
 
-    controller.decodeAndValidateToken[String](token, (_) => "success", "failure") shouldEqual "failure"
+    controller.decodeAndValidateToken[String](token, (_) => "success", "failure", null) shouldEqual "failure"
   }
 
   it should "return the unauthorized block if the claim represents a valid user, but the token has expired" in {
-    val claimExpired = Json.obj("userId" -> uUUID, "iat" -> timeProvider.now().minusDays(3))
+    val claimExpired = Json.obj("userId" -> uUID, "iat" -> timeProvider.now().minusDays(3))
     val token = JwtJson.encode(claimExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
-    controller.decodeAndValidateToken[String](token, (_) => "success", "failure") shouldEqual "failure"
+    controller.decodeAndValidateToken[String](token, (_) => "success", "failure", null) shouldEqual "failure"
   }
 
   it should "return the unauthorized block if the token is issued before the last allLogout date" in {
-    (mockedAuthenticationAPI.allLogoutDate _).expects(uUUID).returning(Some(now))
+    (mockedAuthenticationAPI.allLogoutDate _).expects(uUID).returning(Some(now))
     val token = JwtJson.encode(claimNotExpired, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
 
-    controller.decodeAndValidateToken[String](token, (_) => "success", "failure") shouldEqual "failure"
+    controller.decodeAndValidateToken[String](token, (_) => "success", "failure", null) shouldEqual "failure"
   }
 
 }

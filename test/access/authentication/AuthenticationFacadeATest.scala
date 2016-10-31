@@ -109,10 +109,32 @@ class AuthenticationFacadeATest
     api.allLogoutDate(id1) should contain(now)
   }
 
+  "Validating a single use token" should "return a user message if the given token is later than the latest one in the " +
+  "db" in { implicit session =>
+    val api = makeAPI(session)
+
+    api.validateOneTime(id1, dayBeforeYesterday).flatMap(_.maybeId) should contain(id1)
+    api.validateOneTime(id1, dayBeforeYesterday).flatMap(_.maybeId) shouldBe empty
+    api.validateOneTime(id3, now).flatMap(_.maybeId) should contain(id3)
+    api.validateOneTime(id3, now).flatMap(_.maybeId) shouldBe empty
+  }
+
+  it should "return empty if the given token is not later than the latest one in the db" in { implicit session =>
+    val api = makeAPI(session)
+
+    api.validateOneTime(id3, dayBeforeYesterday) shouldBe empty
+  }
+
+  it should "return empty if the user is blocked" in { implicit session =>
+    val api = makeAPI(session)
+
+    api.validateOneTime(id7, dayBeforeYesterday) shouldBe empty
+  }
+
   private def makeAPI(session:DBSession):AuthenticationAPI = {
     val userDAO =
       new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-    new AuthenticationFacade(userDAO, timeProvider)
+    new AuthenticationFacade(userDAO, timeProvider, uUIDProvider)
   }
 
 }

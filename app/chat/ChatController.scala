@@ -2,8 +2,8 @@ package chat
 
 import java.util.UUID
 
-import access.{AuthenticatedActionCreator, JWTParamsProvider}
 import access.authentication.AuthenticationAPI
+import access.{AllowedTokens, AuthenticatedActionCreator, JWTParamsProvider, SingleUse}
 import akka.actor.ActorSystem
 import akka.stream.{Materializer, OverflowStrategy}
 import com.google.inject.Inject
@@ -11,7 +11,7 @@ import pdi.jwt.JwtJson
 import play.Configuration
 import play.api.libs.json.Json
 import play.api.mvc._
-import util.{UUIDProvider, TimeProvider}
+import util.{TimeProvider, UUIDProvider}
 
 class ChatController @Inject() (
     override val authenticationAPI: AuthenticationAPI,
@@ -29,10 +29,10 @@ class ChatController @Inject() (
       Json.obj(
         "userId" -> request.userId.toString,
         "iat" -> timeProvider.now(),
-        "singleUse" -> true
+        "tokenUse" -> "single"
       )
     val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
-    Ok(Json.obj("token" -> jWT))
+    Ok(Json.obj("singleUseToken" -> jWT))
   }
 
   def chat(token: String) = WebSocket.accept[String, String] { request =>
@@ -45,7 +45,8 @@ class ChatController @Inject() (
       token,
       (uUID: UUID) => BetterActorFlow.namedActorRef( client =>
         ChatActor.props(client), 16, OverflowStrategy.dropNew, uUID.toString + "_" + uUIDProvider.randomUUID().toString),
-      null
+      null,
+      AllowedTokens(SingleUse)
     )
 
   }

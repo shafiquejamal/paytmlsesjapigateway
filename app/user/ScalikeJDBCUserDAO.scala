@@ -61,6 +61,44 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
     byWithSession(id, userFilter)
   }
 
+  private def isUserIsValid(xuserId: UUID, statusOfUserFilter: StatusOfUser => Boolean)(implicit session:DBSession): Boolean =
+    sql"""select xuserid, status, createdat from xuserstatus where xuserid = $xuserId order by createdat desc limit 1"""
+        .map(wrappedResultSetToUserConverter.toStatusOfUser).single().apply().exists(statusOfUserFilter)
+
+  private def isTokenIsLatest(xuserId: UUID, iat: DateTime)
+      (implicit session:DBSession): Boolean = {
+    sql"""select xuserid, iat from xuseriatsingleusetoken where xuserid = $xuserId
+         order by xuseriatsingleusetoken.iat desc limit 1"""
+    .map(wrappedResultSetToUserConverter.toSingleUseToken)
+    .single().apply().forall(_.iat.isBefore(iat))
+  }
+
+  override def validateOneTime(
+      xuserId: UUID,
+      iat: DateTime,
+      statusOfUserFilter: StatusField => Boolean,
+      createdat: DateTime,
+      uUID: UUID): Option[User] = {
+
+    implicit val session = scalikeJDBCSessionProvider.provideAutoSession
+    val userIsValid = isUserIsValid(xuserId, statusOfUserFilter)
+    val tokenIsLatest = isTokenIsLatest(xuserId, iat)
+
+    if (userIsValid && tokenIsLatest) {
+      val isTokenAdded =
+        sql"""insert into xuseriatsingleusetoken (id, authorid, xuserid, iat, createdat) values
+             (${uUID}, ${xuserId}, ${xuserId}, ${iat}, ${createdat})""".update.apply() == 1
+      if (isTokenAdded) {
+        by(xuserId, statusOfUserFilter)
+      } else {
+        None
+      }
+    } else {
+      None
+    }
+
+  }
+
   private def byWithSession(id: UUID, userFilter: User => Boolean)(implicit session:DBSession): Option[User] = {
     sql"""select xuser.id, email, username, status, password, xuser.createdat from xuser inner join xuserusername on
       xuserusername.xuserid = xuser.id inner join xuserstatus on xuserstatus.xuserid = xuser.id inner join xuseremail

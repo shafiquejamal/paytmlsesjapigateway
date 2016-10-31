@@ -11,6 +11,8 @@ trait AuthenticationAPI {
 
   def userById(id: UUID): Option[UserMessage]
 
+  def validateOneTime(id: UUID, iat: DateTime): Option[UserMessage]
+
   def user(authenticationMessage: AuthenticationMessage): Option[UserMessage]
 
   def storePasswordResetCode(email: String, passwordResetCode: String): Try[UserMessage]

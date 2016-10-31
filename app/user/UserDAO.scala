@@ -21,6 +21,13 @@ trait UserDAO {
 
   def by(id: UUID, userFilter: User => Boolean): Option[User]
 
+  def validateOneTime(
+      xuserId: UUID,
+      iat: DateTime,
+      statusOfUserFilter: StatusField => Boolean,
+      created: DateTime,
+      uUID: UUID): Option[User]
+
   def changeUsername(
     id: UUID, newUsername:String,
     created:DateTime,
