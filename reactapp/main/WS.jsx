@@ -22,9 +22,9 @@ export default class WS {
         }
     }
 
-    postMessage(text) {
+    postMessage(text, recipient) {
         this.websocket.send(
-            text
+            text + recipient
         );
     }
 

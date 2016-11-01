@@ -17,13 +17,13 @@ const messageReducer = (state = initialState, action) => {
 
         case CONNECT:
             return {
-                conversation: [],
+                ...state,
                 status: true
             };
 
         case DISCONNECT:
             return {
-                conversation: [],
+                ...state,
                 status: false
             };
 

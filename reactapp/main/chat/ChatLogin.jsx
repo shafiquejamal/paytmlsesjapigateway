@@ -23,49 +23,21 @@ class ChatLogin extends React.Component {
 
     renderBtn() {
         if (this.props.isConnected) {
-            return <button style={styles.loginBtn} type="button" onClick={() => this.handleClick()}>Disconnect</button>
+            return <button className="btn btn-danger" type="button" onClick={() => this.handleClick()}>Disconnect</button>
         } else {
-            return <button style={styles.loginBtn} type="button" onClick={() => this.handleClick()}>Connect</button>
+            return <button className="btn btn-success" type="button" onClick={() => this.handleClick()}>Connect</button>
         }
     }
 
     render(){
         return (
-            <div style={styles.container}>
-                {
-                    this.renderBtn()
-                }
-            </div>
+            this.renderBtn()
         );
     }
 
 }
 
-const styles = {
-    hidden: {
-        display: 'none'
-    },
-    input: {
-        border: '1px solid black',
-        borderRadius: '2px',
-        padding: '5px 6px',
-        display: 'block',
-        marginBottom: '10px',
-        width: '85%'
-    },
-    container: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column'
-    },
-    loginBtn: {
-        padding: '9px 6px',
-        width: '89%',
-        fontSize: '15px'
-    }
 
-}
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatLogin);

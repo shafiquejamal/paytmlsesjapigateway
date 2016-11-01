@@ -7,6 +7,7 @@ import WSInstance from './main/WS';
 import * as ChatActions from './main/chat/chatActionGenerators';
 import * as ActionTypes from './main/chat/chatActionTypes';
 import { WS_ROOT_URL } from './main/ConfigurationPaths';
+import { socketConfiguration } from './main/socketConfiguration';
 
 import routes from './routes';
 import { LOGIN_USER } from './main/access/authentication/authenticationActionGenerators'
@@ -33,39 +34,6 @@ ReactDOM.render(
     document.getElementById('app')
 );
 
-const URL = WS_ROOT_URL + '/chat';
-
-const sock = {
-    ws: null,
-    URL,
-    wsDipatcher: (msg) => {
-        return store.dispatch(ChatActions.receiveMessage(msg));
-    },
-    wsListener: () => {
-        const lastAction = store.getState().lastAction;
-
-        switch (lastAction.type) {
-            case ActionTypes.POST_MESSAGE:
-                return sock.ws.postMessage(lastAction.text);
-
-            case ActionTypes.CONNECT:
-                return sock.startWS();
-
-            case ActionTypes.DISCONNECT:
-                return sock.stopWS();
-
-            default:
-                return;
-        }
-    },
-    stopWS: () => {
-        sock.ws.close();
-        sock.ws = null
-    },
-    startWS: () => {
-        if(!!sock.ws) sock.ws.close();
-        sock.ws = new WSInstance(sock.URL, sock.wsDipatcher)
-    }
-};
+const sock = socketConfiguration(store);
 
 store.subscribe(() => sock.wsListener());

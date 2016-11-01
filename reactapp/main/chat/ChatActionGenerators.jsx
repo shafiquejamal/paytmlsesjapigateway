@@ -19,9 +19,10 @@ export function receiveMessage(message){
     }
 }
 
-export function postMessage(text){
+export function postMessage(text, recipient){
     return {
         type: POST_MESSAGE,
-        text
+        text,
+        recipient
     }
 }
