@@ -70,6 +70,22 @@ class UserFacadeATest
     makeAPI(session).findUnverifiedUser("bob@bob.com").map(_.username) shouldBe empty
   }
 
+  "Querying the userId by username" should "return the userid of the user with the correpsonding " +
+  "username" in { implicit session =>
+    makeAPI(session).by("charlie") shouldBe empty
+    makeAPI(session).by("diane") shouldBe empty
+    makeAPI(session).by("aLIce") should contain(id1)
+    makeAPI(session).by("boB") should contain(id3)
+  }
+
+  "Querying the username by userId" should "return the username of the user with the correpsonding " +
+  "userId" in { implicit session =>
+    makeAPI(session).by(id4) shouldBe empty
+    makeAPI(session).by(id7) shouldBe empty
+    makeAPI(session).by(id1) should contain("alice")
+    makeAPI(session).by(id3) should contain("bob")
+  }
+
   private def makeAPI(session:DBSession) = {
     val userDAO = new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
     new UserFacade(userDAO, new TestTimeProviderImpl())

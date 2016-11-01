@@ -25,7 +25,7 @@ trait AuthenticatedActionCreator {
   val timeProvider: TimeProvider
 
   def validateToken[T](
-      block: => (UUID) => T,
+      block: => (UUID, String) => T,
       unauthorized: => T,
       allowedTokens: AllowedTokens,
       claim: JsObject): T =
@@ -39,7 +39,7 @@ trait AuthenticatedActionCreator {
         if (tokenIssuedAfterLastAllLogout) {
           val tokenUse = claim.value.get("tokenUse").flatMap(_.asOpt[String]).map(TokenUse.fromDescription).getOrElse(MultiUse)
           if (allowedTokens.tokens contains tokenUse)
-            tokenUse.validate(authenticationAPI, userId, iat).fold[T](unauthorized)(user => block(userId))
+            tokenUse.validate(authenticationAPI, userId, iat).fold[T](unauthorized)(user => block(userId, user.username))
           else
             unauthorized
         }
@@ -50,7 +50,7 @@ trait AuthenticatedActionCreator {
 
   def decodeAndValidateToken[T](
       token: String,
-      block: => (UUID) => T,
+      block: => (UUID, String) => T,
       unauthorized: => T,
       allowedTokens: AllowedTokens): T =
     JwtJson.decodeJson(token, secretKey, Seq(algorithm)) match {
@@ -66,7 +66,7 @@ trait AuthenticatedActionCreator {
       .fold[Future[Result]](Future.successful(Unauthorized)) { token =>
         decodeAndValidateToken(
           token,
-          (userId: UUID) => block(new AuthenticatedRequest(userId, request)),
+          (userId: UUID, username: String) => block(new AuthenticatedRequest(userId, username, request)),
           Future.successful(Unauthorized),
           AllowedTokens(MultiUse))
       }

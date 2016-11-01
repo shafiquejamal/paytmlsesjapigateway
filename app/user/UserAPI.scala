@@ -13,4 +13,8 @@ trait UserAPI {
   def findByEmailLatest(email: String): Option[UserMessage]
 
   def findUnverifiedUser(email: String): Option[UserMessage]
+
+  def by(username: String): Option[UUID]
+
+  def by(userId: UUID): Option[String]
 }

@@ -9,7 +9,8 @@ import ChatContacts from './ChatContacts';
 function mapStateToProps(state) {
     return {
         messages: state.messages,
-        isConnected : state.messages.status
+        isConnected : state.messages.status,
+        activeContact: state.contacts.activeContact
     };
 }
 
@@ -24,9 +25,6 @@ class Chat extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            recipient: 'some recipient'
-        };
     }
 
 
@@ -37,7 +35,7 @@ class Chat extends React.Component {
         if(!text){
             return;
         }
-        this.props.actions.postMessage(text, this.state.recipient);
+        this.props.actions.postMessage(text, this.props.activeContact);
         messageNode.value = '';
     }
 
@@ -61,7 +59,6 @@ class Chat extends React.Component {
     }
 
     renderMessages(){
-        console.log('render messages props', this.props);
         return (
             <div>
                 <div>

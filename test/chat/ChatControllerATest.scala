@@ -50,9 +50,12 @@ class ChatControllerATest
   val timeProvider = new TestTimeProviderImpl()
   val jWTParamsProvider = new TestJWTParamsProviderImpl()
   val nonSingleUseClaim =
-    Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"), "iat" -> timeProvider.now().minusMillis(5))
+    Json.obj(
+      "userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"),
+      "iat" -> timeProvider.now().minusMillis(5))
   val singleUseClaim =
     Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"),
+             "username" -> "alice",
              "iat" -> timeProvider.now(),
              "tokenUse" -> "single")
   val nonSingleUseJWT = JwtJson.encode(nonSingleUseClaim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)

@@ -12,7 +12,6 @@ class ChatContacts extends Component {
     }
 
     renderList() {
-        console.log(this.props);
         return this.props.contacts.contacts.map((contact) => {
            return (
              <li

@@ -20,8 +20,7 @@ class UserFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends
       timeProvider.now(),
       changeUsernameFilter)
 
-  override def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[UserMessage] = {
-
+  override def changePassword(userId: UUID, changePasswordMessage: ChangePasswordMessage): Try[UserMessage] =
     userDAO
     .by(userId, authenticationUserFilter)
     .filter(passwordCheck(changePasswordMessage.currentPassword))
@@ -29,11 +28,13 @@ class UserFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider) extends
       userDAO.changePassword(userId, hash(changePasswordMessage.newPassword), timeProvider.now())
     )
 
-  }
-
   override def findByEmailLatest(email:String): Option[UserMessage] = userDAO.byEmail(email, (user:User) => true)
 
   override def findUnverifiedUser(email:String): Option[UserMessage] =
     userDAO.byEmail(email, (user:User) => user.userStatus == Unverified)
+
+  override def by(username: String): Option[UUID] = userDAO.byUsername(username, authenticationUserFilter).flatMap(_.maybeId)
+
+  override def by(userId: UUID): Option[String] = userDAO.by(userId, authenticationUserFilter).map(_.username)
 
 }
