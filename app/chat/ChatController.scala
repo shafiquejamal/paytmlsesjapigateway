@@ -5,7 +5,6 @@ import java.util.UUID
 import access.authentication.AuthenticationAPI
 import access.{AllowedTokens, AuthenticatedActionCreator, JWTParamsProvider, SingleUse}
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.Flow
 import akka.stream.{Materializer, OverflowStrategy}
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
@@ -19,6 +18,7 @@ import scala.concurrent.Future
 
 class ChatController @Inject() (
     userAPI: UserAPI,
+    chatMessageAPI: ChatMessageAPI,
     override val authenticationAPI: AuthenticationAPI,
     override val jWTParamsProvider: JWTParamsProvider,
     uUIDProvider: UUIDProvider,
@@ -50,7 +50,7 @@ class ChatController @Inject() (
     .decodeAndValidateToken(
       token,
       (uUID: UUID, username: String) => Right(BetterActorFlow.namedActorRef(
-        client => ChatActor.props(client, userAPI, uUID, username, timeProvider),
+        client => ChatActor.props(client, userAPI, chatMessageAPI, uUID, username, timeProvider, uUIDProvider),
         16,
         OverflowStrategy.dropNew,
         uUID.toString + "_" + uUIDProvider.randomUUID().toString)),

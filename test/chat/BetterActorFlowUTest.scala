@@ -8,11 +8,11 @@ import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, ShouldMatchers}
-import util.TestTimeProviderImpl
-import scala.util._
-import scala.concurrent.ExecutionContext.Implicits.global
+import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
+import scala.util._
 
 class BetterActorFlowUTest(_system: ActorSystem)
   extends TestKit(_system)
@@ -22,7 +22,8 @@ class BetterActorFlowUTest(_system: ActorSystem)
   with BeforeAndAfterAll {
 
   def this() = this(ActorSystem("MySpec"))
-  val timeProvider = new TestTimeProviderImpl
+  val timeProvider = new TestTimeProviderImpl()
+  val uUIDProvider = new TestUUIDProviderImpl()
 
   override def afterAll {
     TestKit.shutdownActorSystem(system)
@@ -33,7 +34,7 @@ class BetterActorFlowUTest(_system: ActorSystem)
   "Creating an actor flow with a name" should "do something" in {
 
     BetterActorFlow.namedActorRef(
-      client => ChatActor.props(client, null, new UUID(1, 1), "someClient", timeProvider),
+      client => ChatActor.props(client, null, null, new UUID(1, 1), "someClient", timeProvider, uUIDProvider),
       16,
       OverflowStrategy.dropNew,
       "my_actor")

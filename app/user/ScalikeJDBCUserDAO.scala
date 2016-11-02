@@ -18,7 +18,7 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
                                    dBConfig: DBConfig,
                                    uUIDProvider: UUIDProvider) extends UserDAO {
 
-  lazy val namedDB = NamedDB(Symbol(dBConfig.dBName))
+  val namedDB = NamedDB(Symbol(dBConfig.dBName))
   namedDB.autoClose(false)
   val readOnlySession = scalikeJDBCSessionProvider.provideReadOnlySession
 

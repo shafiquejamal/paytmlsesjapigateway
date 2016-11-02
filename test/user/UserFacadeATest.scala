@@ -12,7 +12,6 @@ import scala.util.{Failure, Success}
 class UserFacadeATest
   extends FlatSpec
   with ShouldMatchers
-  with Matchers
   with CrauthAutoRollback
   with UserFixture
   with BeforeAndAfterEach

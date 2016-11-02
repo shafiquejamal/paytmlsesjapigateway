@@ -22,6 +22,13 @@ trait UserFixture {
   val id7 = UUID.fromString("00000000-0000-0000-0000-000000000007")
   val idNonExistentUser = UUID.fromString("90000000-0000-0000-0000-000000000000")
 
+  val idMsgAliceBob1 = UUID.fromString("00000000-0000-0000-0000-100000000013")
+  val idMsgAliceBob2 = UUID.fromString("00000000-0000-0000-0000-200000000013")
+  val idMsgAliceBob3 = UUID.fromString("00000000-0000-0000-0000-300000000013")
+  val idMsgBobAlice1 = UUID.fromString("00000000-0000-0000-0000-100000000031")
+  val idMsgBobAlice2 = UUID.fromString("00000000-0000-0000-0000-200000000031")
+  val idMsgBobAlice3 = UUID.fromString("00000000-0000-0000-0000-300000000031")
+
   val uUIDProvider = new TestUUIDProviderImpl()
   uUIDProvider.index = 100
 
@@ -109,7 +116,39 @@ trait UserFixture {
     sql"""insert into xuseriatsingleusetoken (id, authorid, xuserid, createdat, iat) values
          (${uUIDProvider.randomUUID()}, ${id3}, ${id3}, ${now}, ${dayBeforeYesterday})""",
     sql"""insert into xuseriatsingleusetoken (id, authorid, xuserid, createdat, iat) values
-         (${uUIDProvider.randomUUID()}, ${id3}, ${id3}, ${now}, ${yesterday})"""
+         (${uUIDProvider.randomUUID()}, ${id3}, ${id3}, ${now}, ${yesterday})""",
+
+    sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
+         ($idMsgAliceBob1, ${id1}, ${id3}, 'alice to bob one', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
+         ($idMsgAliceBob2, ${id1}, ${id3}, 'alice to bob two', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
+         ($idMsgAliceBob3, ${id1}, ${id3}, 'alice to bob three', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
+         ($idMsgBobAlice1, ${id3}, ${id1}, 'bob to alice one', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
+         ($idMsgBobAlice2, ${id3}, ${id1}, 'bob to alice two', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
+         ($idMsgBobAlice3, ${id3}, ${id1}, 'bob to alice three', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob1}, 3, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob2}, 1, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob3}, 2, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice1}, 3, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice1}, 1, ${yesterday})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice2}, 1, ${now})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice2}, 0, ${yesterday})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 2, ${now})""",
+    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 0, ${yesterday})"""
 
   )
 

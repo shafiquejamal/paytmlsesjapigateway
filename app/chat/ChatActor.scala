@@ -5,10 +5,17 @@ import java.util.UUID
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import play.api.libs.json.Json
 import user.UserAPI
-import util.TimeProvider
+import util.{UUIDProvider, TimeProvider}
 import OutgoingChatMessage._
 
-class ChatActor(client: ActorRef, userAPI: UserAPI, clientId: UUID, clientUsername: String, timeProvider: TimeProvider)
+class ChatActor(
+    client: ActorRef,
+    userAPI: UserAPI,
+    chatMessageAPI: ChatMessageAPI,
+    clientId: UUID,
+    clientUsername: String,
+    timeProvider: TimeProvider,
+    uUIDProvider: UUIDProvider)
   extends Actor
   with ActorLogging {
 
@@ -22,9 +29,13 @@ class ChatActor(client: ActorRef, userAPI: UserAPI, clientId: UUID, clientUserna
       val recipient = (msg \ "recipient").validate[String].getOrElse("")
       val messageText = (msg \ "text").validate[String].getOrElse("")
 
-      val maybeRecipientId = chatContacts.get(recipient).orElse(userAPI.by(recipient))
+      val maybeRecipientIdFromCache = chatContacts.get(recipient)
+      val maybeRecipientId = maybeRecipientIdFromCache.orElse(userAPI.by(recipient))
       maybeRecipientId foreach { recipientId =>
+        if (maybeRecipientIdFromCache.isEmpty) chatContacts = chatContacts + (recipient -> recipientId)
         val outgoingMessage = OutgoingChatMessage(clientUsername, recipient, messageText, timeProvider.now().getMillis)
+        chatMessageAPI
+          .store(OutgoingChatMessageWithVisibility(outgoingMessage, Both, clientId, recipientId, uUIDProvider.randomUUID()))
         val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
         actorSelectionRecipients ! outgoingMessage
         val actorSelectionSenders = context.actorSelection(s"/user/${clientId.toString}*")
@@ -39,8 +50,15 @@ class ChatActor(client: ActorRef, userAPI: UserAPI, clientId: UUID, clientUserna
 
 object ChatActor {
 
-  def props(client: ActorRef, userAPI: UserAPI, clientId: UUID, clientUsername: String, timeProvider: TimeProvider) =
-    Props(new ChatActor(client, userAPI, clientId, clientUsername, timeProvider))
+  def props(
+      client: ActorRef,
+      userAPI: UserAPI,
+      chatMessageAPI: ChatMessageAPI,
+      clientId: UUID,
+      clientUsername: String,
+      timeProvider: TimeProvider,
+      uUIDProvider: UUIDProvider) =
+    Props(new ChatActor(client, userAPI, chatMessageAPI, clientId, clientUsername, timeProvider, uUIDProvider))
 
 }
 
