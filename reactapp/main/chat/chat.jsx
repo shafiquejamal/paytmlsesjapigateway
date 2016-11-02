@@ -68,7 +68,7 @@ class Chat extends React.Component {
                         {
                             this.props.messages.conversation.filter(msg => msg.message.to === this.props.activeContact || msg.message.from === this.props.activeContact).map(msg =>
                                 <ChatMessage
-                                    key={msg.message.time}
+                                    key={msg.message.id}
                                     msg={msg}
                                     chatMessageToFromClass={ msg.message.to === this.props.auth.username ? "bubble-left" : "bubble-right"}/>)
                         }

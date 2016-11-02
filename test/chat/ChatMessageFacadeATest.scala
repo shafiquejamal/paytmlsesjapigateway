@@ -22,11 +22,11 @@ class ChatMessageFacadeATest
   "Storing a message" should "be successful" in { session =>
     val api = makeAPI(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
-      ToClientChatMessage("alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
+      ToClientChatMessage(
+        uUIDProvider.randomUUID(), "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
       Visible, Visible,
       id1,
-      id3,
-      uUIDProvider.randomUUID()
+      id3
     )
 
     api.store(chatMessageWithVisibility).success.value shouldEqual chatMessageWithVisibility.toClientChatMessage
@@ -35,10 +35,10 @@ class ChatMessageFacadeATest
   "Retrieving messages for a user" should "retrieve all messages that should be visible to the user" in { session =>
     val api = makeAPI(session)
     val expectedMessagesInvolvingBob = Seq(
-      ToClientChatMessage("alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
-      ToClientChatMessage("alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
-      ToClientChatMessage("bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
-      ToClientChatMessage("bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
+      ToClientChatMessage(idMsgAliceBob1, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
+      ToClientChatMessage(idMsgAliceBob3, "alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
+      ToClientChatMessage(idMsgBobAlice1, "bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
+      ToClientChatMessage(idMsgBobAlice2, "bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
     )
 
     api.messagesInvolving(id3) should contain theSameElementsAs expectedMessagesInvolvingBob

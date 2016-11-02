@@ -42,7 +42,7 @@ class SocketActor(
       maybeRecipientId foreach { recipientId =>
         if (maybeRecipientIdFromCache.isEmpty) chatContacts = chatContacts + (recipient -> recipientId)
         val toClientChatMessage =
-          ToClientChatMessage(clientUsername, recipient, messageText, timeProvider.now().getMillis)
+          ToClientChatMessage(uUIDProvider.randomUUID(), clientUsername, recipient, messageText, timeProvider.now().getMillis)
         Future(
           chatMessageAPI
           .store(
@@ -51,8 +51,7 @@ class SocketActor(
               Visible,
               Visible,
               clientId,
-              recipientId,
-              uUIDProvider.randomUUID())))
+              recipientId)))
         val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
         actorSelectionRecipients ! toClientChatMessage
         val actorSelectionSenders = context.actorSelection(s"/user/${clientId.toString}*")

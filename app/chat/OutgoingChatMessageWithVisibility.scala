@@ -9,12 +9,12 @@ case class OutgoingChatMessageWithVisibility(
     senderVisibility: ChatMessageVisibility,
     receiverVisibility: ChatMessageVisibility,
     fromId: UUID,
-    toId: UUID,
-    messageId: UUID)
+    toId: UUID)
 
 object OutgoingChatMessageWithVisibility {
   def converter(rs: WrappedResultSet) = OutgoingChatMessageWithVisibility(
     ToClientChatMessage(
+      UUID.fromString(rs.string("chatmsgid")),
       rs.string("fromusername"),
       rs.string("tousername"),
       rs.string("messagetext"),
@@ -22,7 +22,6 @@ object OutgoingChatMessageWithVisibility {
     ChatMessageVisibility.from(rs.int("sendervisibility")),
     ChatMessageVisibility.from(rs.int("receivervisibility")),
     UUID.fromString(rs.string("fromxuserid")),
-    UUID.fromString(rs.string("toxuserid")),
-    UUID.fromString(rs.string("chatmsgid"))
+    UUID.fromString(rs.string("toxuserid"))
   )
 }
