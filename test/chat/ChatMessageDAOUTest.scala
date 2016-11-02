@@ -1,5 +1,7 @@
 package chat
 
+import chat.ChatMessageVisibility._
+import chat.SocketMessageType.ChatMessage
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
@@ -22,7 +24,7 @@ class ChatMessageDAOUTest
   "Adding a message" should "succeed" in { session =>
     val dAO = makeDAO(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
-      OutgoingChatMessage("alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
+      OutgoingChatMessage(ChatMessage, "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
       Both,
       id1,
       id3,
@@ -44,13 +46,13 @@ class ChatMessageDAOUTest
 
     val expectedMessages = Seq(
       OutgoingChatMessageWithVisibility(
-        OutgoingChatMessage("alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis), Both, id1, id3,
+        OutgoingChatMessage(ChatMessage, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis), Both, id1, id3,
           idMsgAliceBob1),
       OutgoingChatMessageWithVisibility(
-        OutgoingChatMessage("alice", "bob", "alice to bob two", dayBeforeYesterday.getMillis), SenderOnly, id1, id3,
+        OutgoingChatMessage(ChatMessage, "alice", "bob", "alice to bob two", dayBeforeYesterday.getMillis), SenderOnly, id1, id3,
           idMsgAliceBob2),
       OutgoingChatMessageWithVisibility(
-        OutgoingChatMessage("bob", "alice", "bob to alice three", dayBeforeYesterday.getMillis), ReceiverOnly, id3, id1,
+        OutgoingChatMessage(ChatMessage, "bob", "alice", "bob to alice three", dayBeforeYesterday.getMillis), ReceiverOnly, id3, id1,
           idMsgBobAlice3)
     )
 

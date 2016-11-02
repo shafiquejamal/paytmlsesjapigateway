@@ -1,12 +1,14 @@
 package chat
 
-import db.{TestScalikeJDBCSessionProvider, TestDBConnection, CrauthAutoRollback}
+import chat.ChatMessageVisibility.Both
+import chat.SocketMessageType.ChatMessage
+import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
 import scalikejdbc.DBSession
 import user.UserFixture
 import util.TestTimeProviderImpl
-import org.scalatest.TryValues._
 
 class ChatMessageFacadeATest
   extends FlatSpec
@@ -21,7 +23,7 @@ class ChatMessageFacadeATest
   "Storing a message" should "be successful" in { session =>
     val api = makeAPI(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
-      OutgoingChatMessage("alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
+      OutgoingChatMessage(ChatMessage, "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
       Both,
       id1,
       id3,
@@ -34,10 +36,10 @@ class ChatMessageFacadeATest
   "Retrieving messages for a user" should "retrieve all messages that should be visible to the user" in { session =>
     val api = makeAPI(session)
     val expectedMessagesInvolvingBob = Seq(
-      OutgoingChatMessage("alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
-      OutgoingChatMessage("alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
-      OutgoingChatMessage("bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
-      OutgoingChatMessage("bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
+      OutgoingChatMessage(ChatMessage, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
+      OutgoingChatMessage(ChatMessage, "alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
+      OutgoingChatMessage(ChatMessage, "bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
+      OutgoingChatMessage(ChatMessage, "bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
     )
 
     api.messagesInvolving(id3) should contain theSameElementsAs expectedMessagesInvolvingBob

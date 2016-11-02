@@ -2,13 +2,13 @@ package chat
 
 import java.util.UUID
 
+import chat.ChatMessageVisibility.{Both, ReceiverOnly, SenderOnly}
 import com.google.inject.Inject
 import db.{DBConfig, ScalikeJDBCSessionProvider}
 import org.joda.time.DateTime
-import util.UUIDProvider
+import scalikejdbc._
 
 import scala.util.{Failure, Success, Try}
-import scalikejdbc._
 
 class ChatMessageDAOImpl @Inject() (
     scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider,

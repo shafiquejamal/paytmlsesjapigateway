@@ -3,10 +3,12 @@ package chat
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import chat.ChatMessageVisibility.Both
+import chat.OutgoingChatMessage._
+import chat.SocketMessageType.ChatMessage
 import play.api.libs.json.Json
 import user.UserAPI
-import util.{UUIDProvider, TimeProvider}
-import OutgoingChatMessage._
+import util.{TimeProvider, UUIDProvider}
 
 class ChatActor(
     client: ActorRef,
@@ -33,7 +35,7 @@ class ChatActor(
       val maybeRecipientId = maybeRecipientIdFromCache.orElse(userAPI.by(recipient))
       maybeRecipientId foreach { recipientId =>
         if (maybeRecipientIdFromCache.isEmpty) chatContacts = chatContacts + (recipient -> recipientId)
-        val outgoingMessage = OutgoingChatMessage(clientUsername, recipient, messageText, timeProvider.now().getMillis)
+        val outgoingMessage = OutgoingChatMessage(ChatMessage, clientUsername, recipient, messageText, timeProvider.now().getMillis)
         chatMessageAPI
           .store(OutgoingChatMessageWithVisibility(outgoingMessage, Both, clientId, recipientId, uUIDProvider.randomUUID()))
         val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
@@ -41,7 +43,7 @@ class ChatActor(
         val actorSelectionSenders = context.actorSelection(s"/user/${clientId.toString}*")
         actorSelectionSenders ! outgoingMessage
       }
-    case outgoingMessage @ OutgoingChatMessage(from, to, text, time) =>
+    case outgoingMessage @ OutgoingChatMessage(ChatMessage, from, to, text, time) =>
         client ! Json.toJson(outgoingMessage)
   }
 
