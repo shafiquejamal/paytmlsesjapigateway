@@ -10,6 +10,8 @@ import play.api.libs.json.Json
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
 
+import scala.concurrent.Future
+
 class SocketActor(
     client: ActorRef,
     userAPI: UserAPI,
@@ -22,6 +24,7 @@ class SocketActor(
   with ActorLogging {
 
   import play.api.libs.json.JsValue
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   var chatContacts: Map[String, UUID] = Map()
 
@@ -40,8 +43,10 @@ class SocketActor(
         if (maybeRecipientIdFromCache.isEmpty) chatContacts = chatContacts + (recipient -> recipientId)
         val toClientChatMessage =
           ToClientChatMessage(ToClientChat, clientUsername, recipient, messageText, timeProvider.now().getMillis)
-        chatMessageAPI
-        .store(OutgoingChatMessageWithVisibility(toClientChatMessage, Both, clientId, recipientId, uUIDProvider.randomUUID()))
+        Future(
+          chatMessageAPI
+          .store(
+            OutgoingChatMessageWithVisibility(toClientChatMessage, Both, clientId, recipientId, uUIDProvider.randomUUID())))
         val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
         actorSelectionRecipients ! toClientChatMessage
         val actorSelectionSenders = context.actorSelection(s"/user/${clientId.toString}*")
