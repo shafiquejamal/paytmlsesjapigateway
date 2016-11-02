@@ -6,11 +6,14 @@ import play.api.libs.json.{JsPath, Writes}
 import scalikejdbc.WrappedResultSet
 
 case class ToClientChatMessage(
-    override val socketMessageType: SocketMessageType = ToClientChat,
     from: String,
     to: String,
     text: String,
-    time: Long) extends SocketMessage
+    time: Long) extends SocketMessage {
+
+  override val socketMessageType: SocketMessageType = ToClientChat
+
+}
 
 object ToClientChatMessage {
 
@@ -22,10 +25,9 @@ object ToClientChatMessage {
     (JsPath \ "to").write[String] and
     (JsPath \ "text").write[String] and
     (JsPath \ "time").write[Long]
-    ) (unlift(ToClientChatMessage.unapply))
+    ) ( message => (message.socketMessageType, message.from, message.to, message.text, message.time) )
 
   def converter(rs: WrappedResultSet): ToClientChatMessage = ToClientChatMessage(
-    ToClientChat,
     rs.string("fromusername"),
     rs.string("tousername"),
     rs.string("messagetext"),

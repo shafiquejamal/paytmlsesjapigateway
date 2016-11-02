@@ -1,7 +1,6 @@
 package chat
 
 import chat.ChatMessageVisibility.Visible
-import chat.SocketMessageType.ToClientChat
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest._
@@ -23,7 +22,7 @@ class ChatMessageFacadeATest
   "Storing a message" should "be successful" in { session =>
     val api = makeAPI(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
-      ToClientChatMessage(ToClientChat, "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
+      ToClientChatMessage("alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
       Visible, Visible,
       id1,
       id3,
@@ -36,10 +35,10 @@ class ChatMessageFacadeATest
   "Retrieving messages for a user" should "retrieve all messages that should be visible to the user" in { session =>
     val api = makeAPI(session)
     val expectedMessagesInvolvingBob = Seq(
-      ToClientChatMessage(ToClientChat, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
-      ToClientChatMessage(ToClientChat, "alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
-      ToClientChatMessage(ToClientChat, "bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
-      ToClientChatMessage(ToClientChat, "bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
+      ToClientChatMessage("alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
+      ToClientChatMessage("alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
+      ToClientChatMessage("bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
+      ToClientChatMessage("bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
     )
 
     api.messagesInvolving(id3) should contain theSameElementsAs expectedMessagesInvolvingBob

@@ -5,7 +5,6 @@ import java.util.UUID
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import chat.ChatMessageVisibility.Visible
 import chat.ToClientChatMessage._
-import chat.SocketMessageType.ToClientChat
 import play.api.libs.json.Json
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
@@ -24,6 +23,7 @@ class SocketActor(
   with ActorLogging {
 
   import play.api.libs.json.JsValue
+
   import scala.concurrent.ExecutionContext.Implicits.global
 
   var chatContacts: Map[String, UUID] = Map()
@@ -42,7 +42,7 @@ class SocketActor(
       maybeRecipientId foreach { recipientId =>
         if (maybeRecipientIdFromCache.isEmpty) chatContacts = chatContacts + (recipient -> recipientId)
         val toClientChatMessage =
-          ToClientChatMessage(ToClientChat, clientUsername, recipient, messageText, timeProvider.now().getMillis)
+          ToClientChatMessage(clientUsername, recipient, messageText, timeProvider.now().getMillis)
         Future(
           chatMessageAPI
           .store(

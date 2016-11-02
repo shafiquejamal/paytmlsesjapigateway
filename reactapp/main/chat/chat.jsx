@@ -61,7 +61,6 @@ class Chat extends React.Component {
     }
 
     renderMessages(){
-        console.log('this.props', this.props);
         return (
             <div>
                 <div>
