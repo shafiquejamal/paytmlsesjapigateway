@@ -4,13 +4,13 @@ import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import chat.ChatMessageVisibility.Both
-import chat.OutgoingChatMessage._
-import chat.SocketMessageType.ChatMessage
+import chat.ToClientChatMessage._
+import chat.SocketMessageType.ToClientChat
 import play.api.libs.json.Json
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
 
-class ChatActor(
+class SocketActor(
     client: ActorRef,
     userAPI: UserAPI,
     chatMessageAPI: ChatMessageAPI,
@@ -27,30 +27,37 @@ class ChatActor(
 
   override def receive = {
     case msg: JsValue =>
+
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
-      val recipient = (msg \ "recipient").validate[String].getOrElse("")
-      val messageText = (msg \ "text").validate[String].getOrElse("")
+      val socketMessage = SocketMessageType.from(messageType).socketMessage(msg)
+      self ! socketMessage
+
+    case ToServerChatMessage(recipient, messageText) =>
 
       val maybeRecipientIdFromCache = chatContacts.get(recipient)
       val maybeRecipientId = maybeRecipientIdFromCache.orElse(userAPI.by(recipient))
       maybeRecipientId foreach { recipientId =>
         if (maybeRecipientIdFromCache.isEmpty) chatContacts = chatContacts + (recipient -> recipientId)
-        val outgoingMessage = OutgoingChatMessage(ChatMessage, clientUsername, recipient, messageText, timeProvider.now().getMillis)
+        val toClientChatMessage =
+          ToClientChatMessage(ToClientChat, clientUsername, recipient, messageText, timeProvider.now().getMillis)
         chatMessageAPI
-          .store(OutgoingChatMessageWithVisibility(outgoingMessage, Both, clientId, recipientId, uUIDProvider.randomUUID()))
+        .store(OutgoingChatMessageWithVisibility(toClientChatMessage, Both, clientId, recipientId, uUIDProvider.randomUUID()))
         val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
-        actorSelectionRecipients ! outgoingMessage
+        actorSelectionRecipients ! toClientChatMessage
         val actorSelectionSenders = context.actorSelection(s"/user/${clientId.toString}*")
-        actorSelectionSenders ! outgoingMessage
+        actorSelectionSenders ! toClientChatMessage
       }
-    case outgoingMessage @ OutgoingChatMessage(ChatMessage, from, to, text, time) =>
-        client ! Json.toJson(outgoingMessage)
+
+    case outgoingMessage : ToClientChatMessage =>
+
+      client ! Json.toJson(outgoingMessage)
+
   }
 
 }
 
 
-object ChatActor {
+object SocketActor {
 
   def props(
       client: ActorRef,
@@ -60,7 +67,7 @@ object ChatActor {
       clientUsername: String,
       timeProvider: TimeProvider,
       uUIDProvider: UUIDProvider) =
-    Props(new ChatActor(client, userAPI, chatMessageAPI, clientId, clientUsername, timeProvider, uUIDProvider))
+    Props(new SocketActor(client, userAPI, chatMessageAPI, clientId, clientUsername, timeProvider, uUIDProvider))
 
 }
 

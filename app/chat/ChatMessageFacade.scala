@@ -12,11 +12,11 @@ class ChatMessageFacade @Inject() (
     uUIDProvider: UUIDProvider,
     timeProvider: TimeProvider) extends ChatMessageAPI {
 
-  override def store(chatMessage: OutgoingChatMessageWithVisibility): Try[OutgoingChatMessage] =
+  override def store(chatMessage: OutgoingChatMessageWithVisibility): Try[ToClientChatMessage] =
     chatMessageDAO
-    .add(chatMessage, uUIDProvider.randomUUID(), timeProvider.now(), uUIDProvider.randomUUID()).map(_.outgoingChatMessage)
+    .add(chatMessage, uUIDProvider.randomUUID(), timeProvider.now(), uUIDProvider.randomUUID()).map(_.toClientChatMessage)
 
-  override def messagesInvolving(userId: UUID): Seq[OutgoingChatMessage] =
-    chatMessageDAO.visibleMessages(userId).map(_.outgoingChatMessage)
+  override def messagesInvolving(userId: UUID): Seq[ToClientChatMessage] =
+    chatMessageDAO.visibleMessages(userId).map(_.toClientChatMessage)
 
 }

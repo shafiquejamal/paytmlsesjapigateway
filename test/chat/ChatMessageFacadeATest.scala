@@ -1,7 +1,7 @@
 package chat
 
 import chat.ChatMessageVisibility.Both
-import chat.SocketMessageType.ChatMessage
+import chat.SocketMessageType.ToClientChat
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest._
@@ -23,23 +23,23 @@ class ChatMessageFacadeATest
   "Storing a message" should "be successful" in { session =>
     val api = makeAPI(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
-      OutgoingChatMessage(ChatMessage, "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
+      ToClientChatMessage(ToClientChat, "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
       Both,
       id1,
       id3,
       uUIDProvider.randomUUID()
     )
 
-    api.store(chatMessageWithVisibility).success.value shouldEqual chatMessageWithVisibility.outgoingChatMessage
+    api.store(chatMessageWithVisibility).success.value shouldEqual chatMessageWithVisibility.toClientChatMessage
   }
 
   "Retrieving messages for a user" should "retrieve all messages that should be visible to the user" in { session =>
     val api = makeAPI(session)
     val expectedMessagesInvolvingBob = Seq(
-      OutgoingChatMessage(ChatMessage, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
-      OutgoingChatMessage(ChatMessage, "alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
-      OutgoingChatMessage(ChatMessage, "bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
-      OutgoingChatMessage(ChatMessage, "bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
+      ToClientChatMessage(ToClientChat, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
+      ToClientChatMessage(ToClientChat, "alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
+      ToClientChatMessage(ToClientChat, "bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
+      ToClientChatMessage(ToClientChat, "bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
     )
 
     api.messagesInvolving(id3) should contain theSameElementsAs expectedMessagesInvolvingBob

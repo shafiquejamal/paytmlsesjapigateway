@@ -6,8 +6,8 @@ import scala.util.Try
 
 trait ChatMessageAPI {
 
-  def store(chatMessage: OutgoingChatMessageWithVisibility): Try[OutgoingChatMessage]
+  def store(chatMessage: OutgoingChatMessageWithVisibility): Try[ToClientChatMessage]
 
-  def messagesInvolving(userId: UUID): Seq[OutgoingChatMessage]
+  def messagesInvolving(userId: UUID): Seq[ToClientChatMessage]
 
 }

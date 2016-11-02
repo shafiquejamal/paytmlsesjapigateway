@@ -50,7 +50,7 @@ class ChatController @Inject() (
     .decodeAndValidateToken(
       token,
       (uUID: UUID, username: String) => Right(BetterActorFlow.namedActorRef(
-        client => ChatActor.props(client, userAPI, chatMessageAPI, uUID, username, timeProvider, uUIDProvider),
+        client => SocketActor.props(client, userAPI, chatMessageAPI, uUID, username, timeProvider, uUIDProvider),
         16,
         OverflowStrategy.dropNew,
         uUID.toString + "_" + uUIDProvider.randomUUID().toString)),

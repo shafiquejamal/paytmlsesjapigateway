@@ -1,23 +1,39 @@
 package chat
 
-import play.api.libs.json.{Json, JsValue, Writes}
+import play.api.libs.json.{JsValue, Json, Writes}
 
-sealed trait SocketMessageType { def description: String }
+sealed trait SocketMessageType {
+
+  def description: String
+
+  def socketMessage(msg: JsValue): SocketMessage
+
+}
 
 object SocketMessageType {
 
-  case object ChatMessage extends SocketMessageType { override val description = "chatMessage"}
+  case object ToClientChat extends SocketMessageType {
+    override val description = "toClientChat"
+    override def socketMessage(msg: JsValue): ToClientChatMessage = null
+  }
 
-  val socketMessageTypeFrom = Map[String, SocketMessageType](
-    ChatMessage.description -> ChatMessage
+  case object ToServerChat extends SocketMessageType {
+    override val description = "toServerChat"
+    override def socketMessage(msg: JsValue): ToServerChatMessage = ToServerChatMessage(
+      (msg \ "recipient").validate[String].getOrElse(""),
+      (msg \ "text").validate[String].getOrElse("")
+    )
+  }
+
+  private val socketMessageTypeFrom = Map[String, SocketMessageType](
+                                                                      ToClientChat.description -> ToClientChat,
+    ToServerChat.description -> ToServerChat
   )
 
-  def create(description:String): SocketMessageType = socketMessageTypeFrom(description)
+  def from(description:String): SocketMessageType = socketMessageTypeFrom(description)
 
   implicit object SocketMessageTypeWrites extends Writes[SocketMessageType] {
-    override def writes(socketMessageType: SocketMessageType) = socketMessageType match {
-      case ChatMessage => Json.toJson(ChatMessage.description)
-    }
+    override def writes(socketMessageType: SocketMessageType) = Json.toJson(socketMessageType.description)
   }
 
 }

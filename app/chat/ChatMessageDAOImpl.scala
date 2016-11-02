@@ -26,9 +26,9 @@ class ChatMessageDAOImpl @Inject() (
 
     implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
-    val sentAt = new DateTime(chatMessage.outgoingChatMessage.time)
+    val sentAt = new DateTime(chatMessage.toClientChatMessage.time)
     val insertedMessages = sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
-         ($chatMessageUUID, ${chatMessage.fromId}, ${chatMessage.toId}, ${chatMessage.outgoingChatMessage.text},
+         ($chatMessageUUID, ${chatMessage.fromId}, ${chatMessage.toId}, ${chatMessage.toClientChatMessage.text},
           ${createdAt}, ${sentAt})""".update().apply()
 
     val maybeVisibilityAdded = addVisibility(chatMessageUUID, createdAt, chatMessage.visibility, visibilityUUID)

@@ -2,16 +2,16 @@ package chat
 
 import java.util.UUID
 
-import chat.SocketMessageType.ChatMessage
+import chat.SocketMessageType.ToClientChat
 import scalikejdbc.WrappedResultSet
 
 case class OutgoingChatMessageWithVisibility(
-    outgoingChatMessage: OutgoingChatMessage, visibility: ChatMessageVisibility, fromId: UUID, toId: UUID, messageId: UUID)
+    toClientChatMessage: ToClientChatMessage, visibility: ChatMessageVisibility, fromId: UUID, toId: UUID, messageId: UUID)
 
 object OutgoingChatMessageWithVisibility {
   def converter(rs: WrappedResultSet) = OutgoingChatMessageWithVisibility(
-    OutgoingChatMessage(
-      ChatMessage,
+    ToClientChatMessage(
+      ToClientChat,
       rs.string("fromusername"),
       rs.string("tousername"),
       rs.string("messagetext"),
