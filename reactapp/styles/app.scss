@@ -1,7 +1,32 @@
-.pink-test {
-  background-color: pink;
-  background: pink;
-  font-size: 20px;
+.bubble-left,
+.bubble-right {
+  line-height: 100%;
+  display: block;
+  position: relative;
+  padding: .25em .5em;
+  -webkit-border-radius: 11px;
+  -moz-border-radius: 11px;
+  border-radius: 11px;
+  margin-bottom: 1px;
+  clear: both;
+  max-width:50%;
+}
+
+.bubble-left {
+  background-color: #d9edf7;
+  color: black;
+  float: left;
+  margin-right:10%;
+}
+.bubble-right {
+  background-color: #99ff99;
+  color: black;
+  float:right;
+  margin-left:10%
+}
+
+.activeContact {
+  background-color: #d9edf7;
 }
 
 .text-help {
@@ -10,4 +35,12 @@
 
 .title {
   margin-top: 20px;
+}
+
+.nav-link {
+  color: white;
+}
+
+.nav-link:hover {
+  color: greenyellow;
 }

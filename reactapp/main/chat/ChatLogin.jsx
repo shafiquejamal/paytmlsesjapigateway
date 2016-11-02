@@ -23,9 +23,9 @@ class ChatLogin extends React.Component {
 
     renderBtn() {
         if (this.props.isConnected) {
-            return <button className="btn btn-danger" type="button" onClick={() => this.handleClick()}>Disconnect</button>
+            return <button className="btn btn-danger" type="button" onClick={() => this.handleClick()}>Go offline</button>
         } else {
-            return <button className="btn btn-success" type="button" onClick={() => this.handleClick()}>Connect</button>
+            return <button className="btn btn-success" type="button" onClick={() => this.handleClick()}>Go online</button>
         }
     }
 

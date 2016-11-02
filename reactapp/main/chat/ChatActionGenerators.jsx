@@ -15,7 +15,7 @@ export function disconnect() {
 export function receiveMessage(message){
     return {
         type: RECEIVE_MESSAGE,
-        message
+        message: JSON.parse(message)
     }
 }
 

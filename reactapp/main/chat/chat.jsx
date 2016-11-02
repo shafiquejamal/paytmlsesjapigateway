@@ -5,12 +5,14 @@ import { bindActionCreators } from 'redux';
 import * as ChatActions from './chatActionGenerators.jsx';
 import ChatLogin from './ChatLogin';
 import ChatContacts from './ChatContacts';
+import ChatMessage from './ChatMessage';
 
 function mapStateToProps(state) {
     return {
         messages: state.messages,
         isConnected : state.messages.status,
-        activeContact: state.contacts.activeContact
+        activeContact: state.contacts.activeContact,
+        auth: state.auth
     };
 }
 
@@ -59,14 +61,17 @@ class Chat extends React.Component {
     }
 
     renderMessages(){
+        console.log('this.props', this.props);
         return (
             <div>
                 <div>
-                    <ul className="chat-message-list">
+                    <ul className="list-group chat-message-list">
                         {
-                            this.props.messages.conversation.map(msg =>
-                                <li className="list-group-item">{msg.message}</li>
-                            )
+                            this.props.messages.conversation.filter(msg => msg.message.to === this.props.activeContact || msg.message.from === this.props.activeContact).map(msg =>
+                                <ChatMessage
+                                    key={msg.message.time}
+                                    msg={msg}
+                                    chatMessageToFromClass={ msg.message.to === this.props.auth.username ? "bubble-left" : "bubble-right"}/>)
                         }
                     </ul>
                 </div>
