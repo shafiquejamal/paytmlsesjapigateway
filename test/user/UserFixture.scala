@@ -131,23 +131,49 @@ trait UserFixture {
     sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
          ($idMsgBobAlice3, ${id3}, ${id1}, 'bob to alice three', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
 
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
-      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob1}, 3, ${dayBeforeYesterday})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob1}, 1, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob1}, 1, ${dayBeforeYesterday})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
       (${uUIDProvider.randomUUID()}, ${idMsgAliceBob2}, 1, ${dayBeforeYesterday})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
-      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob3}, 2, ${dayBeforeYesterday})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
-      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice1}, 3, ${dayBeforeYesterday})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob2}, 0, ${dayBeforeYesterday})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob3}, 0, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgAliceBob3}, 1, ${dayBeforeYesterday})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice1}, 1, ${dayBeforeYesterday})""",
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice1}, 1, ${dayBeforeYesterday})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
       (${uUIDProvider.randomUUID()}, ${idMsgBobAlice1}, 1, ${yesterday})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice1}, 0, ${yesterday})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
       (${uUIDProvider.randomUUID()}, ${idMsgBobAlice2}, 1, ${now})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice2}, 0, ${now})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
       (${uUIDProvider.randomUUID()}, ${idMsgBobAlice2}, 0, ${yesterday})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
-      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 2, ${now})""",
-    sql"""insert into chatmessagevisibility (id, chatmessageid, visibility, createdat) VALUES
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice2}, 0, ${yesterday})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 0, ${now})""",
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 1, ${now})""",
+
+    sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 0, ${yesterday})""",
+  sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
       (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 0, ${yesterday})"""
 
   )

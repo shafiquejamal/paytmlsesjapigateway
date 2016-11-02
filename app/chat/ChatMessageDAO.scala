@@ -14,10 +14,16 @@ trait ChatMessageDAO {
       createdAt: DateTime,
       visibilityUUID: UUID): Try[OutgoingChatMessageWithVisibility]
 
-  def addMessageVisibility(
+  def addSenderVisibility(
       chatMessageUUID: UUID,
       createdAt: DateTime,
-      visibility: ChatMessageVisibility,
+      senderVisibility: ChatMessageVisibility,
+      visibilityUUID: UUID): Try[UUID]
+
+  def addReceiverVisibility(
+      chatMessageUUID: UUID,
+      createdAt: DateTime,
+      receiverVisibility: ChatMessageVisibility,
       visibilityUUID: UUID): Try[UUID]
 
   def visibleMessages(toOrFromXuserId: UUID): Seq[OutgoingChatMessageWithVisibility]

@@ -3,7 +3,7 @@ package chat
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import chat.ChatMessageVisibility.Both
+import chat.ChatMessageVisibility.Visible
 import chat.ToClientChatMessage._
 import chat.SocketMessageType.ToClientChat
 import play.api.libs.json.Json
@@ -46,7 +46,13 @@ class SocketActor(
         Future(
           chatMessageAPI
           .store(
-            OutgoingChatMessageWithVisibility(toClientChatMessage, Both, clientId, recipientId, uUIDProvider.randomUUID())))
+            OutgoingChatMessageWithVisibility(
+              toClientChatMessage,
+              Visible,
+              Visible,
+              clientId,
+              recipientId,
+              uUIDProvider.randomUUID())))
         val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
         actorSelectionRecipients ! toClientChatMessage
         val actorSelectionSenders = context.actorSelection(s"/user/${clientId.toString}*")

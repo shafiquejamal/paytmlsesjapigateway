@@ -25,7 +25,7 @@ class ChatMessageDAOUTest
     val dAO = makeDAO(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
       ToClientChatMessage(ToClientChat, "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
-      Both,
+      Visible, Visible,
       id1,
       id3,
       uUIDProvider.randomUUID()
@@ -34,11 +34,16 @@ class ChatMessageDAOUTest
     result shouldBe a[Success[_]]
   }
 
-  "Adding message visibility" should "succeed" in { session =>
+  "Adding sender visibility" should "succeed" in { session =>
     val dAO = makeDAO(session)
-    val result = dAO.addMessageVisibility(idMsgAliceBob3, timeProvider.now(), Neither, uUIDProvider.randomUUID())
+    val resultSender =
+      dAO.addSenderVisibility(idMsgAliceBob3, timeProvider.now(), NotVisible, uUIDProvider.randomUUID())
 
-    result shouldBe a[Success[_]]
+    val resultReceiver =
+      dAO.addReceiverVisibility(idMsgAliceBob3, timeProvider.now(), NotVisible, uUIDProvider.randomUUID())
+
+    resultSender shouldBe a[Success[_]]
+    resultReceiver shouldBe a[Success[_]]
   }
 
   "Retrieving messages for a user" should "return all messages that are visible to that user" in { session =>
@@ -46,15 +51,17 @@ class ChatMessageDAOUTest
 
     val expectedMessages = Seq(
       OutgoingChatMessageWithVisibility(
-        ToClientChatMessage(ToClientChat, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis), Both, id1, id3,
-          idMsgAliceBob1),
+        ToClientChatMessage(
+            ToClientChat, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis), Visible, Visible, id1, id3,
+            idMsgAliceBob1),
       OutgoingChatMessageWithVisibility(
         ToClientChatMessage(ToClientChat, "alice", "bob", "alice to bob two",
-          dayBeforeYesterday.getMillis), SenderOnly, id1, id3,
+          dayBeforeYesterday.getMillis), Visible, NotVisible, id1, id3,
           idMsgAliceBob2),
       OutgoingChatMessageWithVisibility(
-          ToClientChatMessage(ToClientChat, "bob", "alice", "bob to alice three", dayBeforeYesterday.getMillis), ReceiverOnly, id3, id1,
-          idMsgBobAlice3)
+          ToClientChatMessage(
+            ToClientChat, "bob", "alice", "bob to alice three", dayBeforeYesterday.getMillis), NotVisible, Visible, id3, id1,
+            idMsgBobAlice3)
     )
 
     dAO.visibleMessages(id1) should contain theSameElementsAs expectedMessages

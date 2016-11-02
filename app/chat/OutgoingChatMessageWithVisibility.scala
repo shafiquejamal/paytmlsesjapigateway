@@ -6,7 +6,12 @@ import chat.SocketMessageType.ToClientChat
 import scalikejdbc.WrappedResultSet
 
 case class OutgoingChatMessageWithVisibility(
-    toClientChatMessage: ToClientChatMessage, visibility: ChatMessageVisibility, fromId: UUID, toId: UUID, messageId: UUID)
+    toClientChatMessage: ToClientChatMessage,
+    senderVisibility: ChatMessageVisibility,
+    receiverVisibility: ChatMessageVisibility,
+    fromId: UUID,
+    toId: UUID,
+    messageId: UUID)
 
 object OutgoingChatMessageWithVisibility {
   def converter(rs: WrappedResultSet) = OutgoingChatMessageWithVisibility(
@@ -16,9 +21,10 @@ object OutgoingChatMessageWithVisibility {
       rs.string("tousername"),
       rs.string("messagetext"),
       rs.jodaDateTime("sentat").getMillis),
-    ChatMessageVisibility.from(rs.int("visibility")),
+    ChatMessageVisibility.from(rs.int("sendervisibility")),
+    ChatMessageVisibility.from(rs.int("receivervisibility")),
     UUID.fromString(rs.string("fromxuserid")),
     UUID.fromString(rs.string("toxuserid")),
-    UUID.fromString(rs.string("chatmessageid"))
+    UUID.fromString(rs.string("chatmsgid"))
   )
 }

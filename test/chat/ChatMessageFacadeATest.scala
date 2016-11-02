@@ -1,6 +1,6 @@
 package chat
 
-import chat.ChatMessageVisibility.Both
+import chat.ChatMessageVisibility.Visible
 import chat.SocketMessageType.ToClientChat
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
@@ -24,7 +24,7 @@ class ChatMessageFacadeATest
     val api = makeAPI(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
       ToClientChatMessage(ToClientChat, "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
-      Both,
+      Visible, Visible,
       id1,
       id3,
       uUIDProvider.randomUUID()
