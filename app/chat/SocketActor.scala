@@ -37,10 +37,7 @@ class SocketActor(
 
     case ToServerChatMessage(recipient, messageText) =>
 
-      val maybeRecipientIdFromCache = chatContacts.get(recipient)
-      val maybeRecipientId = maybeRecipientIdFromCache.orElse(userAPI.by(recipient))
-      maybeRecipientId foreach { recipientId =>
-        if (maybeRecipientIdFromCache.isEmpty) chatContacts = chatContacts + (recipient -> recipientId)
+      userAPI.by(recipient) foreach { recipientId =>
         val toClientChatMessage =
           ToClientChatMessage(uUIDProvider.randomUUID(), clientUsername, recipient, messageText, timeProvider.now().getMillis)
         Future(

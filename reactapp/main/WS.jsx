@@ -22,12 +22,8 @@ export default class WS {
         }
     }
 
-    postMessage(text, recipient) {
-        this.websocket.send(JSON.stringify({
-            messageType: 'toServerChat',
-            text,
-            recipient
-        }));
+    postObject(obj) {
+        this.websocket.send(JSON.stringify(obj));
     }
 
     close() {

@@ -1,4 +1,4 @@
-import { POST_MESSAGE, RECEIVE_MESSAGE, CONNECT, DISCONNECT } from './chatActionTypes';
+import { RECEIVE_MESSAGE, CONNECT, DISCONNECT, POST_OBJECT } from './chatActionTypes';
 
 export function connect() {
     return {
@@ -12,17 +12,16 @@ export function disconnect() {
     }
 }
 
-export function receiveMessage(message){
+export function receiveMessage(message) {
     return {
         type: RECEIVE_MESSAGE,
         message: JSON.parse(message)
     }
 }
 
-export function postMessage(text, recipient){
+export function postObject(obj) {
     return {
-        type: POST_MESSAGE,
-        text,
-        recipient
+        type: POST_OBJECT,
+        obj
     }
 }

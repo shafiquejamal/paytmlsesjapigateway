@@ -14,8 +14,8 @@ export const socketConfiguration = (store) => {
             const lastAction = store.getState().lastAction;
 
             switch (lastAction.type) {
-                case ActionTypes.POST_MESSAGE:
-                    return socketConfig.ws.postMessage(lastAction.text, lastAction.recipient);
+                case ActionTypes.POST_OBJECT:
+                    return socketConfig.ws.postObject(lastAction.obj);
 
                 case ActionTypes.CONNECT:
                     return socketConfig.startWS();
