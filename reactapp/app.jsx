@@ -9,6 +9,8 @@ import * as ActionTypes from './main/chat/chatActionTypes';
 import { WS_ROOT_URL } from './main/ConfigurationPaths';
 import { socketConfiguration } from './main/socketConfiguration';
 
+import { startGettingMessagesFromLocalStorage, updateMessages } from './main/chat/chatMessagesActionGenerators';
+
 import routes from './routes';
 import { LOGIN_USER } from './main/access/authentication/authenticationActionGenerators'
 
@@ -23,6 +25,13 @@ if (token) {
     email,
     username
   })
+}
+
+startGettingMessagesFromLocalStorage();
+const messages = JSON.parse(localStorage.getItem('chatMessages'));
+
+if (messages) {
+    store.dispatch(updateMessages(messages));
 }
 
 require('style!css!sass!applicationStyles');
