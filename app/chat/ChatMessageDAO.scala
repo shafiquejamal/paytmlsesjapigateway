@@ -26,5 +26,5 @@ trait ChatMessageDAO {
       receiverVisibility: ChatMessageVisibility,
       visibilityUUID: UUID): Try[UUID]
 
-  def visibleMessages(toOrFromXuserId: UUID): Seq[OutgoingChatMessageWithVisibility]
+  def visibleMessages(toOrFromXuserId: UUID, maybeAfter: Option[DateTime]): Seq[OutgoingChatMessageWithVisibility]
 }

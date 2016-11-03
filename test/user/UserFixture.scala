@@ -13,6 +13,7 @@ trait UserFixture {
   val later = now.plusDays(1)
   val yesterday = now.minusDays(1).plusMillis(1)
   val dayBeforeYesterday = now.minusDays(2)
+
   val id1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
   val id2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
   val id3 = UUID.fromString("00000000-0000-0000-0000-000000000003")
@@ -119,7 +120,7 @@ trait UserFixture {
          (${uUIDProvider.randomUUID()}, ${id3}, ${id3}, ${now}, ${yesterday})""",
 
     sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
-         ($idMsgAliceBob1, ${id1}, ${id3}, 'alice to bob one', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+         ($idMsgAliceBob1, ${id1}, ${id3}, 'alice to bob one', ${yesterday}, ${yesterday})""",
     sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
          ($idMsgAliceBob2, ${id1}, ${id3}, 'alice to bob two', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
     sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
@@ -127,9 +128,9 @@ trait UserFixture {
     sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
          ($idMsgBobAlice1, ${id3}, ${id1}, 'bob to alice one', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
     sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
-         ($idMsgBobAlice2, ${id3}, ${id1}, 'bob to alice two', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+         ($idMsgBobAlice2, ${id3}, ${id1}, 'bob to alice two', ${now}, ${now})""",
     sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
-         ($idMsgBobAlice3, ${id3}, ${id1}, 'bob to alice three', ${dayBeforeYesterday}, ${dayBeforeYesterday})""",
+         ($idMsgBobAlice3, ${id3}, ${id1}, 'bob to alice three', ${yesterday}, ${yesterday})""",
 
     sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
       (${uUIDProvider.randomUUID()}, ${idMsgAliceBob1}, 1, ${dayBeforeYesterday})""",

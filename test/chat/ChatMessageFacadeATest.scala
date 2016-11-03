@@ -2,6 +2,7 @@ package chat
 
 import chat.ChatMessageVisibility.Visible
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import org.scalatest.LoneElement._
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
@@ -34,14 +35,16 @@ class ChatMessageFacadeATest
 
   "Retrieving messages for a user" should "retrieve all messages that should be visible to the user" in { session =>
     val api = makeAPI(session)
+    val messageNow = ToClientChatMessage(idMsgBobAlice2, "bob", "alice", "bob to alice two", now.getMillis)
     val expectedMessagesInvolvingBob = Seq(
-      ToClientChatMessage(idMsgAliceBob1, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis),
+      ToClientChatMessage(idMsgAliceBob1, "alice", "bob", "alice to bob one", yesterday.getMillis),
       ToClientChatMessage(idMsgAliceBob3, "alice", "bob", "alice to bob three", dayBeforeYesterday.getMillis),
       ToClientChatMessage(idMsgBobAlice1, "bob", "alice", "bob to alice one", dayBeforeYesterday.getMillis),
-      ToClientChatMessage(idMsgBobAlice2, "bob", "alice", "bob to alice two", dayBeforeYesterday.getMillis)
+      messageNow
     )
 
     api.messagesInvolving(id3) should contain theSameElementsAs expectedMessagesInvolvingBob
+    api.messagesInvolving(id3, yesterday).loneElement shouldEqual messageNow
   }
 
   private def makeAPI(session: DBSession) = {

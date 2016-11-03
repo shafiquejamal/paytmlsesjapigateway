@@ -3,6 +3,7 @@ package chat
 import java.util.UUID
 
 import com.google.inject.Inject
+import org.joda.time.DateTime
 import util.{TimeProvider, UUIDProvider}
 
 import scala.util.Try
@@ -17,6 +18,9 @@ class ChatMessageFacade @Inject() (
     .add(chatMessage, uUIDProvider.randomUUID(), timeProvider.now(), uUIDProvider.randomUUID()).map(_.toClientChatMessage)
 
   override def messagesInvolving(userId: UUID): Seq[ToClientChatMessage] =
-    chatMessageDAO.visibleMessages(userId).map(_.toClientChatMessage)
+    chatMessageDAO.visibleMessages(userId, None).map(_.toClientChatMessage)
+
+  def messagesInvolving(userId: UUID, after: DateTime): Seq[ToClientChatMessage] =
+    chatMessageDAO.visibleMessages(userId, Some(after)).map(_.toClientChatMessage)
 
 }

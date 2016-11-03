@@ -87,9 +87,9 @@ class ChatMessageDAOImpl @Inject() (
       Failure(new Exception("Unable to add receiver visibility"))
   }
 
-  override def visibleMessages(toOrFromXuserId: UUID): Seq[OutgoingChatMessageWithVisibility] = {
+  override def visibleMessages(toOrFromXuserId: UUID, maybeAfter: Option[DateTime]): Seq[OutgoingChatMessageWithVisibility] = {
     implicit val readOnlySession = scalikeJDBCSessionProvider.provideReadOnlySession
-    sql"""select DISTINCT ON (chatmessage.id) fromxuserid, toxuserid, messagetext, sentat, chatmessage.id as chatmsgid,
+    val query = maybeAfter.fold(sql"""select DISTINCT ON (chatmessage.id) fromxuserid, toxuserid, messagetext, sentat, chatmessage.id as chatmsgid,
           xuserusernamefrom.username as fromusername,
           xuserusernameto.username as tousername,
           chatmessagesendervisibility.visibility as sendervisibility,
@@ -99,8 +99,25 @@ class ChatMessageDAOImpl @Inject() (
          join chatmessagereceivervisibility on chatmessagereceivervisibility.chatmessageid = chatmessage.id
          join xuserusername as xuserusernamefrom on xuserusernamefrom.xuserid = fromxuserid
          join xuserusername as xuserusernameto on xuserusernameto.xuserid = toxuserid
-         where fromxuserid = $toOrFromXuserId OR toxuserid = $toOrFromXuserId
-         order by chatmessage.id, chatmessagesendervisibility.createdat desc, chatmessagereceivervisibility.createdat desc"""
+         where (fromxuserid = $toOrFromXuserId OR toxuserid = $toOrFromXuserId)
+         order by chatmessage.id, chatmessagesendervisibility.createdat desc,
+         chatmessagereceivervisibility.createdat desc"""){ after =>
+      sql"""select DISTINCT ON (chatmessage.id) fromxuserid, toxuserid, messagetext, sentat, chatmessage.id as chatmsgid,
+          xuserusernamefrom.username as fromusername,
+          xuserusernameto.username as tousername,
+          chatmessagesendervisibility.visibility as sendervisibility,
+          chatmessagereceivervisibility.visibility as receivervisibility
+         from chatmessage
+         join chatmessagesendervisibility on chatmessagesendervisibility.chatmessageid = chatmessage.id
+         join chatmessagereceivervisibility on chatmessagereceivervisibility.chatmessageid = chatmessage.id
+         join xuserusername as xuserusernamefrom on xuserusernamefrom.xuserid = fromxuserid
+         join xuserusername as xuserusernameto on xuserusernameto.xuserid = toxuserid
+         where (fromxuserid = $toOrFromXuserId OR toxuserid = $toOrFromXuserId) AND (sentat > $after)
+         order by chatmessage.id, chatmessagesendervisibility.createdat desc,
+         chatmessagereceivervisibility.createdat desc"""
+      }
+
+    query
     .map(OutgoingChatMessageWithVisibility.converter)
     .list()
     .apply()

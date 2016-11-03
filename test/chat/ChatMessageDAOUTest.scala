@@ -48,19 +48,23 @@ class ChatMessageDAOUTest
   "Retrieving messages for a user" should "return all messages that are visible to that user" in { session =>
     val dAO = makeDAO(session)
 
-    val expectedMessages = Seq(
+    val messageDayBeforeYesterday =
       OutgoingChatMessageWithVisibility(
         ToClientChatMessage(
-          idMsgAliceBob1, "alice", "bob", "alice to bob one", dayBeforeYesterday.getMillis), Visible, Visible, id1, id3),
+          idMsgAliceBob2, "alice", "bob", "alice to bob two", dayBeforeYesterday.getMillis), Visible, NotVisible, id1, id3)
+
+    val expectedMessagesYesterday = Seq(
       OutgoingChatMessageWithVisibility(
         ToClientChatMessage(
-          idMsgAliceBob2, "alice", "bob", "alice to bob two", dayBeforeYesterday.getMillis), Visible, NotVisible, id1, id3),
+          idMsgAliceBob1, "alice", "bob", "alice to bob one", yesterday.getMillis), Visible, Visible, id1, id3),
       OutgoingChatMessageWithVisibility(
           ToClientChatMessage(
-         idMsgBobAlice3, "bob", "alice", "bob to alice three", dayBeforeYesterday.getMillis), NotVisible, Visible, id3, id1)
+         idMsgBobAlice3, "bob", "alice", "bob to alice three", yesterday.getMillis), NotVisible, Visible, id3, id1)
     )
 
-    dAO.visibleMessages(id1) should contain theSameElementsAs expectedMessages
+    dAO.visibleMessages(id1, None) should contain theSameElementsAs expectedMessagesYesterday :+ messageDayBeforeYesterday
+    dAO.visibleMessages(id1, Some(dayBeforeYesterday)) shouldEqual expectedMessagesYesterday
+
   }
 
   private def makeDAO(session:DBSession) =
