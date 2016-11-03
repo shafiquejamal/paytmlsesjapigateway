@@ -32,8 +32,10 @@ class ChatMessageDAOImpl @Inject() (
           ${createdAt}, ${sentAt})""".update().apply()
 
     val maybeSenderVisibilityAdded = addSenderVisibility(chatMessageUUID, createdAt, chatMessage.senderVisibility, visibilityUUID)
+    val maybeReceiverVisibilityAdded = addReceiverVisibility(chatMessageUUID, createdAt, chatMessage.receiverVisibility, visibilityUUID)
 
-    if (insertedMessages == 1 && maybeSenderVisibilityAdded.isSuccess)
+
+    if (insertedMessages == 1 && maybeSenderVisibilityAdded.isSuccess && maybeReceiverVisibilityAdded.isSuccess)
       Success(chatMessage)
     else
       Failure(new Exception("Failed to add message or visibility"))
@@ -89,7 +91,8 @@ class ChatMessageDAOImpl @Inject() (
 
   override def visibleMessages(toOrFromXuserId: UUID, maybeAfter: Option[DateTime]): Seq[OutgoingChatMessageWithVisibility] = {
     implicit val readOnlySession = scalikeJDBCSessionProvider.provideReadOnlySession
-    val query = maybeAfter.fold(sql"""select DISTINCT ON (chatmessage.id) fromxuserid, toxuserid, messagetext, sentat, chatmessage.id as chatmsgid,
+    val query = maybeAfter.fold(
+       sql"""select DISTINCT ON (chatmessage.id) fromxuserid, toxuserid, messagetext, sentat, chatmessage.id as chatmsgid,
           xuserusernamefrom.username as fromusername,
           xuserusernameto.username as tousername,
           chatmessagesendervisibility.visibility as sendervisibility,
@@ -121,7 +124,8 @@ class ChatMessageDAOImpl @Inject() (
     .map(OutgoingChatMessageWithVisibility.converter)
     .list()
     .apply()
-    .toSeq.filter { message =>
+    .toSeq
+    .filter { message =>
       (message.fromId == toOrFromXuserId && message.senderVisibility == Visible) ||
       (message.toId == toOrFromXuserId && message.receiverVisibility == Visible) }
   }

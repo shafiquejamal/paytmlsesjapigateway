@@ -37,7 +37,7 @@ class Chat extends React.Component {
         if(!text){
             return;
         }
-        this.props.actions.postObject({text, recipient: this.props.activeContact, messageType: 'toServerChat'});
+        this.props.actions.postChatMessage(text, this.props.activeContact);
         messageNode.value = '';
     }
 

@@ -61,7 +61,8 @@ class SocketActor(
 
     case toServerRequestMessagesMessage: ToServerRequestMessagesMessage =>
 
-      client ! Json.toJson(chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince))
+      client ! Json.toJson(
+        ToClientMessagesSinceMessage(chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince)))
   }
 }
 

@@ -33,7 +33,8 @@ object ToServerSocketMessageType {
   }
 
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
-    ToServerChat.description -> ToServerChat
+    ToServerChat.description -> ToServerChat,
+    ToServerRequestMessages.description -> ToServerRequestMessages
   )
 
   def from(description:String): ToServerSocketMessageType = socketMessageTypeFrom(description)

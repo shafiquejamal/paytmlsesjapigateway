@@ -19,6 +19,12 @@ export function receiveMessage(message) {
     }
 }
 
+export const postChatMessage = function(text, recipient) {
+    return (dispatch, getState) => {
+       dispatch(postObject({text, recipient, messageType: 'toServerChat'}));
+    };
+}
+
 export function postObject(obj) {
     return {
         type: POST_OBJECT,

@@ -18,6 +18,6 @@ class ChatMessageFacade @Inject() (
     .add(chatMessage, uUIDProvider.randomUUID(), timeProvider.now(), uUIDProvider.randomUUID()).map(_.toClientChatMessage)
 
   override def messagesInvolving(userId: UUID, maybeAfter: Option[DateTime]): Seq[ToClientChatMessage] =
-    chatMessageDAO.visibleMessages(userId, maybeAfter).map(_.toClientChatMessage)
+    chatMessageDAO.visibleMessages(userId, maybeAfter).map(_.toClientChatMessage).sortBy(_.time)
 
 }
