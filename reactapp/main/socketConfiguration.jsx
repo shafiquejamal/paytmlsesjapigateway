@@ -36,7 +36,8 @@ export const socketConfiguration = (store) => {
             socketConfig.ws = new WSInstance(socketConfig.URL, socketConfig.wsDipatcher);
             const chatMessageFromLocalStorage = JSON.parse(localStorage.getItem('chatMessages'));
             if (Object.prototype.toString.call(chatMessageFromLocalStorage) === '[object Array]') {
-                const latestDateTimeMillis = chatMessageFromLocalStorage.sort(function(a,b) {return (a.time > b.time) ? -1 :  1;}).map( message => message.time)[0];
+                const latestDateTimeMillis =
+                    chatMessageFromLocalStorage.sort(function(a,b) {return (a.time > b.time) ? -1 :  1;}).map( message => message.time)[0];
                 setTimeout( () => {
                     socketConfig.ws.postObject({
                         messageType: 'toServerRequestMessages',

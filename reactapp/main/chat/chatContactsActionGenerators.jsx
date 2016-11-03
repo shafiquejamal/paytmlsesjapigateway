@@ -3,9 +3,9 @@ export const SELECT_CONTACT = 'SELECT_CONTACT';
 
 export const getContactsApplicationLoad = () => {
     const contactsFromLocalStorage = localStorage.getItem('chatContacts');
-    const contacts = contactsFromLocalStorage ? JSON.parse(contactsFromLocalStorage) : [];
+    const chatContacts = contactsFromLocalStorage ? JSON.parse(contactsFromLocalStorage) : [];
     return (dispatch, getState) => {
-        dispatch(getContacts(contacts));
+        dispatch(getContacts(chatContacts));
     };
 };
 

@@ -35,9 +35,9 @@ if (messages) {
 
 const testContacts = ['shafique', 'shafiquep', 'shafiqueksg'];
 localStorage.setItem('chatContacts', JSON.stringify(testContacts));
-const contacts = JSON.parse(localStorage.getItem('chatContacts'));
-if (contacts) {
-    store.dispatch(getContactsApplicationLoad(contacts));
+const chatContacts = JSON.parse(localStorage.getItem('chatContacts'));
+if (chatContacts) {
+    store.dispatch(getContactsApplicationLoad(chatContacts));
 }
 
 require('style!css!sass!applicationStyles');
