@@ -30,6 +30,14 @@ trait UserFixture {
   val idMsgBobAlice2 = UUID.fromString("00000000-0000-0000-0000-200000000031")
   val idMsgBobAlice3 = UUID.fromString("00000000-0000-0000-0000-300000000031")
 
+  val idContactAliceBob = UUID.fromString("00000000-0000-0000-0000-100000000013")
+  val idContactBobCharlie = UUID.fromString("00000000-0000-0000-0000-100000000034")
+  val idContactBobAlice = UUID.fromString("00000000-0000-0000-0000-100000000031")
+  val idContactBobDiane = UUID.fromString("00000000-0000-0000-0000-100000000037")
+  val idContactAliceCharlie = UUID.fromString("00000000-0000-0000-0000-100000000014")
+  val idContactCharlieDiane = UUID.fromString("00000000-0000-0000-0000-100000000017")
+  val idContactDianeAlice = UUID.fromString("00000000-0000-0000-0000-100000000071")
+
   val uUIDProvider = new TestUUIDProviderImpl()
   uUIDProvider.index = 100
 
@@ -174,8 +182,35 @@ trait UserFixture {
 
     sql"""insert into chatmessagesendervisibility (id, chatmessageid, visibility, createdat) VALUES
       (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 0, ${yesterday})""",
-  sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
-      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 0, ${yesterday})"""
+    sql"""insert into chatmessagereceivervisibility (id, chatmessageid, visibility, createdat) VALUES
+      (${uUIDProvider.randomUUID()}, ${idMsgBobAlice3}, 0, ${yesterday})""",
+
+    sql"""insert into contact (id, xuserid, contactxuserid, createdat) values
+         ($idContactAliceBob, $id1, $id3, $yesterday)""",
+    sql"""insert into contact (id, xuserid, contactxuserid, createdat) values
+         ($idContactAliceCharlie, $id1, $id4, $yesterday)""",
+    sql"""insert into contact (id, xuserid, contactxuserid, createdat) values
+         ($idContactBobAlice, $id3, $id1, $yesterday)""",
+    sql"""insert into contact (id, xuserid, contactxuserid, createdat) values
+         ($idContactBobDiane, $id3, $id7, $yesterday)""",
+    sql"""insert into contact (id, xuserid, contactxuserid, createdat) values
+         ($idContactCharlieDiane, $id4, $id7, $yesterday)""",
+
+    sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, $idContactAliceBob, 1, $now)""",
+    sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, $idContactAliceBob, 0, $yesterday)""",
+    sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, $idContactAliceCharlie, 1, $yesterday)""",
+    sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, $idContactAliceCharlie, 0, $now)""",
+    sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, $idContactBobAlice, 1, $yesterday)""",
+    sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, $idContactBobDiane, 1, $yesterday)""",
+    sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, $idContactCharlieDiane, 1, $yesterday)"""
+
 
   )
 
