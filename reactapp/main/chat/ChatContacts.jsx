@@ -7,10 +7,6 @@ import { selectContact } from './chatContactsActionGenerators.jsx'
 
 class ChatContacts extends Component {
 
-    componentWillMount() {
-        this.props.getContacts();
-    }
-
     renderList() {
         return this.props.contacts.contacts.filter(contact => contact !== this.props.username).map((contact) => {
            const activeContact = this.props.contacts.activeContact === contact ? "activeContact" : "";

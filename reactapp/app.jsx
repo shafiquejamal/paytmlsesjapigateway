@@ -10,6 +10,7 @@ import { WS_ROOT_URL } from './main/ConfigurationPaths';
 import { socketConfiguration } from './main/socketConfiguration';
 
 import { updateMessagesApplicationLoad } from './main/chat/chatMessagesActionGenerators';
+import { getContactsApplicationLoad } from './main/chat/chatContactsActionGenerators.jsx';
 
 import routes from './routes';
 import { LOGIN_USER } from './main/access/authentication/authenticationActionGenerators'
@@ -30,6 +31,13 @@ if (token) {
 const messages = JSON.parse(localStorage.getItem('chatMessages'));
 if (messages) {
     store.dispatch(updateMessagesApplicationLoad(messages));
+}
+
+const testContacts = ['shafique', 'shafiquep', 'shafiqueksg'];
+localStorage.setItem('chatContacts', JSON.stringify(testContacts));
+const contacts = JSON.parse(localStorage.getItem('chatContacts'));
+if (contacts) {
+    store.dispatch(getContactsApplicationLoad(contacts));
 }
 
 require('style!css!sass!applicationStyles');

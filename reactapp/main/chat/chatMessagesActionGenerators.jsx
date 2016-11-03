@@ -7,3 +7,4 @@ export const updateMessagesApplicationLoad = (messages) => {
         messages
     };
 };
+
