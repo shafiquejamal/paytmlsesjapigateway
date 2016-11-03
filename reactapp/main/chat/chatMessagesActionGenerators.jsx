@@ -1,17 +1,9 @@
+export const UPDATE_MESSAGES_APPLICATION_LOAD = "UPDATE_MESSAGES_APPLICATION_LOAD";
 export const UPDATE_MESSAGES = "UPDATE_MESSAGES";
 
-export const startGettingMessagesFromLocalStorage = () => {
-
-    const chatMessageFromLocalStorage = JSON.parse(localStorage.getItem('chatMessages'));
-
-    return (dispatch, getState) => {
-        dispatch(updateMessages(chatMessageFromLocalStorage));
-    }
-};
-
-export const updateMessages = (messages) => {
+export const updateMessagesApplicationLoad = (messages) => {
     return {
-        type: UPDATE_MESSAGES,
+        type: UPDATE_MESSAGES_APPLICATION_LOAD,
         messages
     };
 };

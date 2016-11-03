@@ -1,5 +1,5 @@
 import { RECEIVE_MESSAGE, DISCONNECT, CONNECT } from './chatActionTypes';
-import { UPDATE_MESSAGES } from './chatMessagesActionGenerators';
+import { UPDATE_MESSAGES_APPLICATION_LOAD, UPDATE_MESSAGES} from './chatMessagesActionGenerators';
 
 import Message from './message';
 
@@ -8,7 +8,15 @@ const initialState = {
     status: false
 };
 
-const updateLocalStorage = () => {
+const updateLocalStorage = (messages) => {
+    const chatMessageFromLocalStorageUnparsed = localStorage.getItem('chatMessages');
+    if (chatMessageFromLocalStorageUnparsed) {
+        const chatMessageFromLocalStorage = JSON.parse(chatMessageFromLocalStorageUnparsed);
+        const messagesToStoreInLocalStorage = [...chatMessageFromLocalStorage, ...messages];
+        localStorage.setItem('chatMessages', JSON.stringify(messagesToStoreInLocalStorage));
+    } else {
+        localStorage.setItem('chatMessages', JSON.stringify(messages));
+    }
 
 };
 
@@ -19,14 +27,7 @@ const messageReducer = (state = initialState, action) => {
             let messagesToAdd = [];
             if (action.message) {
                 const newMessages = action.message.toClientChatMessages;
-                const chatMessageFromLocalStorageUnparsed = localStorage.getItem('chatMessages');
-                if (chatMessageFromLocalStorageUnparsed) {
-                    const chatMessageFromLocalStorage = JSON.parse(chatMessageFromLocalStorageUnparsed);
-                    const messagesToStoreInLocalStorage = [...chatMessageFromLocalStorage, ...newMessages];
-                    localStorage.setItem('chatMessages', JSON.stringify(messagesToStoreInLocalStorage));
-                } else {
-                    localStorage.setItem('chatMessages', JSON.stringify(newMessages));
-                }
+                updateLocalStorage(newMessages);
                 messagesToAdd = newMessages.map(message => new Message(message));
             }
             return {
@@ -34,15 +35,18 @@ const messageReducer = (state = initialState, action) => {
                 conversation: [ ...state.conversation.concat(messagesToAdd) ]
             };
             break;
-        case RECEIVE_MESSAGE:
-            const chatMessageFromLocalStorageUnparsed = localStorage.getItem('chatMessages');
-            if (chatMessageFromLocalStorageUnparsed) {
-                const chatMessageFromLocalStorage = JSON.parse(chatMessageFromLocalStorageUnparsed);
-                const messagesToStoreInLocalStorage = [...chatMessageFromLocalStorage, ...[action.message]];
-                localStorage.setItem('chatMessages', JSON.stringify(messagesToStoreInLocalStorage));
-            } else {
-                localStorage.setItem('chatMessages', JSON.stringify(action.message));
+        case UPDATE_MESSAGES_APPLICATION_LOAD:
+            let messagesToAddApplicationLoad = [];
+            if ( Object.prototype.toString.call(action.messages) === '[object Array]' ) {
+                messagesToAddApplicationLoad = action.messages.map(message => new Message(message));
             }
+            return {
+                ...state,
+                conversation: [ ...state.conversation.concat(messagesToAddApplicationLoad) ]
+            };
+            break;
+        case RECEIVE_MESSAGE:
+            updateLocalStorage([action.message]);
             return {
                 ...state,
                 conversation: [ ...state.conversation, new Message(action.message)]
