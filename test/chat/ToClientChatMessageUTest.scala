@@ -17,7 +17,7 @@ class ToClientChatMessageUTest
     toClientChatMessage.socketMessageType shouldEqual ToClientChat
     Json.toJson(toClientChatMessage) shouldEqual Json.obj(
       "id" -> "00000000-0000-0000-0000-100000000013",
-      "socketMesageType" -> "toClientChat",
+      "socketMessageType" -> "RECEIVE_MESSAGE",
       "from" -> "alice",
       "to" -> "bob",
       "text" -> "alice to bob one",

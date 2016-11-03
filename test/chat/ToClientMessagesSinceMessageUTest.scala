@@ -20,7 +20,7 @@ class ToClientMessagesSinceMessageUTest
     Json.toJson(toClientMessagesSinceMessage) shouldEqual Json.obj( "toClientChatMessages" -> Json.arr(
       Json.obj(
         "id" -> "00000000-0000-0000-0000-100000000013",
-        "socketMesageType" -> "toClientChat",
+        "socketMessageType" -> "RECEIVE_MESSAGE",
         "from" -> "alice",
         "to" -> "bob",
         "text" -> "alice to bob one",
@@ -28,12 +28,12 @@ class ToClientMessagesSinceMessageUTest
       ),
       Json.obj(
         "id" -> "00000000-0000-0000-0000-300000000031",
-        "socketMesageType" -> "toClientChat",
+        "socketMessageType" -> "RECEIVE_MESSAGE",
         "from" -> "bob",
         "to" -> "alice",
         "text" -> "bob to alice three",
         "time" -> now.getMillis
       )
-    ), "socketMessageType" -> "toClientMessagesSince")
+    ), "socketMessageType" -> "UPDATE_MESSAGES")
   }
 }

@@ -23,7 +23,6 @@ export default class WS {
     }
 
     postObject(obj) {
-        console.log('posting:', obj);
         this.websocket.send(JSON.stringify(obj));
     }
 

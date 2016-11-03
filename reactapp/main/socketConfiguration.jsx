@@ -8,8 +8,8 @@ export const socketConfiguration = (store) => {
         ws: null,
         URL: WS_ROOT_URL + '/chat',
         wsDipatcher: (msg) => {
-            console.log('msg:', msg);
-            return store.dispatch(ChatActions.receiveMessage(msg));
+            const parsedMsg = JSON.parse(msg);
+            return store.dispatch(ChatActions.receiveMessage(parsedMsg, parsedMsg.socketMessageType));
         },
         wsListener: () => {
             const lastAction = store.getState().lastAction;
@@ -40,13 +40,11 @@ export const socketConfiguration = (store) => {
                 setTimeout( () => {
                     socketConfig.ws.postObject({
                         messageType: 'toServerRequestMessages',
-                        afterDateTimeInMillis: latestDateTimeMillis});
-                    console.log('timeout finished');
+                        'afterDateTimeInMillis': latestDateTimeMillis});
                 }, 500);
             } else {
                 setTimeout( () => {
                     socketConfig.ws.postObject({messageType: 'toServerRequestMessages'});
-                    console.log('timeout finished');
                 }, 500);
             }
 

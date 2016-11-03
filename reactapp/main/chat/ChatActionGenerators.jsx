@@ -12,18 +12,18 @@ export function disconnect() {
     }
 }
 
-export function receiveMessage(message) {
+export function receiveMessage(message, messageType) {
     return {
-        type: RECEIVE_MESSAGE,
-        message: JSON.parse(message)
+        type: messageType,
+        message: message
     }
 }
 
-export const postChatMessage = function(text, recipient) {
+export const postChatMessage = (text, recipient) => {
     return (dispatch, getState) => {
        dispatch(postObject({text, recipient, messageType: 'toServerChat'}));
     };
-}
+};
 
 export function postObject(obj) {
     return {

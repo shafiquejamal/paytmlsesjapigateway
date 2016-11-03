@@ -30,7 +30,6 @@ class SocketActor(
 
   override def receive = {
     case msg: JsValue =>
-
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
       val socketMessage = ToServerSocketMessageType.from(messageType).socketMessage(msg)
       self ! socketMessage
@@ -60,7 +59,6 @@ class SocketActor(
       client ! Json.toJson(toClientChatMessage)
 
     case toServerRequestMessagesMessage: ToServerRequestMessagesMessage =>
-
       client ! Json.toJson(
         ToClientMessagesSinceMessage(chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince)))
   }

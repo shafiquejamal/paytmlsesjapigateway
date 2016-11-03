@@ -28,8 +28,8 @@ object ToServerSocketMessageType {
   case object ToServerRequestMessages extends ToServerSocketMessageType {
     override val description = "toServerRequestMessages"
     override def socketMessage(msg: JsValue): ToServerRequestMessagesMessage = ToServerRequestMessagesMessage(
-     (msg \ "afterDateTimeInMillis").asOpt[Int].map( millis => new DateTime(millis))
-   )
+      (msg \ "afterDateTimeInMillis").asOpt[Long].map(millis => new DateTime(millis))
+    )
   }
 
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
@@ -44,11 +44,11 @@ object ToServerSocketMessageType {
 object SocketMessageType {
 
   case object ToClientChat extends SocketMessageType {
-    override val description = "toClientChat"
+    override val description = "RECEIVE_MESSAGE"
   }
 
   case object ToClientMessagesSince extends SocketMessageType {
-    override val description = "toClientMessagesSince"
+    override val description = "UPDATE_MESSAGES"
   }
 
   implicit object SocketMessageTypeWrites extends Writes[SocketMessageType] {

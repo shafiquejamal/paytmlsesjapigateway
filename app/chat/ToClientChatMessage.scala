@@ -23,7 +23,7 @@ object ToClientChatMessage {
 
   implicit val toClientChatMessageWrites: Writes[ToClientChatMessage] = (
     (JsPath \ "id").write[UUID] and
-    (JsPath \ "socketMesageType").write[SocketMessageType] and
+    (JsPath \ "socketMessageType").write[SocketMessageType] and
     (JsPath \ "from").write[String] and
     (JsPath \ "to").write[String] and
     (JsPath \ "text").write[String] and
