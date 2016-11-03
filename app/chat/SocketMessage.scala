@@ -1,5 +1,6 @@
 package chat
 
+import contact.ToServerRequestContactsMessage
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json, Writes}
 
@@ -32,9 +33,15 @@ object ToServerSocketMessageType {
     )
   }
 
+  case object ToServerRequestContacts extends ToServerSocketMessageType {
+    override val description = "toServerRequestContacts"
+    override def socketMessage(msg: JsValue): ToServerRequestContactsMessage = new ToServerRequestContactsMessage()
+  }
+
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
     ToServerChat.description -> ToServerChat,
-    ToServerRequestMessages.description -> ToServerRequestMessages
+    ToServerRequestMessages.description -> ToServerRequestMessages,
+    ToServerRequestContacts.description -> ToServerRequestContacts
   )
 
   def from(description:String): ToServerSocketMessageType = socketMessageTypeFrom(description)
