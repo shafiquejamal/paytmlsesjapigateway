@@ -32,7 +32,7 @@ class SocketActor(
     case msg: JsValue =>
 
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
-      val socketMessage = SocketMessageType.from(messageType).socketMessage(msg)
+      val socketMessage = ToServerSocketMessageType.from(messageType).socketMessage(msg)
       self ! socketMessage
 
     case ToServerChatMessage(recipient, messageText) =>
@@ -58,14 +58,15 @@ class SocketActor(
         actorSelectionSenders ! toClientChatMessage
       }
 
-    case outgoingMessage : ToClientChatMessage =>
+    case toClientChatMessage : ToClientChatMessage =>
 
-      client ! Json.toJson(outgoingMessage)
+      client ! Json.toJson(toClientChatMessage)
 
+    case toServerRequestMessagesMessage: ToServerRequestMessagesMessage =>
+
+      client ! Json.toJson(chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince))
   }
-
 }
-
 
 object SocketActor {
 

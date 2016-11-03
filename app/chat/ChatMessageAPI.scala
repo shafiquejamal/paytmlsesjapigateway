@@ -10,8 +10,6 @@ trait ChatMessageAPI {
 
   def store(chatMessage: OutgoingChatMessageWithVisibility): Try[ToClientChatMessage]
 
-  def messagesInvolving(userId: UUID): Seq[ToClientChatMessage]
-
-  def messagesInvolving(userId: UUID, after: DateTime): Seq[ToClientChatMessage]
+  def messagesInvolving(userId: UUID, maybeAfter: Option[DateTime]): Seq[ToClientChatMessage]
 
 }

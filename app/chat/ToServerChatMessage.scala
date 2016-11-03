@@ -1,6 +1,6 @@
 package chat
 
-import chat.SocketMessageType.ToServerChat
+import chat.ToServerSocketMessageType.ToServerChat
 
 case class ToServerChatMessage(recipient: String, text: String) extends SocketMessage {
 

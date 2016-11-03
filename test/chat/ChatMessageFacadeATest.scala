@@ -43,8 +43,8 @@ class ChatMessageFacadeATest
       messageNow
     )
 
-    api.messagesInvolving(id3) should contain theSameElementsAs expectedMessagesInvolvingBob
-    api.messagesInvolving(id3, yesterday).loneElement shouldEqual messageNow
+    api.messagesInvolving(id3, None) should contain theSameElementsAs expectedMessagesInvolvingBob
+    api.messagesInvolving(id3, Some(yesterday)).loneElement shouldEqual messageNow
   }
 
   private def makeAPI(session: DBSession) = {
