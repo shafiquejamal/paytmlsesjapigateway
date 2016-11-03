@@ -13,6 +13,12 @@ This is a template application that has the following characteristics:
 - ReactJS
 - Play Framework
 - Postgres
+- JWT Bearer authentication
+
+## Some capabilities:
+- E-mail verification
+- Logout all devices
+- Chat
 
 ## Requirements
 
@@ -80,3 +86,6 @@ http://bootsnipp.com/snippets/featured/register-page
 
 React JS:
 Udemy.com courses by Adrew Mead and Stephen Grider
+
+Chat with Websocket on client side:
+https://github.com/YannickDot/redux-websocket-example
