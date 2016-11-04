@@ -8,8 +8,9 @@ export const socketConfiguration = (store) => {
         ws: null,
         URL: WS_ROOT_URL + '/chat',
         wsDipatcher: (msg) => {
+            console.log('msg', msg);
             const parsedMsg = JSON.parse(msg);
-            return store.dispatch(ChatActions.receiveMessage(parsedMsg, parsedMsg.socketMessageType));
+            return store.dispatch(ChatActions.receiveMessage(parsedMsg.payload, parsedMsg.socketMessageType));
         },
         wsListener: () => {
             const lastAction = store.getState().lastAction;

@@ -3,7 +3,7 @@ package contact
 import java.util.UUID
 
 import com.google.inject.Inject
-import contact.ContactVisibility.Visible
+import contact.ChatContactVisibility.Visible
 import db.{DBConfig, ScalikeJDBCSessionProvider}
 import org.joda.time.DateTime
 import scalikejdbc._
@@ -11,24 +11,24 @@ import util.UUIDProvider
 
 import scala.util.{Failure, Success, Try}
 
-trait ContactDAO {
+trait ChatContactDAO {
 
-  def visibleContactsFor(userId: UUID): Seq[Contact]
+  def visibleContactsFor(userId: UUID): Seq[ChatContact]
 
   def addContact(forXuserId: UUID, contactXuserIdToAdd: UUID, createdAt: DateTime): Try[UUID]
 
 }
 
-class ContactDAOImpl @Inject() (
+class ChatContactDAOImpl @Inject()(
     scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider,
     dBConfig: DBConfig,
     uUIDProvider: UUIDProvider)
-  extends ContactDAO {
+  extends ChatContactDAO {
 
   val namedDB = NamedDB(Symbol(dBConfig.dBName))
   namedDB.autoClose(false)
 
-  override def visibleContactsFor(userId: UUID): Seq[Contact] = {
+  override def visibleContactsFor(userId: UUID): Seq[ChatContact] = {
 
     implicit val readOnlySession = scalikeJDBCSessionProvider.provideReadOnlySession
 
@@ -48,8 +48,8 @@ class ContactDAOImpl @Inject() (
     implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
       val nRecords =
-        sql"""select id, xuserid, contactxuserid from contact where xuserid = $forXuserId and contactxuserid = $contactXuserIdToAdd
-             order by createdat limit 1
+        sql"""select id, xuserid, contactxuserid from contact where xuserid = $forXuserId and
+              contactxuserid = $contactXuserIdToAdd order by createdat limit 1
            """.map(
         rs => rs.string("id")
       ).single().apply()
@@ -70,7 +70,7 @@ class ContactDAOImpl @Inject() (
             Failure(new Exception("Could not make contact visible"))
           }
         } else {
-          Failure(new Exception("Cound not insert into contact table"))
+          Failure(new Exception("Could not insert into contact table"))
         }
       } { record =>
         val recordId = UUID.fromString(record)

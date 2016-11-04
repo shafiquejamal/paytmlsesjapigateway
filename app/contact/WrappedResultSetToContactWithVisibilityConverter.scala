@@ -6,9 +6,9 @@ import scalikejdbc.WrappedResultSet
 
 object WrappedResultSetToContactWithVisibilityConverter {
 
-  def convert(rs: WrappedResultSet): ContactWithVisibility =
-    ContactWithVisibility(
-      Contact(UUID.fromString(rs.string("contactxuserid")), rs.string("username")),
-        ContactVisibility.from(rs.int("visibility")))
+  def convert(rs: WrappedResultSet): ChatContactWithVisibility =
+    ChatContactWithVisibility(
+      ChatContact(UUID.fromString(rs.string("contactxuserid")), rs.string("username")),
+        ChatContactVisibility.from(rs.int("visibility")))
 
 }

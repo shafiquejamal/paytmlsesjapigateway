@@ -13,12 +13,12 @@ case class OutgoingChatMessageWithVisibility(
 
 object OutgoingChatMessageWithVisibility {
   def converter(rs: WrappedResultSet) = OutgoingChatMessageWithVisibility(
-    ToClientChatMessage(
+    ToClientChatMessage(Chat(
       UUID.fromString(rs.string("chatmsgid")),
       rs.string("fromusername"),
       rs.string("tousername"),
       rs.string("messagetext"),
-      rs.jodaDateTime("sentat").getMillis),
+      rs.jodaDateTime("sentat").getMillis)),
     ChatMessageVisibility.from(rs.int("sendervisibility")),
     ChatMessageVisibility.from(rs.int("receivervisibility")),
     UUID.fromString(rs.string("fromxuserid")),

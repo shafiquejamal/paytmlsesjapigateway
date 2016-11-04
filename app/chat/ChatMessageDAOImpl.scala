@@ -26,14 +26,15 @@ class ChatMessageDAOImpl @Inject() (
 
     implicit val session = scalikeJDBCSessionProvider.provideAutoSession
 
-    val sentAt = new DateTime(chatMessage.toClientChatMessage.time)
+    val sentAt = new DateTime(chatMessage.toClientChatMessage.payload.time)
     val insertedMessages = sql"""insert into chatmessage (id, fromxuserid, toxuserid, messagetext, createdat, sentat) VALUES
-         ($chatMessageUUID, ${chatMessage.fromId}, ${chatMessage.toId}, ${chatMessage.toClientChatMessage.text},
+         ($chatMessageUUID, ${chatMessage.fromId}, ${chatMessage.toId}, ${chatMessage.toClientChatMessage.payload.text},
           ${createdAt}, ${sentAt})""".update().apply()
 
-    val maybeSenderVisibilityAdded = addSenderVisibility(chatMessageUUID, createdAt, chatMessage.senderVisibility, visibilityUUID)
-    val maybeReceiverVisibilityAdded = addReceiverVisibility(chatMessageUUID, createdAt, chatMessage.receiverVisibility, visibilityUUID)
-
+    val maybeSenderVisibilityAdded =
+      addSenderVisibility(chatMessageUUID, createdAt, chatMessage.senderVisibility, visibilityUUID)
+    val maybeReceiverVisibilityAdded =
+      addReceiverVisibility(chatMessageUUID, createdAt, chatMessage.receiverVisibility, visibilityUUID)
 
     if (insertedMessages == 1 && maybeSenderVisibilityAdded.isSuccess && maybeReceiverVisibilityAdded.isSuccess)
       Success(chatMessage)
@@ -42,20 +43,20 @@ class ChatMessageDAOImpl @Inject() (
   }
 
   override def addSenderVisibility(
-    chatMessageUUID: UUID,
-    createdAt: DateTime,
-    senderVisibility: ChatMessageVisibility,
-    visibilityUUID: UUID): Try[UUID] = {
+      chatMessageUUID: UUID,
+      createdAt: DateTime,
+      senderVisibility: ChatMessageVisibility,
+      visibilityUUID: UUID): Try[UUID] = {
 
     implicit val session = scalikeJDBCSessionProvider.provideAutoSession
     addSenderVisibilitySession(chatMessageUUID, createdAt, senderVisibility, visibilityUUID)
   }
 
   override def addReceiverVisibility(
-    chatMessageUUID: UUID,
-    createdAt: DateTime,
-    receiverVisibility: ChatMessageVisibility,
-    visibilityUUID: UUID): Try[UUID] = {
+      chatMessageUUID: UUID,
+      createdAt: DateTime,
+      receiverVisibility: ChatMessageVisibility,
+      visibilityUUID: UUID): Try[UUID] = {
 
     implicit val session = scalikeJDBCSessionProvider.provideAutoSession
     addReceiverVisibilitySession(chatMessageUUID, createdAt, receiverVisibility, visibilityUUID)

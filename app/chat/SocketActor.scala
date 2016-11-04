@@ -38,7 +38,8 @@ class SocketActor(
 
       userAPI.by(recipient) foreach { recipientId =>
         val toClientChatMessage =
-          ToClientChatMessage(uUIDProvider.randomUUID(), clientUsername, recipient, messageText, timeProvider.now().getMillis)
+          ToClientChatMessage(
+            Chat(uUIDProvider.randomUUID(), clientUsername, recipient, messageText, timeProvider.now().getMillis))
         Future(
           chatMessageAPI
           .store(

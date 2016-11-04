@@ -26,7 +26,7 @@ const messageReducer = (state = initialState, action) => {
         case UPDATE_MESSAGES:
             let messagesToAdd = [];
             if (action.message) {
-                const newMessages = action.message.toClientChatMessages;
+                const newMessages = action.message;
                 updateLocalStorage(newMessages);
                 messagesToAdd = newMessages.map(message => new Message(message));
             }

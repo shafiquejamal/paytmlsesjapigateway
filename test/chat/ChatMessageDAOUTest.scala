@@ -23,8 +23,8 @@ class ChatMessageDAOUTest
   "Adding a message" should "succeed" in { session =>
     val dAO = makeDAO(session)
     val chatMessageWithVisibility = OutgoingChatMessageWithVisibility(
-      ToClientChatMessage(
-        uUIDProvider.randomUUID(), "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis),
+      ToClientChatMessage(Chat(
+        uUIDProvider.randomUUID(), "alice", "bob", "some message", timeProvider.now().minusMillis(1).getMillis)),
       Visible, Visible,
       id1,
       id3
@@ -50,16 +50,16 @@ class ChatMessageDAOUTest
 
     val messageDayBeforeYesterday =
       OutgoingChatMessageWithVisibility(
-        ToClientChatMessage(
-          idMsgAliceBob2, "alice", "bob", "alice to bob two", dayBeforeYesterday.getMillis), Visible, NotVisible, id1, id3)
+        ToClientChatMessage(Chat(
+          idMsgAliceBob2, "alice", "bob", "alice to bob two", dayBeforeYesterday.getMillis)), Visible, NotVisible, id1, id3)
 
     val expectedMessagesYesterday = Seq(
       OutgoingChatMessageWithVisibility(
-        ToClientChatMessage(
-          idMsgAliceBob1, "alice", "bob", "alice to bob one", yesterday.getMillis), Visible, Visible, id1, id3),
+        ToClientChatMessage(Chat(
+          idMsgAliceBob1, "alice", "bob", "alice to bob one", yesterday.getMillis)), Visible, Visible, id1, id3),
       OutgoingChatMessageWithVisibility(
-          ToClientChatMessage(
-         idMsgBobAlice3, "bob", "alice", "bob to alice three", yesterday.getMillis), NotVisible, Visible, id3, id1)
+          ToClientChatMessage(Chat(
+         idMsgBobAlice3, "bob", "alice", "bob to alice three", yesterday.getMillis)), NotVisible, Visible, id3, id1)
     )
 
     dAO.visibleMessages(id1, None) should contain theSameElementsAs expectedMessagesYesterday :+ messageDayBeforeYesterday
