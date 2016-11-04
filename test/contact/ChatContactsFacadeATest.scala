@@ -8,6 +8,7 @@ import scalikejdbc.DBSession
 import user.UserFixture
 import util.{TestUUIDProviderImpl, TestTimeProviderImpl}
 import LoneElement._
+import TryValues._
 
 class ChatContactsFacadeATest
   extends FlatSpec
@@ -27,7 +28,8 @@ class ChatContactsFacadeATest
 
   "Adding a contact" should "make this contact visible to the user" in { session =>
 
-
+    val api = makeAPI(session)
+    api.addContact(id1, id4).success.value shouldEqual id4
 
   }
 
