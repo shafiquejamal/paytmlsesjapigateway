@@ -1,4 +1,4 @@
-import { RECEIVE_MESSAGE, CONNECT, DISCONNECT, POST_OBJECT } from './chatActionTypes';
+import { RECEIVE_MESSAGE, CONNECT, DISCONNECT, POST_OBJECT } from './socketActionTypes';
 
 export function connect() {
     return {

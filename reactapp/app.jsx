@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, hashHistory } from 'react-router';
 import promise from 'redux-promise';
-import WSInstance from './main/WS';
-import * as ChatActions from './main/chat/chatActionGenerators';
-import * as ActionTypes from './main/chat/chatActionTypes';
+import WSInstance from './main/socket/WS';
+import * as ChatActions from './main/socket/socketActionGenerators';
+import * as ActionTypes from './main/socket/socketActionTypes';
 import { WS_ROOT_URL } from './main/ConfigurationPaths';
-import { socketConfiguration } from './main/socketConfiguration';
+import { socketConfiguration } from './main/socket/socketConfiguration';
 
 import { updateMessagesApplicationLoad } from './main/chat/chatMessagesActionGenerators';
 import { getContactsApplicationLoad } from './main/chat/chatContactsActionGenerators.jsx';

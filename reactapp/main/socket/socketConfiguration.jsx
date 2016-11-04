@@ -1,7 +1,8 @@
-import { WS_ROOT_URL } from './ConfigurationPaths';
-import * as ChatActions from './chat/chatActionGenerators';
-import * as ActionTypes from './chat/chatActionTypes';
+import { WS_ROOT_URL } from './../ConfigurationPaths';
+import * as ChatActions from './socketActionGenerators';
+import * as ActionTypes from './socketActionTypes';
 import WSInstance from './WS';
+import { fetchNewChatMessages } from './requestNewData';
 
 export const socketConfiguration = (store) => {
     const socketConfig =  {
@@ -35,21 +36,9 @@ export const socketConfiguration = (store) => {
         startWS: () => {
             if (!!socketConfig.ws) socketConfig.ws.close();
             socketConfig.ws = new WSInstance(socketConfig.URL, socketConfig.wsDipatcher);
-            const chatMessageFromLocalStorage = JSON.parse(localStorage.getItem('chatMessages'));
-            if (Object.prototype.toString.call(chatMessageFromLocalStorage) === '[object Array]') {
-                const latestDateTimeMillis =
-                    chatMessageFromLocalStorage.sort(function(a,b) {return (a.time > b.time) ? -1 :  1;}).map( message => message.time)[0];
-                setTimeout( () => {
-                    socketConfig.ws.postObject({
-                        messageType: 'toServerRequestMessages',
-                        'afterDateTimeInMillis': latestDateTimeMillis});
-                }, 500);
-            } else {
-                setTimeout( () => {
-                    socketConfig.ws.postObject({messageType: 'toServerRequestMessages'});
-                }, 1000);
-            }
-
+            setTimeout( () => {
+                fetchNewChatMessages(socketConfig);
+            }, 1000);
         }
     };
     return socketConfig;

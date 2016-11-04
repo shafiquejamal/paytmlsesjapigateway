@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ROOT_URL } from './ConfigurationPaths';
+import { ROOT_URL } from './../ConfigurationPaths';
 
 export default class WS {
     constructor(wsurl, dispatcher) {

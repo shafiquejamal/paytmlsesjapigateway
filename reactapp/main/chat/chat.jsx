@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as ChatActions from './chatActionGenerators.jsx';
+import * as ChatActions from './../socket/socketActionGenerators.jsx';
 import ChatLogin from './ChatLogin';
 import ChatContacts from './ChatContacts';
 import ChatMessage from './ChatMessage';

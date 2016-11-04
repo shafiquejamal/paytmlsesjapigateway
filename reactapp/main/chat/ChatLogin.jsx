@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as ChatActions from './chatActionGenerators';
+import * as ChatActions from './../socket/socketActionGenerators';
 
 function mapStateToProps(state) {
     return {

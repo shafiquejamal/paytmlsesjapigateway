@@ -1,4 +1,4 @@
-import { RECEIVE_MESSAGE, DISCONNECT, CONNECT } from './chatActionTypes';
+import { RECEIVE_MESSAGE, DISCONNECT, CONNECT } from './../socket/socketActionTypes';
 import { UPDATE_MESSAGES_APPLICATION_LOAD, UPDATE_MESSAGES} from './chatMessagesActionGenerators';
 
 import Message from './message';
