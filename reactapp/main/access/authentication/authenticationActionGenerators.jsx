@@ -65,9 +65,7 @@ export const startLoggingOutAllDevices = function() {
 
 export const startLoggingOutUser = function() {
   return (dispatch, getState) => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('email');
-    localStorage.removeItem('username');
+    localStorage.clear();
     dispatch(logoutUser());
   };
 };
