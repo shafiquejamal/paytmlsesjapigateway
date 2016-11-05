@@ -1,11 +1,11 @@
-import { GET_CONTACTS, SELECT_CONTACT } from './chatContactsActionGenerators.jsx';
+import { UPDATE_CONTACTS, SELECT_CONTACT } from './chatContactsActionGenerators.jsx';
 
 export const chatContactsReducer = (state = { contacts: [], activeContact: null }, action) => {
     switch (action.type) {
-        case GET_CONTACTS:
+        case UPDATE_CONTACTS:
             return {
                 ...state,
-                contacts: action.contacts
+                contacts: action.payload
             };
             break;
         case SELECT_CONTACT:

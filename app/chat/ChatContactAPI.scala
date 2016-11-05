@@ -8,7 +8,7 @@ import util.TimeProvider
 
 import scala.util.Try
 
-trait ChatContactsAPI {
+trait ChatContactAPI {
 
   def visibleContactsFor(userId: UUID): Seq[String]
 
@@ -16,9 +16,9 @@ trait ChatContactsAPI {
 
 }
 
-class ChatContactsFacade @Inject() (
+class ChatContactFacade @Inject()(
     contactDAO: ChatContactDAO,
-    timeProvider: TimeProvider) extends ChatContactsAPI {
+    timeProvider: TimeProvider) extends ChatContactAPI {
 
   override def visibleContactsFor(userId: UUID): Seq[String] =
     contactDAO.visibleContactsFor(userId).map(_.contactUsername)

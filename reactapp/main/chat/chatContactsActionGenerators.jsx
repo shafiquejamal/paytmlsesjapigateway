@@ -1,4 +1,4 @@
-export const GET_CONTACTS = 'GET_CONTACTS';
+export const UPDATE_CONTACTS = 'UPDATE_CONTACTS';
 export const SELECT_CONTACT = 'SELECT_CONTACT';
 
 export const getContactsApplicationLoad = () => {
@@ -9,10 +9,10 @@ export const getContactsApplicationLoad = () => {
     };
 };
 
-export const getContacts = (contacts) => {
+export const getContacts = (payload) => {
     return {
-        type: GET_CONTACTS,
-        contacts
+        type: UPDATE_CONTACTS,
+        payload
     };
 };
 

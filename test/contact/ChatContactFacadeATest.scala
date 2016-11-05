@@ -1,6 +1,6 @@
 package contact
 
-import chat.ChatContactsFacade
+import chat.ChatContactFacade
 import db.{TestScalikeJDBCSessionProvider, TestDBConnection, CrauthAutoRollback}
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
@@ -10,7 +10,7 @@ import util.{TestUUIDProviderImpl, TestTimeProviderImpl}
 import LoneElement._
 import TryValues._
 
-class ChatContactsFacadeATest
+class ChatContactFacadeATest
   extends FlatSpec
   with ShouldMatchers
   with CrauthAutoRollback
@@ -34,7 +34,7 @@ class ChatContactsFacadeATest
   }
 
   private def makeAPI(session: DBSession) = {
-    new ChatContactsFacade(
+    new ChatContactFacade(
       new ChatContactDAOImpl(TestScalikeJDBCSessionProvider(session), dBConfig, new TestUUIDProviderImpl()),
       new TestTimeProviderImpl())
   }

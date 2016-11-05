@@ -8,16 +8,18 @@ import { selectContact } from './chatContactsActionGenerators.jsx'
 class ChatContacts extends Component {
 
     renderList() {
-        return this.props.contacts.contacts.filter(contact => contact !== this.props.username).map((contact) => {
-           const activeContact = this.props.contacts.activeContact === contact ? "activeContact" : "";
-           return (
-             <li
-                 key={contact}
-                 onClick={() => this.props.selectContact(contact) }
-                 className={`list-group-item ${activeContact}`}>{contact}
-             </li>
-           );
-        });
+        if (this.props.contacts.contacts) {
+            return this.props.contacts.contacts.filter(contact => contact !== this.props.username).map((contact) => {
+                const activeContact = this.props.contacts.activeContact === contact ? "activeContact" : "";
+                return (
+                    <li
+                        key={contact}
+                        onClick={() => this.props.selectContact(contact) }
+                        className={`list-group-item ${activeContact}`}>{contact}
+                    </li>
+                );
+            });
+        }
     }
 
     render() {

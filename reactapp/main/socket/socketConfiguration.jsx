@@ -2,7 +2,7 @@ import { WS_ROOT_URL } from './../ConfigurationPaths';
 import * as ChatActions from './socketActionGenerators';
 import * as ActionTypes from './socketActionTypes';
 import WSInstance from './WS';
-import { fetchNewChatMessages } from './requestNewData';
+import { fetchNewChatMessages, requestContacts } from './requestNewData';
 
 export const socketConfiguration = (store) => {
     const socketConfig =  {
@@ -37,7 +37,8 @@ export const socketConfiguration = (store) => {
             if (!!socketConfig.ws) socketConfig.ws.close();
             socketConfig.ws = new WSInstance(socketConfig.URL, socketConfig.wsDipatcher);
             setTimeout( () => {
-                fetchNewChatMessages(socketConfig);
+                fetchNewChatMessages(socketConfig.ws);
+                requestContacts(socketConfig.ws);
             }, 1000);
         }
     };

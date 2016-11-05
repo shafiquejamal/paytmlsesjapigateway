@@ -25,8 +25,8 @@ const messageReducer = (state = initialState, action) => {
     switch (action.type) {
         case UPDATE_MESSAGES:
             let messagesToAdd = [];
-            if (action.message) {
-                const newMessages = action.message;
+            if (action.payload) {
+                const newMessages = action.payload;
                 updateLocalStorage(newMessages);
                 messagesToAdd = newMessages.map(message => new Message(message));
             }
@@ -37,8 +37,8 @@ const messageReducer = (state = initialState, action) => {
             break;
         case UPDATE_MESSAGES_APPLICATION_LOAD:
             let messagesToAddApplicationLoad = [];
-            if ( Object.prototype.toString.call(action.messages) === '[object Array]' ) {
-                messagesToAddApplicationLoad = action.messages.map(message => new Message(message));
+            if (action.payload) {
+                messagesToAddApplicationLoad = action.payload.map(message => new Message(message));
             }
             return {
                 ...state,
@@ -46,10 +46,10 @@ const messageReducer = (state = initialState, action) => {
             };
             break;
         case RECEIVE_MESSAGE:
-            updateLocalStorage([action.message]);
+            updateLocalStorage([action.payload]);
             return {
                 ...state,
-                conversation: [ ...state.conversation, new Message(action.message)]
+                conversation: [ ...state.conversation, new Message(action.payload)]
             };
             break;
         case CONNECT:

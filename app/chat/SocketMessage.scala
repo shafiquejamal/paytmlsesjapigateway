@@ -1,6 +1,6 @@
 package chat
 
-import contact.ToServerRequestContactsMessage
+import contact.{ToServerAddContactMessage, ToServerRequestContactsMessage}
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json, Writes}
 
@@ -35,13 +35,23 @@ object ToServerSocketMessageType {
 
   case object ToServerRequestContacts extends ToServerSocketMessageType {
     override val description = "toServerRequestContacts"
-    override def socketMessage(msg: JsValue): ToServerRequestContactsMessage = new ToServerRequestContactsMessage()
+    override def socketMessage(msg: JsValue): ToServerRequestContactsMessage = ToServerRequestContactsMessage(
+      (msg \ "md5ofContacts").validate[String].getOrElse("")
+    )
   }
+
+  case object ToServerAddContact extends ToServerSocketMessageType {
+    override val description = "toServerAddContact"
+    override def socketMessage(msg: JsValue): ToServerAddContactMessage = ToServerAddContactMessage(
+       (msg \ "usernameOfContactToAdd").validate[String].getOrElse("")
+    )
+}
 
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
     ToServerChat.description -> ToServerChat,
     ToServerRequestMessages.description -> ToServerRequestMessages,
-    ToServerRequestContacts.description -> ToServerRequestContacts
+    ToServerRequestContacts.description -> ToServerRequestContacts,
+    ToServerAddContact.description -> ToServerAddContact
   )
 
   def from(description:String): ToServerSocketMessageType = socketMessageTypeFrom(description)
@@ -56,6 +66,10 @@ object SocketMessageType {
 
   case object ToClientMessagesSince extends SocketMessageType {
     override val description = "UPDATE_MESSAGES"
+  }
+
+  case object ToClientAllContacts extends SocketMessageType {
+    override val description = "UPDATE_CONTACTS"
   }
 
   implicit object SocketMessageTypeWrites extends Writes[SocketMessageType] {

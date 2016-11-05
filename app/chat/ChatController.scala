@@ -19,6 +19,7 @@ import scala.concurrent.Future
 class ChatController @Inject() (
     userAPI: UserAPI,
     chatMessageAPI: ChatMessageAPI,
+    chatContactsAPI: ChatContactAPI,
     override val authenticationAPI: AuthenticationAPI,
     override val jWTParamsProvider: JWTParamsProvider,
     uUIDProvider: UUIDProvider,
@@ -50,7 +51,7 @@ class ChatController @Inject() (
     .decodeAndValidateToken(
       token,
       (uUID: UUID, username: String) => Right(BetterActorFlow.namedActorRef(
-        client => SocketActor.props(client, userAPI, chatMessageAPI, uUID, username, timeProvider, uUIDProvider),
+        client => SocketActor.props(client, userAPI, chatMessageAPI, chatContactsAPI, uUID, username, timeProvider, uUIDProvider),
         16,
         OverflowStrategy.dropNew,
         uUID.toString + "_" + uUIDProvider.randomUUID().toString)),

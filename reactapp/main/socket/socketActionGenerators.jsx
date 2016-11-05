@@ -12,10 +12,10 @@ export function disconnect() {
     }
 }
 
-export function receiveMessage(message, messageType) {
+export function receiveMessage(payload, messageType) {
     return {
         type: messageType,
-        message: message
+        payload
     }
 }
 

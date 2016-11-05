@@ -1,5 +1,6 @@
-import chat.{ChatMessageDAOImpl, ChatMessageDAO, ChatMessageAPI, ChatMessageFacade}
+import chat._
 import com.google.inject.AbstractModule
+import contact.{ChatContactDAOImpl, ChatContactDAO}
 import net.codingwell.scalaguice.ScalaModule
 
 /**
@@ -17,6 +18,8 @@ class Module extends AbstractModule with ScalaModule {
   override def configure() {
     bind[ChatMessageAPI].to[ChatMessageFacade]
     bind[ChatMessageDAO].to[ChatMessageDAOImpl]
+    bind[ChatContactAPI].to[ChatContactFacade]
+    bind[ChatContactDAO].to[ChatContactDAOImpl]
   }
 
 }

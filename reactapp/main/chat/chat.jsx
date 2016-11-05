@@ -25,11 +25,6 @@ function mapDispatchToProps(dispatch) {
 
 class Chat extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-
     handleSendPost(){
         const messageNode = ReactDOM.findDOMNode(this.refs.message);
         let text = messageNode.value.trim();

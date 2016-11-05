@@ -34,7 +34,7 @@ class BetterActorFlowUTest(_system: ActorSystem)
   "Creating an actor flow with a name" should "do something" in {
 
     BetterActorFlow.namedActorRef(
-      client => SocketActor.props(client, null, null, new UUID(1, 1), "someClient", timeProvider, uUIDProvider),
+      client => SocketActor.props(client, null, null, null, new UUID(1, 1), "someClient", timeProvider, uUIDProvider),
       16,
       OverflowStrategy.dropNew,
       "my_actor")
