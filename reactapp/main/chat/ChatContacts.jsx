@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getContacts } from './chatContactsActionGenerators.jsx'
-import { selectContact } from './chatContactsActionGenerators.jsx'
-
+import { getContacts } from './chatContactsActionGenerators'
+import { selectContact } from './chatContactsActionGenerators'
+import AddContact from './AddContact'
 
 class ChatContacts extends Component {
+
+    renderAddContact() {
+        return <AddContact />
+    }
 
     renderList() {
         if (this.props.contacts.contacts) {
@@ -24,9 +28,12 @@ class ChatContacts extends Component {
 
     render() {
         return (
-            <ul className="list-group">
-                { this.renderList() }
-            </ul>
+            <div>
+                { this.props.isConnected ? this.renderAddContact() : "" }
+                <ul className="list-group">
+                    { this.renderList() }
+                </ul>
+            </div>
         );
     }
 
@@ -35,7 +42,8 @@ class ChatContacts extends Component {
 function mapStateToProps(state) {
     return {
         contacts: state.contacts,
-        username: state.auth.username
+        username: state.auth.username,
+        isConnected : state.messages.status
     };
 }
 

@@ -19,15 +19,22 @@ export function receiveMessage(payload, messageType) {
     }
 }
 
-export const postChatMessage = (text, recipient) => {
-    return (dispatch, getState) => {
-       dispatch(postObject({text, recipient, messageType: 'toServerChat'}));
-    };
-};
-
 export function postObject(obj) {
     return {
         type: POST_OBJECT,
         obj
     }
 }
+
+export const postChatMessage = (text, recipient) => {
+    return (dispatch, getState) => {
+       dispatch(postObject({text, recipient, messageType: 'toServerChat'}));
+    };
+};
+
+export const addContact = (usernameOfContactToAdd) => {
+    console.log('adding contact', usernameOfContactToAdd);
+    return (dispatch, getState) => {
+        dispatch(postObject({usernameOfContactToAdd, messageType: 'toServerAddContact'}));
+    };
+};

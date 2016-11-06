@@ -32,7 +32,6 @@ class SocketActor(
 
   override def receive = {
     case msg: JsValue =>
-
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
       val socketMessage = ToServerSocketMessageType.from(messageType).socketMessage(msg)
       self ! socketMessage

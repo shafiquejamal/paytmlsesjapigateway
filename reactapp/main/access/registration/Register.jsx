@@ -15,7 +15,7 @@ export const Register = React.createClass({
         usernameError: '',
         passwordError: '',
         confirmError: '',
-        registrationError: '',
+        registrationError: ''
       };
     },
     checkEmail: function(e) {
@@ -24,10 +24,10 @@ export const Register = React.createClass({
         this.setState({ emailError: 'Must be a valid email address' });
       } else if (!this.state.emailError) {
         this.setState({ emailError: '' });
-      };
+      }
     },
     checkAvailable: function(e) {
-      var { dispatch } = this.props;
+      const { dispatch } = this.props;
       const that = this;
       const inputValue = e.target.value;
       const checkVariable = e.target.getAttribute('data-check').toLowerCase();
@@ -118,7 +118,7 @@ export const Register = React.createClass({
                                     <label htmlFor="email" className="control-label">Your Email</label>
                                     <div className="cols-sm-10">
                                         <div className={`input-group ${this.state.emailError !== '' ? 'has-danger' : ''}`}>
-                                            <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"></i></span>
+                                            <span className="input-group-addon"><i className="fa fa-envelope fa" aria-hidden="true"> </i></span>
                                             <input type="text" className="form-control" name="email" id="email" placeholder="Enter your Email" data-check="email" onBlur={this.checkEmail} onChange={this.checkAvailable} />
                                         </div>
                                         <div className="text-help">
