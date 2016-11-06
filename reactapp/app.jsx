@@ -10,10 +10,13 @@ import { WS_ROOT_URL } from './main/ConfigurationPaths';
 import { socketConfiguration } from './main/socket/socketConfiguration';
 
 import { updateMessagesApplicationLoad } from './main/chat/chatMessagesActionGenerators';
-import { getContactsApplicationLoad } from './main/chat/chatContactsActionGenerators.jsx';
+import { getContactsApplicationLoad, updateContacts } from './main/chat/chatContactsActionGenerators.jsx';
 
 import routes from './routes';
 import { LOGIN_USER } from './main/access/authentication/authenticationActionGenerators'
+
+import { RECEIVE_MESSAGE } from './main/socket/socketActionTypes';
+
 
 var store = require('configureStore').configure();
 
@@ -51,4 +54,20 @@ ReactDOM.render(
 
 const sock = socketConfiguration(store);
 
+const messageListener = () => {
+    const lastAction = store.getState().lastAction;
+    console.log("Message listener", lastAction);
+    switch (lastAction.type) {
+        case RECEIVE_MESSAGE:
+            console.log("calling update contacts:", lastAction);
+            return store.dispatch(updateContacts([lastAction.payload.from]));
+        default:
+            console.log("calling nothing", lastAction.type);
+            return;
+
+    }
+};
+
+
 store.subscribe(() => sock.wsListener());
+store.subscribe(() => messageListener());

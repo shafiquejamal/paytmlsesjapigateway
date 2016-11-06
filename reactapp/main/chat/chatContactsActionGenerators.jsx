@@ -5,11 +5,11 @@ export const getContactsApplicationLoad = () => {
     const contactsFromLocalStorage = localStorage.getItem('chatContacts');
     const chatContacts = contactsFromLocalStorage ? JSON.parse(contactsFromLocalStorage) : [];
     return (dispatch, getState) => {
-        dispatch(getContacts(chatContacts));
+        dispatch(updateContacts(chatContacts));
     };
 };
 
-export const getContacts = (payload) => {
+export const updateContacts = (payload) => {
     return {
         type: UPDATE_CONTACTS,
         payload

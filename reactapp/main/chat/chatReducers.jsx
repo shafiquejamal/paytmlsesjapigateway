@@ -1,5 +1,6 @@
 import { RECEIVE_MESSAGE, DISCONNECT, CONNECT } from './../socket/socketActionTypes';
 import { UPDATE_MESSAGES_APPLICATION_LOAD, UPDATE_MESSAGES} from './chatMessagesActionGenerators';
+import { updateContacts } from './chatContactsActionGenerators';
 
 import Message from './message';
 
