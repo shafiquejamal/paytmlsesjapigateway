@@ -9,7 +9,6 @@ export const socketConfiguration = (store) => {
         ws: null,
         URL: WS_ROOT_URL + '/chat',
         wsDipatcher: (msg) => {
-            console.log('msg', msg);
             const parsedMsg = JSON.parse(msg);
             return store.dispatch(ChatActions.receiveMessage(parsedMsg.payload, parsedMsg.socketMessageType));
         },
@@ -39,7 +38,7 @@ export const socketConfiguration = (store) => {
             setTimeout( () => {
                 fetchNewChatMessages(socketConfig.ws);
                 requestContacts(socketConfig.ws);
-            }, 1000);
+            }, 2000);
         }
     };
     return socketConfig;

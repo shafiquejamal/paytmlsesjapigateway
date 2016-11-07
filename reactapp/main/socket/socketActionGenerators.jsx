@@ -33,7 +33,6 @@ export const postChatMessage = (text, recipient) => {
 };
 
 export const addContact = (usernameOfContactToAdd) => {
-    console.log('adding contact', usernameOfContactToAdd);
     return (dispatch, getState) => {
         dispatch(postObject({usernameOfContactToAdd, messageType: 'toServerAddContact'}));
     };

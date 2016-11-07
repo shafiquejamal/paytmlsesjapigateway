@@ -31,6 +31,11 @@ class AddContact extends Component {
         }
         this.props.actions.addContact(text);
         messageNode.value = '';
+        this.state = {
+            errorMessage: '',
+            successMessage: '',
+            userAlreadyAdded: ''
+        };
     }
 
 
