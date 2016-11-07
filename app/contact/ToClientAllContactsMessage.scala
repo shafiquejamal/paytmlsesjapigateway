@@ -1,8 +1,8 @@
 package contact
 
-import chat.SocketMessageType.ToClientAllContacts
-import chat.{SocketMessageType, ToClientSocketMessage}
 import play.api.libs.json.{Json, Writes}
+import socket.SocketMessageType.ToClientAllContacts
+import socket.{SocketMessageType, ToClientSocketMessage}
 
 case class ToClientAllContactsMessage(override val payload: Seq[String]) extends ToClientSocketMessage {
 

@@ -2,9 +2,10 @@ package chat
 
 import java.util.UUID
 
-import chat.SocketMessageType.ToClientChat
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Writes}
+import socket.SocketMessageType.ToClientChat
+import socket.{SocketMessageType, ToClientSocketMessage}
 
 case class ToClientChatMessage(override val payload: Chat) extends ToClientSocketMessage {
 

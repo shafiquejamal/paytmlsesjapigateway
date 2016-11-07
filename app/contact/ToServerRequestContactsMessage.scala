@@ -1,7 +1,7 @@
 package contact
 
-import chat.ToServerSocketMessageType.ToServerRequestContacts
-import chat.{SocketMessage, SocketMessageType}
+import socket.ToServerSocketMessageType.ToServerRequestContacts
+import socket.{SocketMessage, SocketMessageType, ToServerSocketMessageType}
 
 case class ToServerRequestContactsMessage(md5Hash: String) extends SocketMessage {
 

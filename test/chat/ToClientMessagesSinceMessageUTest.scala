@@ -1,8 +1,9 @@
 package chat
 
-import chat.SocketMessageType.ToClientMessagesSince
 import org.scalatest._
 import play.api.libs.json.Json
+import socket.SocketMessageType
+import socket.SocketMessageType.ToClientMessagesSince
 import user.UserFixture
 
 class ToClientMessagesSinceMessageUTest

@@ -1,8 +1,9 @@
 package chat
 
-import chat.SocketMessageType.ToClientChat
 import org.scalatest.{FlatSpecLike, ShouldMatchers}
 import play.api.libs.json.Json
+import socket.SocketMessageType
+import socket.SocketMessageType.ToClientChat
 import user.UserFixture
 
 class ToClientChatMessageUTest

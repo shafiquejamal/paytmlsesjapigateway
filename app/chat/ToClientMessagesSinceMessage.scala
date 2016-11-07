@@ -1,7 +1,8 @@
 package chat
 
-import chat.SocketMessageType.ToClientMessagesSince
 import play.api.libs.json.{Json, Writes}
+import socket.SocketMessageType.ToClientMessagesSince
+import socket.{SocketMessageType, ToClientSocketMessage}
 
 case class ToClientMessagesSinceMessage(override val payload: Seq[ToClientChatMessage]) extends ToClientSocketMessage {
 

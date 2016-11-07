@@ -1,4 +1,4 @@
-package chat
+package socket
 
 import java.security.MessageDigest
 import java.util.UUID
@@ -6,13 +6,14 @@ import java.util.UUID
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import chat.ChatMessageVisibility.Visible
 import chat.ToClientChatMessage._
-import contact.{ToClientAllContactsMessage, ToServerRequestContactsMessage, ToServerAddContactMessage}
+import chat._
+import contact.{ToClientAllContactsMessage, ToServerAddContactMessage, ToServerRequestContactsMessage}
 import play.api.libs.json.Json
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
-import scala.util._
 
 import scala.concurrent.Future
+import scala.util._
 
 class SocketActor(
     client: ActorRef,
@@ -27,6 +28,7 @@ class SocketActor(
   with ActorLogging {
 
   import play.api.libs.json.JsValue
+
   import scala.concurrent.ExecutionContext.Implicits.global
 
 

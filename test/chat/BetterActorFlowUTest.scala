@@ -8,6 +8,7 @@ import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, ShouldMatchers}
+import socket.SocketActor
 import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 import scala.concurrent.ExecutionContext.Implicits.global

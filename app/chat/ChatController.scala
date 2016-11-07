@@ -11,6 +11,7 @@ import pdi.jwt.JwtJson
 import play.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
+import socket.SocketActor
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
 

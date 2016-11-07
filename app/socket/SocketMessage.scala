@@ -1,5 +1,6 @@
-package chat
+package socket
 
+import chat.{ToServerChatMessage, ToServerRequestMessagesMessage}
 import contact.{ToServerAddContactMessage, ToServerRequestContactsMessage}
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json, Writes}
