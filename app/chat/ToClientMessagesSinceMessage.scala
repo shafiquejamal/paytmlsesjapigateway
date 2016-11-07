@@ -3,7 +3,7 @@ package chat
 import chat.SocketMessageType.ToClientMessagesSince
 import play.api.libs.json.{Json, Writes}
 
-case class ToClientMessagesSinceMessage(payload: Seq[ToClientChatMessage]) extends SocketMessage {
+case class ToClientMessagesSinceMessage(override val payload: Seq[ToClientChatMessage]) extends ToClientSocketMessage {
 
   override val socketMessageType: SocketMessageType = ToClientMessagesSince
 

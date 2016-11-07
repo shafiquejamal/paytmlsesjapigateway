@@ -6,7 +6,7 @@ import chat.SocketMessageType.ToClientChat
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Writes}
 
-case class ToClientChatMessage(payload: Chat) extends SocketMessage {
+case class ToClientChatMessage(override val payload: Chat) extends ToClientSocketMessage {
 
   override val socketMessageType: SocketMessageType = ToClientChat
 

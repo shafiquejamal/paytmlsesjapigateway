@@ -83,3 +83,9 @@ trait SocketMessage {
   def socketMessageType: SocketMessageType
 
 }
+
+trait ToClientSocketMessage extends SocketMessage {
+
+  def payload: AnyRef
+
+}
