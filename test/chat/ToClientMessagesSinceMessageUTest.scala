@@ -2,7 +2,6 @@ package chat
 
 import org.scalatest._
 import play.api.libs.json.Json
-import socket.SocketMessageType
 import socket.SocketMessageType.ToClientMessagesSince
 import user.UserFixture
 
@@ -17,8 +16,7 @@ class ToClientMessagesSinceMessageUTest
     val toClientChatMessage2 = ToClientChatMessage(Chat(idMsgBobAlice3, "bob", "alice", "bob to alice three", now.getMillis))
     val toClientMessagesSinceMessage = ToClientMessagesSinceMessage(Seq(toClientChatMessage1, toClientChatMessage2))
 
-    toClientMessagesSinceMessage.socketMessageType shouldBe ToClientMessagesSince
-    Json.toJson(toClientMessagesSinceMessage) shouldEqual Json.obj( "payload" -> Json.arr(
+    val expected = Json.obj( "payload" -> Json.arr(
       Json.obj(
           "id" -> "00000000-0000-0000-0000-100000000013",
           "from" -> "alice",
@@ -34,5 +32,10 @@ class ToClientMessagesSinceMessageUTest
           "time" -> now.getMillis
       )
     ), "socketMessageType" -> "UPDATE_MESSAGES")
+
+    toClientMessagesSinceMessage.socketMessageType shouldBe ToClientMessagesSince
+    Json.toJson(toClientMessagesSinceMessage) shouldEqual expected
+    toClientMessagesSinceMessage.toJson shouldEqual expected
+
   }
 }

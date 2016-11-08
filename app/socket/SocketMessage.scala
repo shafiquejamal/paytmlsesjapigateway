@@ -89,4 +89,6 @@ trait ToClientSocketMessage extends SocketMessage {
 
   def payload: AnyRef
 
+  def toJson: JsValue
+
 }

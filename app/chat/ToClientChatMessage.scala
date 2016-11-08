@@ -3,13 +3,17 @@ package chat
 import java.util.UUID
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Writes}
+import play.api.libs.json.{JsPath, JsValue, Json, Writes}
 import socket.SocketMessageType.ToClientChat
 import socket.{SocketMessageType, ToClientSocketMessage}
 
 case class ToClientChatMessage(override val payload: Chat) extends ToClientSocketMessage {
 
+  import ToClientChatMessage._
+
   override val socketMessageType: SocketMessageType = ToClientChat
+
+  override def toJson: JsValue = Json.toJson(this)
 
 }
 

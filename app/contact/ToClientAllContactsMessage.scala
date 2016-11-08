@@ -1,12 +1,16 @@
 package contact
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{JsValue, Json, Writes}
 import socket.SocketMessageType.ToClientAllContacts
 import socket.{SocketMessageType, ToClientSocketMessage}
 
 case class ToClientAllContactsMessage(override val payload: Seq[String]) extends ToClientSocketMessage {
 
+  import ToClientAllContactsMessage._
+
   override val socketMessageType: SocketMessageType = ToClientAllContacts
+
+  override def toJson: JsValue = Json.toJson(this)
 
 }
 
