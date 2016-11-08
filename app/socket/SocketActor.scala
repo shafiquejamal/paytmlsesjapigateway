@@ -59,14 +59,13 @@ class SocketActor(
         actorSelectionSenderConnections ! toClientChatMessage
       }
 
-    case toClientChatMessage : ToClientChatMessage =>
+    case toClientSocketMessage : ToClientSocketMessage =>
 
-      client ! Json.toJson(toClientChatMessage)
+      client ! toClientSocketMessage.toJson
 
     case toServerRequestMessagesMessage: ToServerRequestMessagesMessage =>
 
-      client ! Json.toJson(
-        ToClientMessagesSinceMessage(chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince)))
+      client ! ToClientMessagesSinceMessage(chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince)).toJson
 
     case toServerRequestContactsMessage: ToServerRequestContactsMessage =>
 
@@ -93,10 +92,6 @@ class SocketActor(
           case Failure(_) =>
         }
       }
-
-    case toClientAllContactsMessage: ToClientAllContactsMessage =>
-
-      client ! Json.toJson(toClientAllContactsMessage)
 
   }
 }
