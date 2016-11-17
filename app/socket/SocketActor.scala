@@ -1,19 +1,11 @@
 package socket
 
-import java.security.MessageDigest
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import chat.ChatMessageVisibility.Visible
-import chat.ToClientChatMessage._
 import chat._
-import contact.{ToClientAllContactsMessage, ToServerAddContactMessage, ToServerRequestContactsMessage}
-import play.api.libs.json.Json
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
-
-import scala.concurrent.Future
-import scala.util._
 
 class SocketActor(
     client: ActorRef,
@@ -29,69 +21,22 @@ class SocketActor(
 
   import play.api.libs.json.JsValue
 
-  import scala.concurrent.ExecutionContext.Implicits.global
+  val toServerMessageActor =
+    context.actorOf(
+      ToServerMessageActor.props(
+        client, userAPI, chatMessageAPI, chatContactsAPI, clientId, clientUsername, timeProvider, uUIDProvider))
 
 
   override def receive = {
+
     case msg: JsValue =>
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
       val socketMessage = ToServerSocketMessageType.from(messageType).socketMessage(msg)
-      self ! socketMessage
-
-    case ToServerChatMessage(recipient, messageText) =>
-
-      userAPI.by(recipient) foreach { recipientId =>
-        val toClientChatMessage =
-          ToClientChatMessage(
-            Chat(uUIDProvider.randomUUID(), clientUsername, recipient, messageText, timeProvider.now().getMillis))
-        Future(
-          chatMessageAPI
-          .store(
-            OutgoingChatMessageWithVisibility(
-              toClientChatMessage,
-              Visible,
-              Visible,
-              clientId,
-              recipientId)))
-        val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
-        actorSelectionRecipients ! toClientChatMessage
-        val actorSelectionSenderConnections = context.actorSelection(s"/user/${clientId.toString}*")
-        actorSelectionSenderConnections ! toClientChatMessage
-      }
+      socketMessage.send(client, toServerMessageActor)
 
     case toClientSocketMessage : ToClientSocketMessage =>
 
       client ! toClientSocketMessage.toJson
-
-    case toServerRequestMessagesMessage: ToServerRequestMessagesMessage =>
-
-      client ! ToClientMessagesSinceMessage(chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince)).toJson
-
-    case toServerRequestContactsMessage: ToServerRequestContactsMessage =>
-
-      val digest = MessageDigest.getInstance("MD5")
-
-      val md5ofContactsOnClient = toServerRequestContactsMessage.md5Hash
-      val visibleContactsForThisClient = chatContactsAPI.visibleContactsFor(clientId)
-      val contactsOnServerStringified =
-        "[" + visibleContactsForThisClient.map(contact => "\"" + contact + "\"").mkString(",") + "]"
-      val md5ofContactsOnServer = digest.digest(contactsOnServerStringified.getBytes).map("%02x".format(_)).mkString
-
-      if (md5ofContactsOnClient != md5ofContactsOnServer) {
-        val actorSelectionAllClientConnections = context.actorSelection(s"/user/${clientId.toString}*")
-        actorSelectionAllClientConnections ! ToClientAllContactsMessage(visibleContactsForThisClient)
-      }
-
-    case toServerAddContactMessage: ToServerAddContactMessage =>
-
-      val maybeUserIdOfContactToAdd = userAPI.by(toServerAddContactMessage.usernameOfContactToAdd)
-      maybeUserIdOfContactToAdd foreach { userIdOfContactToAdd =>
-        chatContactsAPI.addContact(clientId, userIdOfContactToAdd) match {
-          case Success(uUID) =>
-            self ! ToServerRequestContactsMessage("")
-          case Failure(_) =>
-        }
-      }
 
   }
 }

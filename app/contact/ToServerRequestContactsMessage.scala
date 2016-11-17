@@ -1,9 +1,9 @@
 package contact
 
 import socket.ToServerSocketMessageType.ToServerRequestContacts
-import socket.{SocketMessage, SocketMessageType, ToServerSocketMessageType}
+import socket.{SocketMessageType, ToServerSocketMessage}
 
-case class ToServerRequestContactsMessage(md5Hash: String) extends SocketMessage {
+case class ToServerRequestContactsMessage(md5Hash: String) extends ToServerSocketMessage {
 
   override val socketMessageType: SocketMessageType = ToServerRequestContacts
 

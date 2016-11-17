@@ -1,5 +1,6 @@
 package socket
 
+import akka.actor.ActorRef
 import chat.{ToServerChatMessage, ToServerRequestMessagesMessage}
 import contact.{ToServerAddContactMessage, ToServerRequestContactsMessage}
 import org.joda.time.DateTime
@@ -13,7 +14,7 @@ trait SocketMessageType {
 
 sealed trait ToServerSocketMessageType extends SocketMessageType {
 
-  def socketMessage(msg: JsValue): SocketMessage
+  def socketMessage(msg: JsValue): ToServerSocketMessage
 
 }
 
@@ -90,5 +91,12 @@ trait ToClientSocketMessage extends SocketMessage {
   def payload: AnyRef
 
   def toJson: JsValue
+
+
+}
+
+trait ToServerSocketMessage extends SocketMessage {
+
+  def send(client: ActorRef, toServerMessageActor: ActorRef): Unit = toServerMessageActor ! this
 
 }
