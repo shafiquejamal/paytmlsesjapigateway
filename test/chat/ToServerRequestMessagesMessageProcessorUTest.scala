@@ -2,6 +2,7 @@ package chat
 
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
+import contact.ToServerRequestContactsMessage
 import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, ShouldMatchers}
@@ -41,7 +42,7 @@ class ToServerRequestMessagesMessageProcessorUTest
     val toServerRequestMessagesMessageProcessor =
       system.actorOf(ToServerRequestMessagesMessageProcessor.props(testActor, mockChatMessageAPI, clientId))
 
-    toServerRequestMessagesMessageProcessor ! "this message should be ignored"
+    toServerRequestMessagesMessageProcessor ! ToServerRequestContactsMessage("")
 
     expectNoMsg()
   }
