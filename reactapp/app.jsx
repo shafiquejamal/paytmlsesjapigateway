@@ -35,8 +35,6 @@ if (messages) {
     store.dispatch(updateMessagesApplicationLoad(messages));
 }
 
-const testContacts = ['shafique', 'shafiquep', 'shafiqueksg'];
-localStorage.setItem('chatContacts', JSON.stringify(testContacts));
 const chatContacts = JSON.parse(localStorage.getItem('chatContacts'));
 if (chatContacts) {
     store.dispatch(getContactsApplicationLoad(chatContacts));

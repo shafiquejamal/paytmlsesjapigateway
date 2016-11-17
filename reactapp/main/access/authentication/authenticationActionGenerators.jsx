@@ -15,7 +15,7 @@ export const startResettingPassword = function(email, code, newPassword) {
     return axios.post(`${ROOT_URL}${PASSWORD_RESET_ENDPOINT}`,
       {email, code, newPassword});
   }
-}
+};
 
 export const sendPasswordResetLink = function(email) {
   return (dispatch, getState) => {
@@ -36,7 +36,8 @@ export const startLoggingInUser = function(emailOrUsername, password) {
         username: emailOrUsername,
         password: password
       };
-    };
+    }
+
     return axios.post(`${ROOT_URL}${LOGIN_ENDPOINT}`, loginCredentials).then(
       (response) => {
         if (response.data.token) {
@@ -61,11 +62,16 @@ export const startLoggingOutAllDevices = function() {
       { headers: { authorization: "Bearer " + localStorage.getItem('token') }});
     dispatch(startLoggingOutUser());
   }
-}
+};
 
 export const startLoggingOutUser = function() {
   return (dispatch, getState) => {
     localStorage.clear();
+    localStorage.removeItem('token');
+    localStorage.removeItem('email');
+    localStorage.removeItem('username');
+    localStorage.removeItem('chatContacts');
+    localStorage.removeItem('chatMessages');
     dispatch(logoutUser());
   };
 };

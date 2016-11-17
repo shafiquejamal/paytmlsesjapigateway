@@ -23,7 +23,7 @@ class SocketActor(
 
   val toServerMessageActor =
     context.actorOf(
-      ToServerMessageActor.props(
+      ToServerMessageRouter.props(
         client, userAPI, chatMessageAPI, chatContactsAPI, clientId, clientUsername, timeProvider, uUIDProvider))
 
 
