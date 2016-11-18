@@ -4,7 +4,7 @@ var envFile = require('node-env-file');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 process.env.CRAUTH_PROTOCOL = process.env.CRAUTH_PROTOCOL || 'https';
-process.env.CRAUTH_WS_PROTOCOL = process.env.CRAUTH_WS_PROTOCOL || 'ws';
+process.env.CRAUTH_WS_PROTOCOL = process.env.CRAUTH_WS_PROTOCOL || 'wss';
 process.env.CRAUTH_API_SERVER = process.env.CRAUTH_API_SERVER || 'localhost:9000';
 
 try {
