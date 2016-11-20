@@ -1,4 +1,4 @@
-name := """crauth"""
+name := """smsbackend"""
 
 version := "0.1-SNAPSHOT"
 
