@@ -30,6 +30,7 @@ class ChatContacts extends Component {
         return (
             <div>
                 { this.props.isConnected ? this.renderAddContact() : "" }
+                <p>Click on a contact.</p>
                 <ul className="list-group">
                     { this.renderList() }
                 </ul>
