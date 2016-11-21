@@ -38,4 +38,3 @@ val testSettings = Seq(
 )
 
 javaOptions in run += "-Dhttp.port=9001"
-javaOptions in Test += "-Dconfig.file=conf/aplaksjdhflsajkplication.test.conf"
