@@ -10,6 +10,8 @@ import org.scalatest._
 import org.scalatestplus.play.OneAppPerTest
 import pdi.jwt.JwtJson
 import play.Configuration
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Controller
 import play.api.test.FakeRequest
@@ -38,7 +40,7 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
 
   val uUIDProvider = new TestUUIDProviderImpl()
   val uUID = uUIDProvider.randomUUID()
-  val configuration = new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
+  val configuration = new Configuration(ConfigFactory.parseFile(new File("conf/application.test.conf")).resolve())
   val controller =
     new ExampleController(mockedAuthenticationAPI, jWTParamsProvider, configuration, new TestTimeProviderImpl())
   val timeProvider = new TestTimeProviderImpl

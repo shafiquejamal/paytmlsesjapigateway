@@ -30,14 +30,16 @@ trait AuthenticatedActionCreator {
       allowedTokens: AllowedTokens,
       claim: JsObject): T =
     claim.value.get("iat").flatMap(_.asOpt[DateTime]).fold[T](unauthorized) { iat =>
-      val tokenExpired = iat.isBefore(timeProvider.now().minusDays(configuration.getInt("crauth.jwtValidityDays")))
+      val jWTValidity = configuration.getInt("crauth.jwtValidityDays")
+      val tokenExpired = iat.isBefore(timeProvider.now().minusDays(jWTValidity)) && jWTValidity > 0
       if (tokenExpired)
         unauthorized
       else {
         val userId = UUID.fromString(claim.value.get("userId").flatMap(_.asOpt[String]).getOrElse(""))
         val tokenIssuedAfterLastAllLogout = authenticationAPI.allLogoutDate(userId).fold[Boolean](true)(iat.isAfter)
         if (tokenIssuedAfterLastAllLogout) {
-          val tokenUse = claim.value.get("tokenUse").flatMap(_.asOpt[String]).map(TokenUse.fromDescription).getOrElse(MultiUse)
+          val tokenUse =
+            claim.value.get("tokenUse").flatMap(_.asOpt[String]).map(TokenUse.fromDescription).getOrElse(MultiUse)
           if (allowedTokens.tokens contains tokenUse)
             tokenUse.validate(authenticationAPI, userId, iat).fold[T](unauthorized)(user => block(userId, user.username))
           else

@@ -36,3 +36,6 @@ coverageEnabled in Test:= true
 val testSettings = Seq(
   fork in Test := false
 )
+
+javaOptions in run += "-Dhttp.port=9001"
+javaOptions in Test += "-Dconfig.file=conf/aplaksjdhflsajkplication.test.conf"
