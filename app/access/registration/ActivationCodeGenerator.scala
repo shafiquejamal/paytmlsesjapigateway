@@ -7,8 +7,9 @@ object ActivationCodeGenerator {
   val configurationKey = "crauth.md5ActivationKey"
 
   def generate(userId: String, key: String): String =
-    MessageDigest.getInstance("MD5").digest((userId.toString + key).getBytes).map("%02x".format(_)).mkString
+    MessageDigest.getInstance("MD5").digest((userId.toString + key).getBytes).map("%02x".format(_)).mkString.takeRight(9)
 
-  def checkCode(userId: String, md5hash: String, key: String): Boolean = generate(userId, key: String) == md5hash
+  def checkCode(userId: String, codeFromUser: String, key: String): Boolean =
+    generate(userId, key: String).takeRight(9) == codeFromUser.replaceAll("-", "")
 
 }

@@ -1,7 +1,5 @@
 package communication
 
-import java.net.URLEncoder._
-
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -22,13 +20,9 @@ class LinkSenderImpl @Inject()(
       subjectMessageKey:String,
       bodyTextMessageKey:String):Unit = {
 
-    val protocolAndHost = configuration.getString("crauth.protocol").getOrElse("http") + "://" + host
-    val urlEncodedEmailAddress = encode(user.email, "UTF-8")
-    val link = s"$protocolAndHost/#/$route?email=$urlEncodedEmailAddress&code=$code"
-
     val from = configuration.getString("crauth.emailFrom").getOrElse("")
     val subject = Messages(subjectMessageKey)
-    val bodyText = Messages(bodyTextMessageKey:String, link)
+    val bodyText = Messages(bodyTextMessageKey:String, code)
 
     emailer.sendEmail(
       subject,

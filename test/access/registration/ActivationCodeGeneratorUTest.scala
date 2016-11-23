@@ -18,7 +18,7 @@ class ActivationCodeGeneratorUTest extends FlatSpec with ShouldMatchers {
 
     val user1Id = user1.maybeId.map(_.toString).getOrElse("")
     val user2Id = user2.maybeId.map(_.toString).getOrElse("")
-    val code = ActivationCodeGenerator.generate(user1Id, md5key)
+    val code = ActivationCodeGenerator.generate(user1Id, md5key).takeRight(9)
 
     ActivationCodeGenerator.checkCode(user1Id, code, md5key) shouldBe true
     ActivationCodeGenerator.checkCode(user1Id, code, "an-incorrect-key") shouldBe false
