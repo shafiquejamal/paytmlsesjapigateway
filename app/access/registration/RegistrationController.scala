@@ -42,6 +42,8 @@ class RegistrationController @Inject() (
   }
 
   def activate() = Action(parse.json) { request =>
+    println("request")
+    println(request)
     request.body.validate[ActivateAccountMessage] match {
       case success:JsSuccess[ActivateAccountMessage] =>
         val (email, code) = (success.get.email, success.get.code)
@@ -50,7 +52,7 @@ class RegistrationController @Inject() (
           if (ActivationCodeGenerator.checkCode(userId, code, activationCodeKey)) {
             activateUser(user, code)
           } else {
-            BadRequest
+            Ok(Json.obj("error" -> "incorrect code"))
           }
       }
       case error:JsError =>

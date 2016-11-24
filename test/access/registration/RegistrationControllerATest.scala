@@ -91,7 +91,8 @@ class RegistrationControllerATest
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
       .withJsonBody(Json.obj("email" -> "charlie@charlie.com", "code" -> wrongCode)))
       .get
-    status(result) shouldEqual BAD_REQUEST
+    status(result) shouldEqual OK
+    (contentAsJson(result) \ "error").asOpt[String] should contain("incorrect code")
   }
 
   it should "fail if the user is blocked" in {
