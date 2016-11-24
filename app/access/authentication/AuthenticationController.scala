@@ -72,7 +72,8 @@ class AuthenticationController @Inject() (
   def resetPassword() = Action(parse.json) { request =>
     request.body.validate[ResetPasswordMessage] match {
       case success:JsSuccess[ResetPasswordMessage] =>
-        authenticationAPI.resetPassword(success.get.email, success.get.code, success.get.newPassword) match {
+        authenticationAPI
+        .resetPassword(success.get.email, success.get.code.replaceAll("-", ""), success.get.newPassword) match {
           case Success(user) =>
             Ok
           case _ =>

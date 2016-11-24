@@ -23,17 +23,23 @@ class PasswordResetCodeSenderImpl @Inject()(
           configuration.getInt("crauth.passwordResetLinkIsValidForDays").getOrElse(10)
         }
     .fold[Unit] {
-      val passwordResetCode = Random.alphanumeric.take(50).mkString
+      val passwordResetCode = Random.alphanumeric.take(9).mkString.toLowerCase.replaceAll("0", "q").replaceAll("8", "p")
       authenticationAPI.storePasswordResetCode(user.email, passwordResetCode) match {
         case Success(retrievedUser) =>
+          val passwordResetCodeWithDashes =
+            Seq(passwordResetCode.take(3),  passwordResetCode.slice(3, 6), passwordResetCode.takeRight(3)).mkString("-")
           linkSender
-          .send(retrievedUser, host, passwordResetCode, "reset-password", "passwordresetlink.subject", "passwordresetlink.body")
+          .send(retrievedUser, passwordResetCodeWithDashes, "passwordresetlink.subject", "passwordresetlink.body")
         case _ =>
       }
-    }(existingPasswordResetCode =>
+    } { existingPasswordResetCode =>
+      val passwordResetCodeWithDashes =
+        Seq(existingPasswordResetCode.code.take(3),
+            existingPasswordResetCode.code.slice(3, 6),
+            existingPasswordResetCode.code.takeRight(3)).mkString("-")
       linkSender
-        .send(user, host, existingPasswordResetCode.code, "reset-password", "passwordresetlink.subject", "passwordresetlink.body")
-     )
+      .send(user, passwordResetCodeWithDashes, "passwordresetlink.subject", "passwordresetlink.body")
+      }
 
 
 

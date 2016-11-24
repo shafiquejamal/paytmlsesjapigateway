@@ -11,7 +11,7 @@ class AccountActivationLinkSenderImpl @Inject()(linkSender: LinkSender) extends 
     val activationCode = ActivationCodeGenerator.generate(user.maybeId.map(_.toString).getOrElse(""), key)
     val activationCodeWithDashes =
       Seq(activationCode.take(3),  activationCode.slice(3, 6), activationCode.takeRight(3)).mkString("-")
-    linkSender.send(user, host, activationCodeWithDashes, "activate", "activation.subject", "activation.body")
+    linkSender.send(user, activationCodeWithDashes, "activation.subject", "activation.body")
   }
 
   override val statusOnRegistration = UserStatus.Unverified
