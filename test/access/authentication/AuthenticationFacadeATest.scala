@@ -64,13 +64,13 @@ class AuthenticationFacadeATest
   }
 
   "resetting the password" should "succeed if the id and code match what is in the database and the code is valid, " +
-  "and it should invalidate the code" in
+  "and it should invalidate the code. This should be case insensitive" in
   { implicit session =>
     val api = makeAPI(session)
 
     timeProvider.setNow(timeProvider.now().plusDays(1))
 
-    api.resetPassword("alice@alice.com", passwordResetCodeAlice2, newPassword) shouldBe a[Success[_]]
+    api.resetPassword("alice@alice.com", passwordResetCodeAlice2.toUpperCase(), newPassword) shouldBe a[Success[_]]
     api.user(AuthenticationMessage(None, Some("alice@alice.com"), newPassword)).map(_.email) should contain("alice@alice.com")
     api.resetPassword("alice@alice.com", passwordResetCodeAlice2, "another new password")
     .failure.exception shouldBe a[RuntimeException]

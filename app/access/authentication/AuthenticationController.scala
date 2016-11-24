@@ -76,10 +76,10 @@ class AuthenticationController @Inject() (
         .resetPassword(success.get.email, success.get.code.replaceAll("-", ""), success.get.newPassword) match {
           case Success(user) =>
             Ok
-          case _ =>
+          case Failure(failure) =>
             BadRequest
         }
-      case _ =>
+      case JsError(errors) =>
         BadRequest
     }
   }

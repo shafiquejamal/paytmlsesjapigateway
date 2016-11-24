@@ -23,7 +23,9 @@ class PasswordResetCodeSenderImpl @Inject()(
           configuration.getInt("crauth.passwordResetLinkIsValidForDays").getOrElse(10)
         }
     .fold[Unit] {
-      val passwordResetCode = Random.alphanumeric.take(9).mkString.toLowerCase.replaceAll("0", "q").replaceAll("8", "p")
+      val passwordResetCode =
+        Random.alphanumeric.take(9).mkString.toLowerCase
+        .replaceAll("0", "q").replaceAll("8", "p").replaceAll("l", "z").replaceAll("1", "2")
       authenticationAPI.storePasswordResetCode(user.email, passwordResetCode) match {
         case Success(retrievedUser) =>
           val passwordResetCodeWithDashes =
