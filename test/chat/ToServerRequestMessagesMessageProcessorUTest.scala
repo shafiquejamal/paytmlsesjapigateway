@@ -35,7 +35,7 @@ class ToServerRequestMessagesMessageProcessorUTest
 
     toServerRequestMessagesMessageProcessor ! toServerRequestMessagesMessage
 
-    expectMsg(ToClientMessagesSinceMessage(messages).toJson)
+    expectMsg(ToClientMessagesSinceMessage(messages))
   }
 
   it should "send no message to the client if the message is not of type ToServerRequestMessagesMessage" in {

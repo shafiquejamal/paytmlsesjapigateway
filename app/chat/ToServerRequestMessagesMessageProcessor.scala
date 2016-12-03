@@ -14,9 +14,8 @@ class ToServerRequestMessagesMessageProcessor(
   override def receive = {
 
     case toServerRequestMessagesMessage: ToServerRequestMessagesMessage =>
-
       val messages = chatMessageAPI.messagesInvolving(clientId, toServerRequestMessagesMessage.maybeSince)
-      client ! ToClientMessagesSinceMessage(messages).toJson
+      client ! ToClientMessagesSinceMessage(messages)
 
   }
 

@@ -18,5 +18,4 @@ POST    /reset-password             access.authentication.AuthenticationControll
 POST    /logout-all-devices         access.authentication.AuthenticationController.logoutAllDevices
 
 POST    /change-password            user.UserController.changePassword
-GET     /chat                       chat.ChatController.chat(token: String)
-POST    /single-use-token           chat.ChatController.singleUseToken
+GET     /chat                       chat.SocketController.connect

@@ -31,7 +31,7 @@ class SocketActor(
     case msg: JsValue =>
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
       val socketMessage = ToServerSocketMessageType.from(messageType).socketMessage(msg)
-      socketMessage.send(client, toServerMessageRouter)
+      socketMessage sendTo toServerMessageRouter
 
     case toClientSocketMessage : ToClientSocketMessage =>
 

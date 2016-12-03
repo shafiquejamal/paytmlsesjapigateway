@@ -1,13 +1,13 @@
 package socket
 
-import akka.actor.{Props, Actor, ActorLogging, ActorRef}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
 class NamedClient(unnamedClient: ActorRef) extends Actor with ActorLogging {
 
   override def receive = {
 
-    case msg =>
-      unnamedClient ! msg
+    case msg: ToClientSocketMessage =>
+      unnamedClient ! msg.toJson
 
   }
 

@@ -9,7 +9,7 @@ case class ToClientAllContactsMessage(override val payload: Seq[String]) extends
   import ToClientAllContactsMessage._
 
   override val socketMessageType: SocketMessageType = ToClientAllContacts
-
+  
   override def toJson: JsValue = Json.toJson(this)
 
 }

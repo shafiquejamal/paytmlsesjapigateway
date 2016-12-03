@@ -1,5 +1,6 @@
 package socket
 
+import access.authentication.{ToServerAuthenticateMessage, ToServerLogoutMessage}
 import akka.actor.ActorRef
 import chat.{ToServerChatMessage, ToServerRequestMessagesMessage}
 import contact.{ToServerAddContactMessage, ToServerAddContactsMessage, ToServerRequestContactsMessage}
@@ -51,6 +52,18 @@ object ToServerSocketMessageType {
     )
   }
 
+  case object ToServerAuthenticate extends ToServerSocketMessageType {
+    override val description = "toServerAuthenticate"
+    override def socketMessage(msg: JsValue): ToServerAuthenticateMessage = ToServerAuthenticateMessage(
+       (msg \ "jwt").validate[String].getOrElse("")
+    )
+  }
+
+  case object ToServerLogout extends ToServerSocketMessageType {
+    override val description = "toServerLogout"
+    override def socketMessage(msg: JsValue) = ToServerLogoutMessage
+  }
+
   case object ToServerAddContacts extends ToServerSocketMessageType {
     override val description = "toServerAddContacts"
     override def socketMessage(msg: JsValue): ToServerAddContactsMessage = ToServerAddContactsMessage(
@@ -63,7 +76,9 @@ object ToServerSocketMessageType {
     ToServerRequestMessages.description -> ToServerRequestMessages,
     ToServerRequestContacts.description -> ToServerRequestContacts,
     ToServerAddContact.description -> ToServerAddContact,
-    ToServerAddContacts.description -> ToServerAddContacts
+    ToServerAddContacts.description -> ToServerAddContacts,
+    ToServerAuthenticate.description -> ToServerAuthenticate,
+    ToServerLogout.description -> ToServerLogout
   )
 
   def from(description:String): ToServerSocketMessageType = socketMessageTypeFrom(description)
@@ -84,9 +99,26 @@ object SocketMessageType {
     override val description = "UPDATE_CONTACTS"
   }
 
+  case object ToClientLoginSuccessful extends SocketMessageType {
+    override val description = "SOCKET_LOGIN_SUCCESSFUL"
+  }
+
+  case object ToClientLoginFailed extends SocketMessageType {
+    override val description = "SOCKET_LOGIN_FAILED"
+  }
+
+  case object ToClientAlreadyAuthenticated extends SocketMessageType {
+    override val description = "SOCKET_ALREADY_AUTHENTICATED"
+  }
+
+  case object ToClientLoggingOut extends SocketMessageType {
+    override val description = "SOCKET_LOGGING_OUT"
+  }
+
   implicit object SocketMessageTypeWrites extends Writes[SocketMessageType] {
     override def writes(socketMessageType: SocketMessageType) = Json.toJson(socketMessageType.description)
   }
+
 
 }
 
@@ -107,6 +139,6 @@ trait ToClientSocketMessage extends SocketMessage {
 
 trait ToServerSocketMessage extends SocketMessage {
 
-  def send(client: ActorRef, toServerMessageActor: ActorRef): Unit = toServerMessageActor ! this
+  def sendTo(toServerMessageActor: ActorRef): Unit = toServerMessageActor ! this
 
 }

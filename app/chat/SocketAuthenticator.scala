@@ -1,12 +1,12 @@
 package chat
 
-import access.{AuthenticatedActionCreator, JWTParamsProvider}
 import access.authentication.AuthenticationAPI
+import access.{AuthenticatedActionCreator, JWTParamsProvider}
 import com.google.inject.Inject
 import play.Configuration
 import util.TimeProvider
 
-class ChatAuthenticator @Inject() (
+class SocketAuthenticator @Inject()(
     override val authenticationAPI:AuthenticationAPI,
     override val jWTParamsProvider: JWTParamsProvider,
     override val configuration: Configuration,

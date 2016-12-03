@@ -4,6 +4,7 @@ import java.security.MessageDigest
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, Props}
+import chat.ClientPaths.namedClientPath
 import contact.{ToClientAllContactsMessage, ToServerRequestContactsMessage}
 
 class ToServerRequestContactsMessageProcessor(
@@ -25,7 +26,7 @@ class ToServerRequestContactsMessageProcessor(
       val md5ofContactsOnServer = digest.digest(contactsOnServerStringified.getBytes).map("%02x".format(_)).mkString
 
       if (md5ofContactsOnClient != md5ofContactsOnServer) {
-        val actorSelectionAllClientConnections = context.actorSelection(s"/user/${clientId.toString}*")
+        val actorSelectionAllClientConnections = context.actorSelection(namedClientPath(clientId))
         actorSelectionAllClientConnections ! ToClientAllContactsMessage(visibleContactsForThisClient)
       }
 

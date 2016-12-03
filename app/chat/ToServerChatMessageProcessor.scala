@@ -4,6 +4,7 @@ import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import chat.ChatMessageVisibility.Visible
+import chat.ClientPaths.namedClientPath
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
 
@@ -39,9 +40,11 @@ class ToServerChatMessageProcessor(
               Visible,
               clientId,
               recipientId)))
-        val actorSelectionRecipients = context.actorSelection(s"/user/${recipientId.toString}*")
+        val actorSelectionRecipients = context.actorSelection(namedClientPath(recipientId))
+        log.info("chat proc, recipients, path: {}", actorSelectionRecipients.pathString)
         actorSelectionRecipients ! toClientChatMessage
-        val actorSelectionSenderConnections = context.actorSelection(s"/user/${clientId.toString}*")
+        val actorSelectionSenderConnections = context.actorSelection(namedClientPath(clientId))
+        log.info("chat proc, sender connections, path: {}", actorSelectionSenderConnections.pathString)
         actorSelectionSenderConnections ! toClientChatMessage
       }
 
