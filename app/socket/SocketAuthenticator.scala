@@ -1,4 +1,4 @@
-package chat
+package socket
 
 import access.authentication.AuthenticationAPI
 import access.{AuthenticatedActionCreator, JWTParamsProvider}

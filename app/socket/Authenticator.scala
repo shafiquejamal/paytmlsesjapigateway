@@ -6,7 +6,7 @@ import access.authentication._
 import access.{AllowedTokens, JWTParamsProvider, MultiUse}
 import akka.actor._
 import chat.ClientPaths.namedClientActorName
-import chat.{ChatContactAPI, ChatMessageAPI, SocketAuthenticator}
+import chat.{ChatContactAPI, ChatMessageAPI}
 import play.Configuration
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}

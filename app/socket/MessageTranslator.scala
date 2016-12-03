@@ -3,7 +3,7 @@ package socket
 import access.JWTParamsProvider
 import access.authentication._
 import akka.actor.{Actor, ActorLogging, _}
-import chat.{ChatContactAPI, ChatMessageAPI, SocketAuthenticator}
+import chat.{ChatContactAPI, ChatMessageAPI}
 import play.Configuration
 import play.api.libs.json.JsValue
 import user.UserAPI

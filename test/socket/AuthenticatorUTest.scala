@@ -7,7 +7,6 @@ ToServerAuthenticateMessage}
 import access.{AllowedTokens, MultiUse, TestJWTParamsProviderImpl}
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
-import chat.SocketAuthenticator
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, ShouldMatchers}
 import user.UserAPI

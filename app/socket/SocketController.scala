@@ -1,15 +1,15 @@
-package chat
+package socket
 
 import access.authentication.AuthenticationAPI
 import access.{AuthenticatedActionCreator, JWTParamsProvider}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import chat.{ChatContactAPI, ChatMessageAPI}
 import com.google.inject.Inject
 import play.Configuration
 import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import socket.MessageTranslator
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
 
