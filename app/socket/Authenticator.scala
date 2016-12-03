@@ -36,7 +36,7 @@ class Authenticator (
           authenticationRequest.jwt, (uUID, clientUsername) => Some(uUID, clientUsername), None, AllowedTokens(MultiUse))
 
       maybeValidUser.fold {
-        unnamedClient ! ToClientLoginFailedMessage
+        unnamedClient ! ToClientLoginFailedMessage.toJson
       } { case (clientId, clientUsername) =>
         clientUserId = clientId
         namedClient =
