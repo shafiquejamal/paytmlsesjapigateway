@@ -45,7 +45,7 @@ class AuthenticatorUTest
 
     authenticator ! ToServerAuthenticateMessage(fakeJWT)
 
-    expectMsg(ToClientLoginFailedMessage)
+    expectMsg(ToClientLoginFailedMessage.toJson)
   }
 
   it should "return a login success message if the authentication attempt succeeds" in {
