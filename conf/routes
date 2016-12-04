@@ -13,7 +13,7 @@ GET     /username/:username         access.registration.RegistrationController.u
 GET     /email/:email               access.registration.RegistrationController.emailCheck(email:String)
 
 POST    /authenticate               access.authentication.AuthenticationController.authenticate
-POST    /send-password-reset-link   access.authentication.AuthenticationController.sendPasswordResetLink
+POST    /send-password-reset-link   access.authentication.AuthenticationController.sendPasswordResetCode
 POST    /reset-password             access.authentication.AuthenticationController.resetPassword
 POST    /logout-all-devices         access.authentication.AuthenticationController.logoutAllDevices
 

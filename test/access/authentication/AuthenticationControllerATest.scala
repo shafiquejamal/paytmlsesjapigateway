@@ -1,12 +1,16 @@
 package access.authentication
 
+import java.io.File
 import java.util.UUID
 
+import access.registration.ActivationCodeGenerator
 import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
+import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
 import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
+import play.api.Configuration
 import play.api.http.HeaderNames
 import play.api.inject._
 import play.api.libs.json.{JsValue, Json}
@@ -36,6 +40,8 @@ class AuthenticationControllerATest
   val dBConfig = new ScalikeJDBCTestDBConfig()
   val newPassword = "some new password"
   val timeProvider = new TestTimeProviderImpl()
+  val configuration =
+    new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
@@ -128,7 +134,9 @@ class AuthenticationControllerATest
 
   "resetting the password" should "succeed if the code matches the email in the db, and fail if the code is used a " +
   "second time" in new JWTChecker {
-    val message = Json.obj("email" -> "alice@alice.com", "code" -> passwordResetCodeAlice2, "newPassword" -> newPassword)
+    val key = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
+    val hashedCode = ActivationCodeGenerator.generate(passwordResetCodeAlice2, key)
+    val message = Json.obj("email" -> "alice@alice.com", "code" -> hashedCode, "newPassword" -> newPassword)
     val result =
       route(app, FakeRequest(POST, "/reset-password")
       .withJsonBody(message)

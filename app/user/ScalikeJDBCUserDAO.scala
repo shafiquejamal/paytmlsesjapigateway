@@ -30,10 +30,6 @@ class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResul
       .filter(_._2).map(_._1)
   }
 
-  override def passwordResetCode(userId: UUID, code:String): Option[PasswordResetCodeAndDate] = {
-    passwordResetCode(userId: UUID).filter(_.code == code)
-  }
-
   override def byUsername(username: String, userFilter: User => Boolean): Option[User] =
     byUsernameWithSession(username, userFilter)(readOnlySession)
 

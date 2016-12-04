@@ -2,8 +2,10 @@ package access.authentication
 
 import java.util.UUID
 
+import access.registration.ActivationCodeGenerator
 import com.google.inject.{Inject, Singleton}
 import org.joda.time.DateTime
+import play.api.Configuration
 import user.UserMessage._
 import user.UserStatus._
 import user.{User, UserDAO, UserMessage}
@@ -13,7 +15,11 @@ import util.{TimeProvider, UUIDProvider}
 import scala.util.{Failure, Try}
 
 @Singleton
-class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvider, uUIDProvider: UUIDProvider)
+class AuthenticationFacade @Inject() (
+    userDAO:UserDAO,
+    timeProvider: TimeProvider,
+    uUIDProvider: UUIDProvider,
+    configuration: Configuration)
   extends AuthenticationAPI {
 
   override def userById(id:UUID): Option[UserMessage] = userDAO.by(id, authenticationUserFilter)
@@ -48,10 +54,16 @@ class AuthenticationFacade @Inject() (userDAO:UserDAO, timeProvider: TimeProvide
    userDAO.byEmail(email, authenticationUserFilter)
    .fold[Try[User]](Failure(new RuntimeException("User does not exist"))){ retrievedUser =>
      retrievedUser.maybeId.fold[Try[User]](Failure(new RuntimeException("User does not exist"))){userId =>
-       userDAO.passwordResetCode(userId, code.toLowerCase)
-       .fold[Try[User]](Failure(new RuntimeException("Code does not exist for this user"))){ _ =>
-         userDAO.addPasswordResetCode(userId, code, timeProvider.now(), active = false)
-         userDAO.changePassword(userId, hash(newPassword), timeProvider.now())
+       userDAO.passwordResetCode(userId)
+       .fold[Try[User]](Failure(new RuntimeException("Code does not exist for this user"))){ fetchedCode =>
+         val key = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
+         val checkOfFetchedCode = ActivationCodeGenerator.checkCode(fetchedCode.code, code, key)
+         if (checkOfFetchedCode) {
+           userDAO.addPasswordResetCode(userId, code, timeProvider.now(), active = false)
+           userDAO.changePassword(userId, hash(newPassword), timeProvider.now())
+         } else {
+           Failure(new RuntimeException("The given code is incorrect"))
+         }
        }
      }
    }

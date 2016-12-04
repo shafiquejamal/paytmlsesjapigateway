@@ -41,8 +41,6 @@ trait UserDAO {
 
   def passwordResetCode(userId: UUID): Option[PasswordResetCodeAndDate]
 
-  def passwordResetCode(userId: UUID, code:String): Option[PasswordResetCodeAndDate]
-
   def allLogoutDate(id: UUID):Option[DateTime]
 
   def addAllLogoutDate(id: UUID, allLogoutDate: DateTime, created:DateTime):Try[User]

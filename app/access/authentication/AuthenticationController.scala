@@ -51,7 +51,7 @@ class AuthenticationController @Inject() (
     }
   }
 
-  def sendPasswordResetLink() = Action(parse.json) { request =>
+  def sendPasswordResetCode() = Action(parse.json) { request =>
     request.body.validate[EmailMessage] match {
       case success:JsSuccess[EmailMessage] =>
         val maybeUser = userAPI.findByEmailLatest(success.get.email)

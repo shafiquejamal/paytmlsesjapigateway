@@ -1,11 +1,15 @@
 package access.authentication
 
+import java.io.File
 import java.util.UUID
 
+import access.registration.ActivationCodeGenerator
+import com.typesafe.config.ConfigFactory
 import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
+import play.api.Configuration
 import scalikejdbc.DBSession
 import user._
 import util.TestTimeProviderImpl
@@ -24,6 +28,8 @@ class AuthenticationFacadeATest
   val timeProvider = new TestTimeProviderImpl()
   val passwordResetCode = "some password reset code"
   val newPassword = "some new password"
+  val configuration =
+    new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
 
   "retrieving a user by ID" should "retrieve the latest added user with the given parent ID if that user is" +
     " active, otherwise return empty" in { implicit session =>
@@ -70,7 +76,9 @@ class AuthenticationFacadeATest
 
     timeProvider.setNow(timeProvider.now().plusDays(1))
 
-    api.resetPassword("alice@alice.com", passwordResetCodeAlice2.toUpperCase(), newPassword) shouldBe a[Success[_]]
+    val key = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
+    val hashedPassword = ActivationCodeGenerator.generate(passwordResetCodeAlice2, key)
+    api.resetPassword("alice@alice.com", hashedPassword.toUpperCase, newPassword) shouldBe a[Success[_]]
     api.user(AuthenticationMessage(None, Some("alice@alice.com"), newPassword)).map(_.email) should contain("alice@alice.com")
     api.resetPassword("alice@alice.com", passwordResetCodeAlice2, "another new password")
     .failure.exception shouldBe a[RuntimeException]
@@ -134,7 +142,7 @@ class AuthenticationFacadeATest
   private def makeAPI(session:DBSession):AuthenticationAPI = {
     val userDAO =
       new ScalikeJDBCUserDAO(converter, TestScalikeJDBCSessionProvider(session), dBConfig, uUIDProvider)
-    new AuthenticationFacade(userDAO, timeProvider, uUIDProvider)
+    new AuthenticationFacade(userDAO, timeProvider, uUIDProvider, configuration)
   }
 
 }

@@ -42,8 +42,6 @@ class RegistrationController @Inject() (
   }
 
   def activate() = Action(parse.json) { request =>
-    println("request")
-    println(request)
     request.body.validate[ActivateAccountMessage] match {
       case success:JsSuccess[ActivateAccountMessage] =>
         val (email, code) = (success.get.email, success.get.code)

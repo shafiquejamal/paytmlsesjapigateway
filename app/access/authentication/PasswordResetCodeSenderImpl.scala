@@ -1,5 +1,6 @@
 package access.authentication
 
+import access.registration.ActivationCodeGenerator
 import com.google.inject.Inject
 import communication.LinkSender
 import org.joda.time.Days
@@ -16,35 +17,38 @@ class PasswordResetCodeSenderImpl @Inject()(
     configuration: Configuration)
   extends PasswordResetCodeSender {
 
+  val key = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
+
   override def send(user: UserMessage, host: String): Unit = {
     authenticationAPI.retrievePasswordResetCode(user.email)
         .filter { passwordResetCodeAndDate =>
-          Days.daysBetween(passwordResetCodeAndDate.date.withTimeAtStartOfDay(), timeProvider.now().withTimeAtStartOfDay()).getDays <
-          configuration.getInt("crauth.passwordResetLinkIsValidForDays").getOrElse(10)
+          Days.daysBetween(passwordResetCodeAndDate.date.withTimeAtStartOfDay(),
+            timeProvider.now().withTimeAtStartOfDay()).getDays <
+              configuration.getInt("crauth.passwordResetLinkIsValidForDays").getOrElse(10)
         }
     .fold[Unit] {
-      val passwordResetCode =
-        Random.alphanumeric.take(9).mkString.toLowerCase
-        .replaceAll("0", "q").replaceAll("8", "p").replaceAll("l", "z").replaceAll("1", "2")
+      val passwordResetCode = Random.alphanumeric.take(20).mkString
+      val hashedPasswordResetCodeWithoutDashes =
+        ActivationCodeGenerator.generate(passwordResetCode, key)
+      val hashedPasswordResetCodeWithDashes =
+        Seq(
+          hashedPasswordResetCodeWithoutDashes.take(3),
+          hashedPasswordResetCodeWithoutDashes.slice(3, 6),
+          hashedPasswordResetCodeWithoutDashes.takeRight(3)
+        ).mkString("-")
       authenticationAPI.storePasswordResetCode(user.email, passwordResetCode) match {
         case Success(retrievedUser) =>
-          val passwordResetCodeWithDashes =
-            Seq(passwordResetCode.take(3),  passwordResetCode.slice(3, 6), passwordResetCode.takeRight(3)).mkString("-")
           linkSender
-          .send(retrievedUser, passwordResetCodeWithDashes, "passwordresetlink.subject", "passwordresetlink.body")
+          .send(retrievedUser, hashedPasswordResetCodeWithDashes, "passwordresetlink.subject", "passwordresetlink.body")
         case _ =>
       }
     } { existingPasswordResetCode =>
-      val passwordResetCodeWithDashes =
-        Seq(existingPasswordResetCode.code.take(3),
-            existingPasswordResetCode.code.slice(3, 6),
-            existingPasswordResetCode.code.takeRight(3)).mkString("-")
+      val hashedPasswordResetCodeToSend =
+        ActivationCodeGenerator
+        .generate(existingPasswordResetCode.code, key)
       linkSender
-      .send(user, passwordResetCodeWithDashes, "passwordresetlink.subject", "passwordresetlink.body")
-      }
-
-
-
+      .send(user, hashedPasswordResetCodeToSend, "passwordresetlink.subject", "passwordresetlink.body")
+    }
 
   }
 

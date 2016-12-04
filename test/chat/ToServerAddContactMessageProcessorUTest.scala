@@ -41,6 +41,8 @@ class ToServerAddContactMessageProcessorUTest
 
   it should "send no message if the user to add does not exist" in {
     (mockUserAPI.by(_: String)).expects(username).returning(None)
+    (mockUserAPI.findByEmailLatest(_: String)).expects(username).returning(None)
+
 
     toServerAddContactMessageProcessor ! toServerAddContactMessage
 

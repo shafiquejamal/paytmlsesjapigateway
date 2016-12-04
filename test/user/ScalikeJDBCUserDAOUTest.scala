@@ -186,14 +186,12 @@ class ScalikeJDBCUserDAOUTest
     val userDAO = makeDAO(session)
 
     userDAO.passwordResetCode(id1) should contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
-    userDAO.passwordResetCode(id1, "wrong code") shouldBe empty
   }
 
   it should "return the code and date if the code matches" in { implicit session =>
     val userDAO = makeDAO(session)
 
-    userDAO.passwordResetCode(id1, passwordResetCodeAlice2) should
-    contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
+    userDAO.passwordResetCode(id1) should contain(PasswordResetCodeAndDate(passwordResetCodeAlice2, yesterday.plusMillis(1)))
   }
 
   "getting the latest allLogoutDate" should "return empty if there is no entry for that user, and return the latest " +
