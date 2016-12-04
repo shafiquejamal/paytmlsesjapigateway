@@ -42,7 +42,6 @@ class ToServerMessageRouter(
       toServerChatMessageActor ! toServerChatMessage
 
     case toServerRequestMessagesMessage: ToServerRequestMessagesMessage =>
-      log.info("router rec'd toServerRequestMessagesMessage: {}", toServerRequestMessagesMessage)
       toServerRequestMessagesMessageActor ! toServerRequestMessagesMessage
 
     case toServerRequestContactsMessage: ToServerRequestContactsMessage =>

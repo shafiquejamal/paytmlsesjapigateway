@@ -41,10 +41,8 @@ class ToServerChatMessageProcessor(
               clientId,
               recipientId)))
         val actorSelectionRecipients = context.actorSelection(namedClientPath(recipientId))
-        log.info("chat proc, recipients, path: {}", actorSelectionRecipients.pathString)
         actorSelectionRecipients ! toClientChatMessage
         val actorSelectionSenderConnections = context.actorSelection(namedClientPath(clientId))
-        log.info("chat proc, sender connections, path: {}", actorSelectionSenderConnections.pathString)
         actorSelectionSenderConnections ! toClientChatMessage
       }
 
