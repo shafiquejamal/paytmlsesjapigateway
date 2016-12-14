@@ -9,8 +9,7 @@ class AccountActivationLinkSenderImpl @Inject()(linkSender: LinkSender) extends 
   override def sendActivationCode(user: UserMessage, host: String, key: String): Unit = {
 
     val activationCode = ActivationCodeGenerator.generate(user.maybeId.map(_.toString).getOrElse(""), key)
-    val activationCodeWithDashes =
-      Seq(activationCode.take(3),  activationCode.slice(3, 6), activationCode.takeRight(3)).mkString("-")
+    val activationCodeWithDashes = ActivationCodeGenerator.codeWithDashes(activationCode)
     linkSender.send(user, activationCodeWithDashes, "activation.subject", "activation.body")
   }
 

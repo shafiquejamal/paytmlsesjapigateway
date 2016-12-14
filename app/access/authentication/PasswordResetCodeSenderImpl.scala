@@ -30,12 +30,7 @@ class PasswordResetCodeSenderImpl @Inject()(
       val passwordResetCode = Random.alphanumeric.take(20).mkString
       val hashedPasswordResetCodeWithoutDashes =
         ActivationCodeGenerator.generate(passwordResetCode, key)
-      val hashedPasswordResetCodeWithDashes =
-        Seq(
-          hashedPasswordResetCodeWithoutDashes.take(3),
-          hashedPasswordResetCodeWithoutDashes.slice(3, 6),
-          hashedPasswordResetCodeWithoutDashes.takeRight(3)
-        ).mkString("-")
+      val hashedPasswordResetCodeWithDashes = ActivationCodeGenerator.codeWithDashes(hashedPasswordResetCodeWithoutDashes)
       authenticationAPI.storePasswordResetCode(user.email, passwordResetCode) match {
         case Success(retrievedUser) =>
           linkSender

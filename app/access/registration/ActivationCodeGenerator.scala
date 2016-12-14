@@ -17,4 +17,12 @@ object ActivationCodeGenerator {
   def checkCode(nonHashedCode: String, codeFromUser: String, key: String): Boolean =
     generate(nonHashedCode, key: String).takeRight(9).toLowerCase == codeFromUser.replaceAll("-", "").toLowerCase
 
+  def codeWithDashes(codeWithoutSeparatingSymbol: String, separatingSymbol: String = "-", nCharsBetween: Int = 3): String = {
+    val nSegments = 1.to(math.ceil(codeWithoutSeparatingSymbol.length/nCharsBetween.toDouble).toInt).map(_*nCharsBetween)
+    val segments =
+      nSegments.foldLeft((Seq[String](), 0)){ (acc, next) =>
+        (acc._1 :+ codeWithoutSeparatingSymbol.slice(acc._2, next), next) }
+    segments._1.mkString(separatingSymbol)
+  }
+
 }

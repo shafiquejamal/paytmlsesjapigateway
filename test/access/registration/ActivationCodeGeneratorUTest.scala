@@ -27,4 +27,14 @@ class ActivationCodeGeneratorUTest extends FlatSpec with ShouldMatchers {
 
   }
 
+  "Adding dashes every x number of characters" should "add the dashes appropriately" in {
+
+    val someCodeWithoutDashes = "abcdefghijk"
+    val anotherCodeWithoutDashes = "cdefghijkl"
+
+    ActivationCodeGenerator.codeWithDashes(someCodeWithoutDashes) shouldEqual "abc-def-ghi-jk"
+    ActivationCodeGenerator.codeWithDashes(anotherCodeWithoutDashes, ".", 2) shouldEqual "cd.ef.gh.ij.kl"
+
+  }
+
 }
