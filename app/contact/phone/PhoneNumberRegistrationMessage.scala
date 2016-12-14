@@ -2,6 +2,7 @@ package contact.phone
 
 import play.api.libs.json.Reads._
 import play.api.libs.json.{JsPath, Reads}
+import scala.language.implicitConversions
 
 case class PhoneNumberRegistrationMessage(phoneNumberToAdd: String) {
   require(phoneNumberToAdd.length == 11)
