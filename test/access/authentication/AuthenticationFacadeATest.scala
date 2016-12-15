@@ -77,7 +77,7 @@ class AuthenticationFacadeATest
     timeProvider.setNow(timeProvider.now().plusDays(1))
 
     val key = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
-    val hashedPassword = ActivationCodeGenerator.generate(passwordResetCodeAlice2, key)
+    val hashedPassword = ActivationCodeGenerator.generateWithDashes(passwordResetCodeAlice2, key)
     api.resetPassword("alice@alice.com", hashedPassword.toUpperCase, newPassword) shouldBe a[Success[_]]
     api.user(AuthenticationMessage(None, Some("alice@alice.com"), newPassword)).map(_.email) should contain("alice@alice.com")
     api.resetPassword("alice@alice.com", passwordResetCodeAlice2, "another new password")

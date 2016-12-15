@@ -25,4 +25,9 @@ object ActivationCodeGenerator {
     segments._1.mkString(separatingSymbol)
   }
 
+  def generateWithDashes(nonHashedCode: String, key: String, separatingSymbol: String = "-", nCharsBetween: Int = 3):
+  String = {
+    codeWithDashes(generate(nonHashedCode, key), separatingSymbol, nCharsBetween)
+  }
+
 }

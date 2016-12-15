@@ -86,7 +86,7 @@ class RegistrationControllerATest
   }
 
   it should "fail if the email and code combination is not valid" in {
-    val wrongCode = ActivationCodeGenerator.generate(id7.toString, md5key)
+    val wrongCode = ActivationCodeGenerator.generateWithDashes(id7.toString, md5key)
     val result = route(app, FakeRequest(POST, s"/activate")
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
       .withJsonBody(Json.obj("email" -> "charlie@charlie.com", "code" -> wrongCode)))
@@ -96,7 +96,7 @@ class RegistrationControllerATest
   }
 
   it should "fail if the user is blocked" in {
-    val code = ActivationCodeGenerator.generate(id7.toString, md5key)
+    val code = ActivationCodeGenerator.generateWithDashes(id7.toString, md5key)
     val result = route(app, FakeRequest(POST, s"/activate")
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
       .withJsonBody(Json.obj("email" -> "diane@diane.com", "code" -> code)))
@@ -105,7 +105,7 @@ class RegistrationControllerATest
   }
 
   it should "succeed if the user is admin" in {
-    val code = ActivationCodeGenerator.generate(id3.toString, md5key)
+    val code = ActivationCodeGenerator.generateWithDashes(id3.toString, md5key)
     val result = route(app, FakeRequest(POST, s"/activate")
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
       .withJsonBody(Json.obj("email" -> "bob@bob.com", "code" -> code)))
@@ -114,7 +114,7 @@ class RegistrationControllerATest
   }
 
   it should "succeed if the user is active" in {
-    val code = ActivationCodeGenerator.generate(id1.toString, md5key)
+    val code = ActivationCodeGenerator.generateWithDashes(id1.toString, md5key)
     val result = route(app, FakeRequest(POST, s"/activate")
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
       .withJsonBody(Json.obj("email" -> "alice@alice.com", "code" -> code)))
@@ -123,7 +123,7 @@ class RegistrationControllerATest
   }
 
   it should "succeed if the user is unverified and the code matches the email" in {
-    val code = ActivationCodeGenerator.generate(id4.toString, md5key)
+    val code = ActivationCodeGenerator.generateWithDashes(id4.toString, md5key)
     val result = route(app, FakeRequest(POST, s"/activate?email=charlie%40charlie.com&code=$code")
       .withHeaders(HeaderNames.CONTENT_TYPE -> "application/json")
       .withJsonBody(Json.obj("email" -> "charlie@charlie.com", "code" -> code)))

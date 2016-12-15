@@ -135,7 +135,7 @@ class AuthenticationControllerATest
   "resetting the password" should "succeed if the code matches the email in the db, and fail if the code is used a " +
   "second time" in new JWTChecker {
     val key = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
-    val hashedCode = ActivationCodeGenerator.generate(passwordResetCodeAlice2, key)
+    val hashedCode = ActivationCodeGenerator.generateWithDashes(passwordResetCodeAlice2, key)
     val message = Json.obj("email" -> "alice@alice.com", "code" -> hashedCode, "newPassword" -> newPassword)
     val result =
       route(app, FakeRequest(POST, "/reset-password")
