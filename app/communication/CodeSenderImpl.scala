@@ -5,12 +5,12 @@ import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import user.UserMessage
 
-class LinkSenderImpl @Inject()(
+class CodeSenderImpl @Inject()(
     emailer: Emailer,
     configuration:Configuration,
     override val messagesApi: MessagesApi)
-  extends LinkSender
-  with I18nSupport {
+  extends CodeSender
+          with I18nSupport {
 
   def send(
       user:UserMessage,

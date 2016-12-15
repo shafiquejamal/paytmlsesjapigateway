@@ -3,7 +3,7 @@ package access.authentication
 import java.io.File
 
 import com.typesafe.config.ConfigFactory
-import communication.TestLinkSender
+import communication.TestCodeSender
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, ShouldMatchers}
 import play.api.Configuration
@@ -21,7 +21,7 @@ class PasswordResetCodeSenderImplUTest
   val configuration =
     new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
   val authenticationAPI = mock[AuthenticationAPI]
-  val linkSender = new TestLinkSender()
+  val linkSender = new TestCodeSender()
   val user = new TestUserImpl(Some(id1), "alice", "alice@alice.com", pAlice2, Active, Some(timeProvider.now()))
   val passwordResetCodeSenderImpl =
     new PasswordResetCodeSenderImpl(authenticationAPI, linkSender, timeProvider, configuration)

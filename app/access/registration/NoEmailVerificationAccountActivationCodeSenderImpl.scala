@@ -2,7 +2,7 @@ package access.registration
 
 import user.{UserMessage, UserStatus}
 
-class NoEmailVerificationAccountActivationLinkSenderImpl extends AccountActivationLinkSender {
+class NoEmailVerificationAccountActivationCodeSenderImpl extends AccountActivationCodeSender {
 
   override def sendActivationCode(user: UserMessage, host: String, key: String): Unit = {}
 

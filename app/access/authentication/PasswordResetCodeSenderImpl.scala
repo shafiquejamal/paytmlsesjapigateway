@@ -2,7 +2,7 @@ package access.authentication
 
 import access.registration.ActivationCodeGenerator
 import com.google.inject.Inject
-import communication.LinkSender
+import communication.CodeSender
 import org.joda.time.Days
 import play.api.Configuration
 import user.UserMessage
@@ -12,7 +12,7 @@ import scala.util.{Random, Success}
 
 class PasswordResetCodeSenderImpl @Inject()(
     authenticationAPI: AuthenticationAPI,
-    linkSender: LinkSender,
+    linkSender: CodeSender,
     timeProvider: TimeProvider,
     configuration: Configuration)
   extends PasswordResetCodeSender {

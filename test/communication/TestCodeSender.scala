@@ -2,7 +2,7 @@ package communication
 
 import user.UserMessage
 
-class TestLinkSender extends LinkSender {
+class TestCodeSender extends CodeSender {
 
   def send(user: UserMessage,
     code: String,

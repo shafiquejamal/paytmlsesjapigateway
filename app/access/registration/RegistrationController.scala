@@ -19,7 +19,7 @@ class RegistrationController @Inject() (
     jWTParamsProvider: JWTParamsProvider,
     uUIDProvider: UUIDProvider,
     configuration:Configuration,
-    accountActivationLinkSender:AccountActivationLinkSender)
+    accountActivationLinkSender:AccountActivationCodeSender)
   extends Controller {
 
   val activationCodeKey = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")

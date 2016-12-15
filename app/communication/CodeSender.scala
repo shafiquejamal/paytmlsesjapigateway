@@ -2,7 +2,7 @@ package communication
 
 import user.UserMessage
 
-trait LinkSender {
+trait CodeSender {
 
   def send(user: UserMessage,
       code: String,
