@@ -10,8 +10,6 @@ import org.scalatest._
 import org.scalatestplus.play.OneAppPerTest
 import pdi.jwt.JwtJson
 import play.Configuration
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Controller
 import play.api.test.FakeRequest

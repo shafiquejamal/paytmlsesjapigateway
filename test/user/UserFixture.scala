@@ -53,6 +53,7 @@ trait UserFixture {
   val inactivePasswordResetCodeBob1 = "some inactive password reset code for bob"
 
   val bobRawPhoneNumber = "18883216111"
+  val aliceRawPhoneNumber = "18883216113"
 
   val alice =
     TestUserImpl(Some(id1), "alice", "alice@alice.com", pAlice2, userStatus = Active, Some(now))
@@ -212,6 +213,9 @@ trait UserFixture {
           (${uUIDProvider.randomUUID()}, $idContactBobDiane, 1, $yesterday)""",
     sql"""insert into contactvisibility (id, contactid, visibility, createdat) VALUES
           (${uUIDProvider.randomUUID()}, $idContactCharlieDiane, 1, $yesterday)""",
+
+    sql"""insert into xuserphonenumber (id, xuserid, phonenumber, status, createdat) VALUES
+          (${uUIDProvider.randomUUID()}, ${id1}, $aliceRawPhoneNumber, 1, $yesterday)""",
 
     sql"""insert into xuserphonenumber (id, xuserid, phonenumber, status, createdat) VALUES
           (${uUIDProvider.randomUUID()}, ${id3}, $bobRawPhoneNumber, 0, $yesterday)"""

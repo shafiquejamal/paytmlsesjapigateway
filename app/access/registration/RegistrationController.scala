@@ -64,7 +64,7 @@ class RegistrationController @Inject() (
       case success:JsSuccess[EmailMessage] =>
         userAPI
         .findUnverifiedUser(success.get.email)
-        .foreach( user => accountActivationLinkSender.sendActivationCode(user, request.host, activationCodeKey))
+        .foreach( user => accountActivationLinkSender.sendActivationCode(user, activationCodeKey))
         Ok
       case error:JsError =>
         BadRequest
@@ -91,7 +91,7 @@ class RegistrationController @Inject() (
     registrationAPI.signUp(registrationMessage, accountActivationLinkSender.statusOnRegistration) match {
       case Success(user) =>
         accountActivationLinkSender
-        .sendActivationCode(user, request.host, activationCodeKey)
+        .sendActivationCode(user, activationCodeKey)
         Ok(Json.obj("status" -> "success"))
       case _ =>
         Ok(Json.obj("status" -> "failed to add user"))

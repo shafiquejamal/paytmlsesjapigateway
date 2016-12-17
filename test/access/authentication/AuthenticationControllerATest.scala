@@ -41,7 +41,7 @@ class AuthenticationControllerATest
   val newPassword = "some new password"
   val timeProvider = new TestTimeProviderImpl()
   val configuration =
-    new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
+    new Configuration(ConfigFactory.parseFile(new File("conf/application.test.conf")).resolve())
 
   override def beforeEach() {
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))

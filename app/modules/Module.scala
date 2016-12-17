@@ -28,7 +28,8 @@ class Module extends AbstractModule with ScalaModule {
     bind[AccountActivationCodeSender].to[AccountActivationCodeSenderImpl]
     bind[PasswordResetCodeSender].to[PasswordResetCodeSenderImpl]
     bind[CodeSender].to[CodeSenderImpl]
-    bind[PhoneDAO].to[ScalikeJDBCPhoneDAOImpl]
+    bind[PhoneDAO].to[ScalikeJDBCPhoneDAO]
+    bind[PhoneVerificationCodeSender].to[PhoneVerificationCodeSenderImpl]
   }
 
 }

@@ -6,7 +6,7 @@ import user.{UserMessage, UserStatus}
 
 class AccountActivationCodeSenderImpl @Inject()(linkSender: CodeSender) extends AccountActivationCodeSender {
 
-  override def sendActivationCode(user: UserMessage, host: String, key: String): Unit = {
+  override def sendActivationCode(user: UserMessage, key: String): Unit = {
     val activationCodeWithDashes =
       ActivationCodeGenerator.generateWithDashes(user.maybeId.map(_.toString).getOrElse(""), key)
     linkSender.send(user, activationCodeWithDashes, "activation.subject", "activation.body")
