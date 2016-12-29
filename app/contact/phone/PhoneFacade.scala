@@ -14,7 +14,7 @@ class PhoneFacade @Inject() (
     phoneDAO: PhoneDAO,
     timeProvider: TimeProvider,
     phoneVerificationCodeSender: PhoneVerificationCodeSender,
-    configuration: Configuration)  extends PhoneAPI {
+    configuration: Configuration) extends PhoneAPI {
 
   override def registerPhoneNumber(forUser: UUID, phoneNumberRegistration: PhoneNumberRegistrationMessage):
   Try[PhoneNumber] = {

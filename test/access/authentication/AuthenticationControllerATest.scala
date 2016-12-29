@@ -3,8 +3,8 @@ package access.authentication
 import java.io.File
 import java.util.UUID
 
+import access.{TestJWTParamsProviderImpl, JWTParamsProvider, JWTParamsProviderImpl}
 import access.registration.ActivationCodeGenerator
-import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
 import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
@@ -56,15 +56,16 @@ class AuthenticationControllerATest
     super.afterEach()
   }
 
-  val jWTParamsProvider = new TestJWTParamsProviderImpl()
+  val jWTParamsProvider = new TestJWTParamsProviderImpl
   val claim =
     Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"),
              "iat" -> timeProvider.now())
-  val expectedJWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+  val expectedJWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
 
   trait JWTChecker {
     def checkJWT(authentication:JsValue) = {
-      (contentFromRequest(authentication) \ "token").asOpt[String] should contain(expectedJWT)
+      val tokenFromRequest = (contentFromRequest(authentication) \ "token").asOpt[String].map{ token =>
+        token.split(".").take(2).toList.mkString(".") } should contain(expectedJWT.split(".").take(2).toList.mkString("."))
       (contentFromRequest(authentication) \ "username").asOpt[String] should contain("alice")
       (contentFromRequest(authentication) \ "email").asOpt[String] should contain("alice@alice.com")
     }
@@ -190,9 +191,8 @@ class AuthenticationControllerATest
 
   "Logging out of all devices" should "succeed if the user exists" in {
     val timeProvider = new TestTimeProviderImpl()
-    val jWTParamsProvider = new TestJWTParamsProviderImpl()
     val claim = Json.obj("userId" -> id1, "iat" -> timeProvider.now())
-    val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+    val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
 
     val result = route(app, FakeRequest(POST, "/logout-all-devices")
       .withHeaders(("Authorization", "Bearer " + jWT))
@@ -205,9 +205,8 @@ class AuthenticationControllerATest
 
   it should "fail if the user does not exist" in {
     val timeProvider = new TestTimeProviderImpl()
-    val jWTParamsProvider = new TestJWTParamsProviderImpl()
     val claim = Json.obj("userId" -> idNonExistentUser, "iat" -> timeProvider.now())
-    val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+    val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
 
     val result = route(app, FakeRequest(POST, "/logout-all-devices")
       .withHeaders(("Authorization", jWT))

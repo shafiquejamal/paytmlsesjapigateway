@@ -1,11 +1,12 @@
 package access
 
+import java.security.PublicKey
 import java.util.UUID
 
 import access.authentication.AuthenticationAPI
 import org.joda.time.DateTime
 import pdi.jwt._
-import pdi.jwt.algorithms.JwtHmacAlgorithm
+import pdi.jwt.algorithms.JwtAsymetricAlgorithm
 import play.Configuration
 import play.api.libs.json.JsObject
 import play.api.mvc.Results._
@@ -19,8 +20,8 @@ trait AuthenticatedActionCreator {
 
   val authenticationAPI: AuthenticationAPI
   val jWTParamsProvider: JWTParamsProvider
-  val secretKey: String = jWTParamsProvider.secretKey
-  val algorithm: JwtHmacAlgorithm = jWTParamsProvider.algorithm
+  val publicKey: PublicKey = jWTParamsProvider.publicKey
+  val algorithm: JwtAsymetricAlgorithm = jWTParamsProvider.algorithm
   val configuration: Configuration
   val timeProvider: TimeProvider
 
@@ -55,7 +56,7 @@ trait AuthenticatedActionCreator {
       block: => (UUID, String) => T,
       unauthorized: => T,
       allowedTokens: AllowedTokens): T =
-    JwtJson.decodeJson(token, secretKey, Seq(algorithm)) match {
+    JwtJson.decodeJson(token, publicKey, Seq(algorithm)) match {
       case Success(claim) =>
         validateToken(block, unauthorized, allowedTokens, claim)
       case _ =>

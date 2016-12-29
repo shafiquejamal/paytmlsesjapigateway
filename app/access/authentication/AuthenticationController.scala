@@ -34,7 +34,7 @@ class AuthenticationController @Inject() (
             Json.obj(
               "userId" -> user.maybeId.getOrElse(uUIDProvider.randomUUID()).toString,
               "iat" -> timeProvider.now())
-          val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+          val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
           Ok(Json.obj("token" -> jWT, "email" -> user.email, "username" -> user.username))
         }
       case error: JsError =>

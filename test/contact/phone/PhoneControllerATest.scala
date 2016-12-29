@@ -1,15 +1,11 @@
 package contact.phone
 
-import java.util.UUID
-
 import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
 import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
 import play.api.inject._
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
 import scalikejdbc.NamedAutoSession
 import user.UserFixture
 import util._
@@ -48,6 +44,6 @@ class PhoneControllerATest
   val timeProvider = new TestTimeProviderImpl()
   val jWTParamsProvider = new TestJWTParamsProviderImpl()
   val claim = Json.obj("userId" -> id1, "iat" -> timeProvider.now())
-  val jWT = JwtJson.encode(claim, jWTParamsProvider.secretKey, jWTParamsProvider.algorithm)
+  val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
 
 }

@@ -1,12 +1,13 @@
 package access
 
-import pdi.jwt.algorithms.JwtHmacAlgorithm
+import pdi.jwt.algorithms.JwtAsymetricAlgorithm
 
 trait JWTParamsProvider {
 
-  def secretKey: String
+  def algorithm: JwtAsymetricAlgorithm
 
-  def algorithm: JwtHmacAlgorithm
+  def publicKey: java.security.PublicKey
 
+  def privateKey: java.security.PrivateKey
 
 }

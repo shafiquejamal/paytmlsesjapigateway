@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "net.codingwell" %% "scala-guice" % "4.0.1",
   "org.mindrot" % "jbcrypt" % "0.3m",
-  "com.pauldijou" % "jwt-play-json_2.11" % "0.8.0",
+  "com.pauldijou" %% "jwt-play-json" % "0.9.2",
   "org.postgresql" % "postgresql" % "9.4.1208.jre7",
   "commons-validator" % "commons-validator" % "1.5.1",
   "com.typesafe.play" %% "play-mailer" % "5.0.0",
