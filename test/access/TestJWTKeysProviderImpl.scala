@@ -8,7 +8,7 @@ import org.bouncycastle.jce.spec.ECNamedCurveSpec
 import pdi.jwt.JwtAlgorithm
 import pdi.jwt.algorithms.JwtAsymetricAlgorithm
 
-class TestJWTParamsProviderImpl extends JWTParamsProvider {
+class TestJWTKeysProviderImpl extends JWTKeysProvider {
 
   override def algorithm: JwtAsymetricAlgorithm = JwtAlgorithm.ES512
 

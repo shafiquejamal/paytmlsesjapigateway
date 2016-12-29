@@ -3,7 +3,7 @@ package modules
 import access.authentication.{PasswordResetCodeSenderImpl, PasswordResetCodeSender, AuthenticationAPI, AuthenticationFacade}
 import access.registration.{AccountActivationCodeSender, AccountActivationCodeSenderImpl, RegistrationAPI,
 RegistrationFacade}
-import access.{JWTParamsProvider, JWTParamsProviderImpl}
+import access.{JWTKeysProvider, JWTKeysProviderImpl}
 import com.google.inject.AbstractModule
 import communication.{CodeSenderImpl, CodeSender, Emailer, EmailerImpl}
 import contact.phone._
@@ -23,7 +23,7 @@ class Module extends AbstractModule with ScalaModule {
     bind[UserAPI].to[UserFacade]
     bind[PhoneAPI].to[PhoneFacade]
     bind[DBConfig].to[ScalikeJDBCDevProdDBConfig]
-    bind[JWTParamsProvider].to[JWTParamsProviderImpl]
+    bind[JWTKeysProvider].to[JWTKeysProviderImpl]
     bind[Emailer].to[EmailerImpl]
     bind[AccountActivationCodeSender].to[AccountActivationCodeSenderImpl]
     bind[PasswordResetCodeSender].to[PasswordResetCodeSenderImpl]

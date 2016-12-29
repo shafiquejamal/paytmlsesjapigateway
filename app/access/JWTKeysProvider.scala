@@ -2,7 +2,7 @@ package access
 
 import pdi.jwt.algorithms.JwtAsymetricAlgorithm
 
-trait JWTParamsProvider {
+trait JWTKeysProvider {
 
   def algorithm: JwtAsymetricAlgorithm
 

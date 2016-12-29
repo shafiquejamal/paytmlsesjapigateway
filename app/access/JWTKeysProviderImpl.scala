@@ -10,7 +10,7 @@ import pdi.jwt.JwtAlgorithm
 import pdi.jwt.algorithms.JwtAsymetricAlgorithm
 import play.api.Configuration
 
-class JWTParamsProviderImpl @Inject()(configuration: Configuration) extends JWTParamsProvider {
+class JWTKeysProviderImpl @Inject()(configuration: Configuration) extends JWTKeysProvider {
 
   override def algorithm: JwtAsymetricAlgorithm = JwtAlgorithm.ES512
 

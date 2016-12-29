@@ -19,7 +19,7 @@ import scala.util.Success
 trait AuthenticatedActionCreator {
 
   val authenticationAPI: AuthenticationAPI
-  val jWTParamsProvider: JWTParamsProvider
+  val jWTParamsProvider: JWTKeysProvider
   val publicKey: PublicKey = jWTParamsProvider.publicKey
   val algorithm: JwtAsymetricAlgorithm = jWTParamsProvider.algorithm
   val configuration: Configuration

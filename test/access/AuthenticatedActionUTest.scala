@@ -2,7 +2,7 @@ package access
 
 import java.io.File
 import java.security.spec.ECPrivateKeySpec
-import java.security.{KeyFactory, Security, PrivateKey}
+import java.security.{KeyFactory, PrivateKey, Security}
 
 import access.authentication.AuthenticationAPI
 import com.google.inject.Inject
@@ -25,13 +25,13 @@ import util.{TestTimeProviderImpl, TestUUIDProviderImpl, TimeProvider}
 class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppPerTest with MockFactory {
 
   val oKcontent = "request was ok"
-  val jWTParamsProvider = new TestJWTParamsProviderImpl()
+  val jWTParamsProvider = new TestJWTKeysProviderImpl()
 
   class ExampleController @Inject() (
-      override val authenticationAPI:AuthenticationAPI,
-      override val jWTParamsProvider: JWTParamsProvider,
-      override val configuration: Configuration,
-      override val timeProvider: TimeProvider)
+                                      override val authenticationAPI:AuthenticationAPI,
+                                      override val jWTParamsProvider: JWTKeysProvider,
+                                      override val configuration: Configuration,
+                                      override val timeProvider: TimeProvider)
     extends Controller
     with AuthenticatedActionCreator {
 

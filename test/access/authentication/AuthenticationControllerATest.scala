@@ -3,7 +3,7 @@ package access.authentication
 import java.io.File
 import java.util.UUID
 
-import access.{TestJWTParamsProviderImpl, JWTParamsProvider, JWTParamsProviderImpl}
+import access.{TestJWTKeysProviderImpl, JWTKeysProvider, JWTKeysProviderImpl}
 import access.registration.ActivationCodeGenerator
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
@@ -31,7 +31,7 @@ class AuthenticationControllerATest
   override def overrideModules =
     Seq(
       bind[DBConfig].to[ScalikeJDBCTestDBConfig],
-      bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
+      bind[JWTKeysProvider].to[TestJWTKeysProviderImpl],
       bind[UUIDProvider].to[TestUUIDProviderImpl],
       bind[Emailer].to[TestEmailerImpl],
       bind[TimeProvider].to[TestTimeProviderImpl]
@@ -56,7 +56,7 @@ class AuthenticationControllerATest
     super.afterEach()
   }
 
-  val jWTParamsProvider = new TestJWTParamsProviderImpl
+  val jWTParamsProvider = new TestJWTKeysProviderImpl
   val claim =
     Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"),
              "iat" -> timeProvider.now())

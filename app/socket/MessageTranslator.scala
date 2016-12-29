@@ -1,6 +1,6 @@
 package socket
 
-import access.JWTParamsProvider
+import access.JWTKeysProvider
 import access.authentication._
 import akka.actor.{Actor, ActorLogging, _}
 import chat.{ChatContactAPI, ChatMessageAPI}
@@ -15,7 +15,7 @@ class MessageTranslator(
     chatMessageAPI: ChatMessageAPI,
     chatContactsAPI: ChatContactAPI,
     authenticationAPI: AuthenticationAPI,
-    jWTParamsProvider: JWTParamsProvider,
+    jWTParamsProvider: JWTKeysProvider,
     configuration: Configuration,
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
@@ -51,16 +51,16 @@ class MessageTranslator(
 object MessageTranslator {
 
   def props(
-    chatAuthenticator: SocketAuthenticator,
-    userAPI: UserAPI,
-    chatMessageAPI: ChatMessageAPI,
-    chatContactsAPI: ChatContactAPI,
-    authenticationAPI: AuthenticationAPI,
-    jWTParamsProvider: JWTParamsProvider,
-    configuration: Configuration,
-    timeProvider: TimeProvider,
-    uUIDProvider: UUIDProvider,
-    unnamedClient: ActorRef
+             chatAuthenticator: SocketAuthenticator,
+             userAPI: UserAPI,
+             chatMessageAPI: ChatMessageAPI,
+             chatContactsAPI: ChatContactAPI,
+             authenticationAPI: AuthenticationAPI,
+             jWTParamsProvider: JWTKeysProvider,
+             configuration: Configuration,
+             timeProvider: TimeProvider,
+             uUIDProvider: UUIDProvider,
+             unnamedClient: ActorRef
   ) =
     Props(
       new MessageTranslator(

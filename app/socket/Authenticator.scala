@@ -3,7 +3,7 @@ package socket
 import java.util.UUID
 
 import access.authentication._
-import access.{AllowedTokens, JWTParamsProvider, MultiUse}
+import access.{AllowedTokens, JWTKeysProvider, MultiUse}
 import akka.actor._
 import chat.ClientPaths.namedClientActorName
 import chat.{ChatContactAPI, ChatMessageAPI}
@@ -12,16 +12,16 @@ import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
 
 class Authenticator (
-    chatAuthenticator: SocketAuthenticator,
-    userAPI: UserAPI,
-    chatMessageAPI: ChatMessageAPI,
-    chatContactsAPI: ChatContactAPI,
-    authenticationAPI: AuthenticationAPI,
-    jWTParamsProvider: JWTParamsProvider,
-    configuration: Configuration,
-    timeProvider: TimeProvider,
-    uUIDProvider: UUIDProvider,
-    unnamedClient: ActorRef)
+                      chatAuthenticator: SocketAuthenticator,
+                      userAPI: UserAPI,
+                      chatMessageAPI: ChatMessageAPI,
+                      chatContactsAPI: ChatContactAPI,
+                      authenticationAPI: AuthenticationAPI,
+                      jWTParamsProvider: JWTKeysProvider,
+                      configuration: Configuration,
+                      timeProvider: TimeProvider,
+                      uUIDProvider: UUIDProvider,
+                      unnamedClient: ActorRef)
   extends Actor
   with ActorLogging {
 
@@ -71,16 +71,16 @@ class Authenticator (
 object Authenticator {
 
   def props(
-      chatAuthenticator: SocketAuthenticator,
-      userAPI: UserAPI,
-      chatMessageAPI: ChatMessageAPI,
-      chatContactsAPI: ChatContactAPI,
-      authenticationAPI: AuthenticationAPI,
-      jWTParamsProvider: JWTParamsProvider,
-      configuration: Configuration,
-      timeProvider: TimeProvider,
-      uUIDProvider: UUIDProvider,
-      unnamedClient: ActorRef
+             chatAuthenticator: SocketAuthenticator,
+             userAPI: UserAPI,
+             chatMessageAPI: ChatMessageAPI,
+             chatContactsAPI: ChatContactAPI,
+             authenticationAPI: AuthenticationAPI,
+             jWTParamsProvider: JWTKeysProvider,
+             configuration: Configuration,
+             timeProvider: TimeProvider,
+             uUIDProvider: UUIDProvider,
+             unnamedClient: ActorRef
     ) =
     Props(
       new Authenticator(

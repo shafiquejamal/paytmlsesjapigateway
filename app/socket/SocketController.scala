@@ -1,7 +1,7 @@
 package socket
 
 import access.authentication.AuthenticationAPI
-import access.{AuthenticatedActionCreator, JWTParamsProvider}
+import access.{AuthenticatedActionCreator, JWTKeysProvider}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import chat.{ChatContactAPI, ChatMessageAPI}
@@ -19,7 +19,7 @@ class SocketController @Inject()(
     chatMessageAPI: ChatMessageAPI,
     chatContactsAPI: ChatContactAPI,
     override val authenticationAPI: AuthenticationAPI,
-    override val jWTParamsProvider: JWTParamsProvider,
+    override val jWTParamsProvider: JWTKeysProvider,
     uUIDProvider: UUIDProvider,
     override val configuration: Configuration,
     override val timeProvider: TimeProvider,

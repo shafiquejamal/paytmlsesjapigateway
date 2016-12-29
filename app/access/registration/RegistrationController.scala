@@ -1,6 +1,6 @@
 package access.registration
 
-import access.JWTParamsProvider
+import access.JWTKeysProvider
 import access.authentication.EmailMessage
 import access.registration.RegistrationMessage._
 import com.google.inject.Inject
@@ -14,12 +14,12 @@ import util.UUIDProvider
 import scala.util.Success
 
 class RegistrationController @Inject() (
-    registrationAPI: RegistrationAPI,
-    userAPI: UserAPI,
-    jWTParamsProvider: JWTParamsProvider,
-    uUIDProvider: UUIDProvider,
-    configuration:Configuration,
-    accountActivationLinkSender:AccountActivationCodeSender)
+                                         registrationAPI: RegistrationAPI,
+                                         userAPI: UserAPI,
+                                         jWTParamsProvider: JWTKeysProvider,
+                                         uUIDProvider: UUIDProvider,
+                                         configuration:Configuration,
+                                         accountActivationLinkSender:AccountActivationCodeSender)
   extends Controller {
 
   val activationCodeKey = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")

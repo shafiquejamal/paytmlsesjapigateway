@@ -2,7 +2,7 @@ package user
 
 import java.util.UUID
 
-import access.{JWTParamsProvider, TestJWTParamsProviderImpl}
+import access.{JWTKeysProvider, TestJWTKeysProviderImpl}
 import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
@@ -22,11 +22,12 @@ class UserControllerATest
   with UserFixture {
 
   override def overrideModules =
-    Seq(bind[DBConfig].to[ScalikeJDBCTestDBConfig],
-        bind[JWTParamsProvider].to[TestJWTParamsProviderImpl],
-        bind[UUIDProvider].to[TestUUIDProviderImpl],
-        bind[TimeProvider].to[TestTimeProviderImpl]
-       )
+    Seq(
+      bind[DBConfig].to[ScalikeJDBCTestDBConfig],
+      bind[JWTKeysProvider].to[TestJWTKeysProviderImpl],
+      bind[UUIDProvider].to[TestUUIDProviderImpl],
+      bind[TimeProvider].to[TestTimeProviderImpl]
+    )
 
   val dBConfig = new ScalikeJDBCTestDBConfig()
 
@@ -44,7 +45,7 @@ class UserControllerATest
   }
 
   val timeProvider = new TestTimeProviderImpl()
-  val jWTParamsProvider = new TestJWTParamsProviderImpl()
+  val jWTParamsProvider = new TestJWTKeysProviderImpl()
   val claim = Json.obj("userId" -> id1, "iat" -> timeProvider.now())
   val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
 

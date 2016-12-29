@@ -3,7 +3,7 @@ package access.authentication
 import access.authentication.AuthenticationMessage._
 import access.authentication.EmailMessage._
 import access.authentication.ResetPasswordMessage._
-import access.{AuthenticatedActionCreator, JWTParamsProvider}
+import access.{AuthenticatedActionCreator, JWTKeysProvider}
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
 import play.Configuration
@@ -18,7 +18,7 @@ import scala.util.{Failure, Success}
 class AuthenticationController @Inject() (
     override val authenticationAPI: AuthenticationAPI,
     userAPI: UserAPI,
-    override val jWTParamsProvider: JWTParamsProvider,
+    override val jWTParamsProvider: JWTKeysProvider,
     uUIDProvider: UUIDProvider,
     passwordResetCodeSender: PasswordResetCodeSender,
     override val timeProvider: TimeProvider,

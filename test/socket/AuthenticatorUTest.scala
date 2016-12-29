@@ -4,7 +4,7 @@ import java.util.UUID
 
 import access.authentication.{AuthenticationAPI, ToClientLoginFailedMessage, ToClientLoginSuccessfulMessage,
 ToServerAuthenticateMessage}
-import access.{AllowedTokens, MultiUse, TestJWTParamsProviderImpl}
+import access.{AllowedTokens, MultiUse, TestJWTKeysProviderImpl}
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
 import org.scalamock.scalatest.MockFactory
@@ -24,7 +24,7 @@ class AuthenticatorUTest
 
   val timeProvider = new TestTimeProviderImpl()
   val uUIDProvider = new TestUUIDProviderImpl()
-  val jWTParamsProvider = new TestJWTParamsProviderImpl()
+  val jWTParamsProvider = new TestJWTKeysProviderImpl()
   class NoArgSocketAuthenticator extends SocketAuthenticator(mockAuthenticationAPI, jWTParamsProvider, null, timeProvider)
   val mockChatAuthenticator = mock[NoArgSocketAuthenticator]
   val authenticator =
