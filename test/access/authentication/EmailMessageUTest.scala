@@ -24,7 +24,7 @@ class EmailMessageUTest extends FlatSpecLike with ShouldMatchers {
     validatedMessage.isError shouldBe true
   }
 
-  "It" should "not be possible to form an email message with an invalid email" in {
+  it should "not be possible to form an email message with an invalid email" in {
     Try(EmailMessage(invalidEmail)) shouldBe a[Failure[_]]
   }
 
