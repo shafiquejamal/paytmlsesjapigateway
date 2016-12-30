@@ -1,4 +1,4 @@
-name := """smsbackend"""
+name := """access-service"""
 
 version := "0.1"
 
