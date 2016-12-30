@@ -1,14 +1,16 @@
 package socket
 
+import java.io.File
 import java.util.UUID
 
-import access.authentication.{AuthenticationAPI, ToClientLoginFailedMessage, ToClientLoginSuccessfulMessage,
-ToServerAuthenticateMessage}
-import access.{AllowedTokens, MultiUse, TestJWTKeysProviderImpl}
+import access._
+import access.authentication.{AuthenticationAPI, ToClientLoginFailedMessage, ToClientLoginSuccessfulMessage, ToServerAuthenticateMessage}
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
+import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, ShouldMatchers}
+import play.api.Configuration
 import user.UserAPI
 import util.{StopSystemAfterAll, TestTimeProviderImpl, TestUUIDProviderImpl}
 
@@ -24,13 +26,25 @@ class AuthenticatorUTest
 
   val timeProvider = new TestTimeProviderImpl()
   val uUIDProvider = new TestUUIDProviderImpl()
-  val jWTParamsProvider = new TestJWTKeysProviderImpl()
-  class NoArgSocketAuthenticator extends SocketAuthenticator(mockAuthenticationAPI, jWTParamsProvider, null, timeProvider)
+  val jWTAlgorithmProvider = new JWTAlgorithmProviderImpl()
+  val configuration = new Configuration(ConfigFactory.parseFile(new File("conf/application.test.conf")).resolve())
+  val jWTPublicKeyProvider = new JWTPublicKeyProviderImpl(configuration)
+  class NoArgSocketAuthenticator extends
+    SocketAuthenticator(mockAuthenticationAPI, jWTAlgorithmProvider, jWTPublicKeyProvider, null, timeProvider)
   val mockChatAuthenticator = mock[NoArgSocketAuthenticator]
   val authenticator =
     system.actorOf(Authenticator.props(
       mockChatAuthenticator,
-      mockUserAPI, null, null, mockAuthenticationAPI, jWTParamsProvider, null, timeProvider, uUIDProvider, testActor))
+      mockUserAPI,
+      null,
+      null,
+      mockAuthenticationAPI,
+      jWTAlgorithmProvider,
+      jWTPublicKeyProvider,
+      null,
+      timeProvider,
+      uUIDProvider,
+      testActor))
 
   val id1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
   val fakeJWT = "somejwt"

@@ -3,7 +3,7 @@ package access.authentication
 import java.io.File
 import java.util.UUID
 
-import access.{TestJWTKeysProviderImpl, JWTKeysProvider, JWTKeysProviderImpl}
+import access._
 import access.registration.ActivationCodeGenerator
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
@@ -31,7 +31,6 @@ class AuthenticationControllerATest
   override def overrideModules =
     Seq(
       bind[DBConfig].to[ScalikeJDBCTestDBConfig],
-      bind[JWTKeysProvider].to[TestJWTKeysProviderImpl],
       bind[UUIDProvider].to[TestUUIDProviderImpl],
       bind[Emailer].to[TestEmailerImpl],
       bind[TimeProvider].to[TestTimeProviderImpl]
@@ -56,11 +55,13 @@ class AuthenticationControllerATest
     super.afterEach()
   }
 
-  val jWTParamsProvider = new TestJWTKeysProviderImpl
+  val jWTAlgorithmProvider = new JWTAlgorithmProviderImpl()
+  val jWTPrivateKeyProvider = new JWTPrivateKeyProviderImpl(configuration)
+
   val claim =
     Json.obj("userId" -> UUID.fromString("00000000-0000-0000-0000-000000000001"),
              "iat" -> timeProvider.now())
-  val expectedJWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
+  val expectedJWT = JwtJson.encode(claim, jWTPrivateKeyProvider.privateKey, jWTAlgorithmProvider.algorithm)
 
   trait JWTChecker {
     def checkJWT(authentication:JsValue) = {
@@ -192,7 +193,7 @@ class AuthenticationControllerATest
   "Logging out of all devices" should "succeed if the user exists" in {
     val timeProvider = new TestTimeProviderImpl()
     val claim = Json.obj("userId" -> id1, "iat" -> timeProvider.now())
-    val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
+    val jWT = JwtJson.encode(claim, jWTPrivateKeyProvider.privateKey, jWTAlgorithmProvider.algorithm)
 
     val result = route(app, FakeRequest(POST, "/logout-all-devices")
       .withHeaders(("Authorization", "Bearer " + jWT))
@@ -206,7 +207,7 @@ class AuthenticationControllerATest
   it should "fail if the user does not exist" in {
     val timeProvider = new TestTimeProviderImpl()
     val claim = Json.obj("userId" -> idNonExistentUser, "iat" -> timeProvider.now())
-    val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
+    val jWT = JwtJson.encode(claim, jWTPrivateKeyProvider.privateKey, jWTAlgorithmProvider.algorithm)
 
     val result = route(app, FakeRequest(POST, "/logout-all-devices")
       .withHeaders(("Authorization", jWT))

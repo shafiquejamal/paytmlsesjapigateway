@@ -1,11 +1,11 @@
 package modules
 
-import access.authentication.{PasswordResetCodeSenderImpl, PasswordResetCodeSender, AuthenticationAPI, AuthenticationFacade}
+import access._
+import access.authentication.{AuthenticationAPI, AuthenticationFacade, PasswordResetCodeSender, PasswordResetCodeSenderImpl}
 import access.registration.{AccountActivationCodeSender, AccountActivationCodeSenderImpl, RegistrationAPI,
 RegistrationFacade}
-import access.{JWTKeysProvider, JWTKeysProviderImpl}
 import com.google.inject.AbstractModule
-import communication.{CodeSenderImpl, CodeSender, Emailer, EmailerImpl}
+import communication.{CodeSender, CodeSenderImpl, Emailer, EmailerImpl}
 import contact.phone._
 import db.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import net.codingwell.scalaguice.ScalaModule
@@ -23,7 +23,9 @@ class Module extends AbstractModule with ScalaModule {
     bind[UserAPI].to[UserFacade]
     bind[PhoneAPI].to[PhoneFacade]
     bind[DBConfig].to[ScalikeJDBCDevProdDBConfig]
-    bind[JWTKeysProvider].to[JWTKeysProviderImpl]
+    bind[JWTAlgorithmProvider].to[JWTAlgorithmProviderImpl]
+    bind[JWTPublicKeyProvider].to[JWTPublicKeyProviderImpl]
+    bind[JWTPrivateKeyProvider].to[JWTPrivateKeyProviderImpl]
     bind[Emailer].to[EmailerImpl]
     bind[AccountActivationCodeSender].to[AccountActivationCodeSenderImpl]
     bind[PasswordResetCodeSender].to[PasswordResetCodeSenderImpl]

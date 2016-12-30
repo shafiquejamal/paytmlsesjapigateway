@@ -1,10 +1,10 @@
 package socket
 
-import access.JWTKeysProvider
 import access.authentication._
+import access.{JWTAlgorithmProvider, JWTPublicKeyProvider}
 import akka.actor.{Actor, ActorLogging, _}
 import chat.{ChatContactAPI, ChatMessageAPI}
-import play.Configuration
+import play.api.Configuration
 import play.api.libs.json.JsValue
 import user.UserAPI
 import util.{TimeProvider, UUIDProvider}
@@ -15,7 +15,8 @@ class MessageTranslator(
     chatMessageAPI: ChatMessageAPI,
     chatContactsAPI: ChatContactAPI,
     authenticationAPI: AuthenticationAPI,
-    jWTParamsProvider: JWTKeysProvider,
+    jWTAlgorithmProvider: JWTAlgorithmProvider,
+    jWTPublicKeyProvider: JWTPublicKeyProvider,
     configuration: Configuration,
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
@@ -31,7 +32,8 @@ class MessageTranslator(
         chatMessageAPI,
         chatContactsAPI,
         authenticationAPI,
-        jWTParamsProvider,
+        jWTAlgorithmProvider,
+        jWTPublicKeyProvider,
         configuration,
         timeProvider,
         uUIDProvider,
@@ -51,16 +53,17 @@ class MessageTranslator(
 object MessageTranslator {
 
   def props(
-             chatAuthenticator: SocketAuthenticator,
-             userAPI: UserAPI,
-             chatMessageAPI: ChatMessageAPI,
-             chatContactsAPI: ChatContactAPI,
-             authenticationAPI: AuthenticationAPI,
-             jWTParamsProvider: JWTKeysProvider,
-             configuration: Configuration,
-             timeProvider: TimeProvider,
-             uUIDProvider: UUIDProvider,
-             unnamedClient: ActorRef
+    chatAuthenticator: SocketAuthenticator,
+    userAPI: UserAPI,
+    chatMessageAPI: ChatMessageAPI,
+    chatContactsAPI: ChatContactAPI,
+    authenticationAPI: AuthenticationAPI,
+    jWTAlgorithmProvider: JWTAlgorithmProvider,
+    jWTPublicKeyProvider: JWTPublicKeyProvider,
+    configuration: Configuration,
+    timeProvider: TimeProvider,
+    uUIDProvider: UUIDProvider,
+    unnamedClient: ActorRef
   ) =
     Props(
       new MessageTranslator(
@@ -69,7 +72,8 @@ object MessageTranslator {
         chatMessageAPI,
         chatContactsAPI,
         authenticationAPI,
-        jWTParamsProvider,
+        jWTAlgorithmProvider,
+        jWTPublicKeyProvider,
         configuration,
         timeProvider,
         uUIDProvider,

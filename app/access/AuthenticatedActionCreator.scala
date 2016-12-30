@@ -7,7 +7,7 @@ import access.authentication.AuthenticationAPI
 import org.joda.time.DateTime
 import pdi.jwt._
 import pdi.jwt.algorithms.JwtAsymetricAlgorithm
-import play.Configuration
+import play.api.Configuration
 import play.api.libs.json.JsObject
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -19,9 +19,10 @@ import scala.util.Success
 trait AuthenticatedActionCreator {
 
   val authenticationAPI: AuthenticationAPI
-  val jWTParamsProvider: JWTKeysProvider
-  val publicKey: PublicKey = jWTParamsProvider.publicKey
-  val algorithm: JwtAsymetricAlgorithm = jWTParamsProvider.algorithm
+  val jWTPublicKeyProvider: JWTPublicKeyProvider
+  val jWTAlgorithmProvider: JWTAlgorithmProvider
+  val publicKey: PublicKey = jWTPublicKeyProvider.publicKey
+  val algorithm: JwtAsymetricAlgorithm = jWTAlgorithmProvider.algorithm
   val configuration: Configuration
   val timeProvider: TimeProvider
 
@@ -31,7 +32,7 @@ trait AuthenticatedActionCreator {
       allowedTokens: AllowedTokens,
       claim: JsObject): T =
     claim.value.get("iat").flatMap(_.asOpt[DateTime]).fold[T](unauthorized) { iat =>
-      val jWTValidity = configuration.getInt("crauth.jwtValidityDays")
+      val jWTValidity = configuration.getInt("crauth.jwtValidityDays").getOrElse(-1)
       val tokenExpired = iat.isBefore(timeProvider.now().minusDays(jWTValidity)) && jWTValidity > 0
       if (tokenExpired)
         unauthorized

@@ -3,15 +3,16 @@ package user
 import javax.inject.Inject
 
 import access.authentication.AuthenticationAPI
-import access.{AuthenticatedActionCreator, JWTKeysProvider}
-import play.Configuration
+import access.{AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPublicKeyProvider}
+import play.api.Configuration
 import play.api.libs.json.{JsSuccess, Json}
 import play.api.mvc.{Action, Controller, Result}
 import util.TimeProvider
 
 class UserController @Inject()(
     override val authenticationAPI: AuthenticationAPI,
-    override val jWTParamsProvider: JWTKeysProvider,
+    override val jWTAlgorithmProvider: JWTAlgorithmProvider,
+    override val jWTPublicKeyProvider: JWTPublicKeyProvider,
     override val timeProvider: TimeProvider,
     override val configuration: Configuration,
     userAPI:UserAPI

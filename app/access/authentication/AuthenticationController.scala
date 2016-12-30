@@ -1,12 +1,12 @@
 package access.authentication
 
+import access._
 import access.authentication.AuthenticationMessage._
 import access.authentication.EmailMessage._
 import access.authentication.ResetPasswordMessage._
-import access.{AuthenticatedActionCreator, JWTKeysProvider}
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
-import play.Configuration
+import play.api.Configuration
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import user.UserAPI
@@ -18,7 +18,9 @@ import scala.util.{Failure, Success}
 class AuthenticationController @Inject() (
     override val authenticationAPI: AuthenticationAPI,
     userAPI: UserAPI,
-    override val jWTParamsProvider: JWTKeysProvider,
+    override val jWTPublicKeyProvider: JWTPublicKeyProvider,
+    jWTPrivateKeyProvider: JWTPrivateKeyProvider,
+    override val jWTAlgorithmProvider: JWTAlgorithmProvider,
     uUIDProvider: UUIDProvider,
     passwordResetCodeSender: PasswordResetCodeSender,
     override val timeProvider: TimeProvider,
@@ -34,7 +36,7 @@ class AuthenticationController @Inject() (
             Json.obj(
               "userId" -> user.maybeId.getOrElse(uUIDProvider.randomUUID()).toString,
               "iat" -> timeProvider.now())
-          val jWT = JwtJson.encode(claim, jWTParamsProvider.privateKey, jWTParamsProvider.algorithm)
+          val jWT = JwtJson.encode(claim, jWTPrivateKeyProvider.privateKey, jWTAlgorithmProvider.algorithm)
           Ok(Json.obj("token" -> jWT, "email" -> user.email, "username" -> user.username))
         }
       case error: JsError =>

@@ -1,6 +1,5 @@
 package access.registration
 
-import access.{JWTKeysProvider, TestJWTKeysProviderImpl}
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
 import db._
@@ -25,7 +24,6 @@ class RegistrationControllerATest
   override def overrideModules =
     Seq(
       bind[DBConfig].to[ScalikeJDBCTestDBConfig],
-      bind[JWTKeysProvider].to[TestJWTKeysProviderImpl],
       bind[UUIDProvider].to[TestUUIDProviderImpl],
       bind[Emailer].to[TestEmailerImpl],
       bind[TimeProvider].to[TestTimeProviderImpl]
