@@ -54,7 +54,7 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
   val claimNotExpired = Json.obj("userId" -> uUID, "iat" -> now.minusDays(1))
   val user = new TestUserImpl().copy(maybeId = Some(uUID))
 
-  trait WrongprivateKey {
+  trait WrongPrivateKey {
     val S = BigInt("abcd", 16)
     Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
     val curveParams = ECNamedCurveTable.getParameterSpec("P-521")
@@ -84,7 +84,7 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
     contentAsString(result) shouldBe empty
   }
 
-  it should "deny access if the token is not valid" in new WrongprivateKey {
+  it should "deny access if the token is not valid" in new WrongPrivateKey {
     val token = JwtJson.encode(claimNotExpired, wrongprivateKey, jWTAlgorithmProvider.algorithm)
     val result = controller.index.apply(FakeRequest(GET, "/test").withHeaders(("Authorization", "Bearer " + token)) )
 
@@ -187,7 +187,7 @@ class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppP
       token, (_, _) => "success", "failure", AllowedTokens(Vector(SingleUse, MultiUse))) shouldEqual "success"
   }
 
-  it should "return the unauthorized block if the token is not valid" in new WrongprivateKey {
+  it should "return the unauthorized block if the token is not valid" in new WrongPrivateKey {
     val token = JwtJson.encode(claimNotExpired, wrongprivateKey, jWTAlgorithmProvider.algorithm)
 
     controller.decodeAndValidateToken[String](token, (_, _) => "success", "failure", null) shouldEqual "failure"

@@ -4,7 +4,7 @@ import java.security.MessageDigest
 
 object ActivationCodeGenerator {
 
-  val configurationKey = "crauth.md5ActivationKey"
+  val configurationKey = "accessService.md5ActivationKey"
 
   def generate(nonHashedCode: String, key: String): String = {
     val origCode =

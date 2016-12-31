@@ -11,8 +11,8 @@ import play.api.Configuration
 class JWTPublicKeyProviderImpl @Inject()(configuration: Configuration) extends JWTPublicKeyProvider {
 
   override def publicKey: PublicKey = {
-    val xRaw: String = configuration.getString("crauth.X").getOrElse("")
-    val yRaw: String = configuration.getString("crauth.Y").getOrElse("")
+    val xRaw: String = configuration.getString("accessService.X").getOrElse("")
+    val yRaw: String = configuration.getString("accessService.Y").getOrElse("")
     val X = BigInt(xRaw, 16)
     val Y = BigInt(yRaw, 16)
     Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider())

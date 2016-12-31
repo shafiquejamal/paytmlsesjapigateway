@@ -18,7 +18,7 @@ class CodeSenderImpl @Inject()(
       subjectMessageKey:String,
       bodyTextMessageKey:String):Unit = {
 
-    val from = configuration.getString("crauth.emailFrom").getOrElse("")
+    val from = configuration.getString("accessService.emailFrom").getOrElse("")
     val subject = Messages(subjectMessageKey)
     val bodyText = Messages(bodyTextMessageKey:String, code)
 

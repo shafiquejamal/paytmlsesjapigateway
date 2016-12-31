@@ -11,7 +11,7 @@ import play.api.Configuration
 class JWTPrivateKeyProviderImpl @Inject()(configuration: Configuration) extends JWTPrivateKeyProvider {
 
   override def privateKey: PrivateKey = {
-    val sRaw: String = configuration.getString("crauth.S").getOrElse("")
+    val sRaw: String = configuration.getString("accessService.S").getOrElse("")
     val S = BigInt(sRaw, 16)
     Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider())
     val curveParams = ECNamedCurveTable.getParameterSpec("P-521")

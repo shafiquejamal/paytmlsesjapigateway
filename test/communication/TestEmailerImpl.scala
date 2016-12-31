@@ -2,7 +2,7 @@ package communication
 
 import com.google.inject.Inject
 import play.api.Configuration
-import play.api.libs.mailer.{MailerClient, Email}
+import play.api.libs.mailer.{Email, MailerClient}
 
 class TestEmailerImpl @Inject() (mailerClient: MailerClient, configuration:Configuration) extends Emailer {
 
@@ -18,7 +18,7 @@ class TestEmailerImpl @Inject() (mailerClient: MailerClient, configuration:Confi
       Email(
         subject,
         from,
-        Seq(configuration.getString("crauth.testEmailRecipient").getOrElse("")),
+        Seq(configuration.getString("accessService.testEmailRecipient").getOrElse("")),
         bodyText,
         None,
         None,

@@ -24,7 +24,7 @@ class PasswordResetCodeSenderImpl @Inject()(
         .filter { passwordResetCodeAndDate =>
           Days.daysBetween(passwordResetCodeAndDate.date.withTimeAtStartOfDay(),
             timeProvider.now().withTimeAtStartOfDay()).getDays <
-              configuration.getInt("crauth.passwordResetLinkIsValidForDays").getOrElse(10)
+              configuration.getInt("accessService.passwordResetLinkIsValidForDays").getOrElse(10)
         }
     .fold[Unit] {
       val passwordResetCode = Random.alphanumeric.take(20).mkString
