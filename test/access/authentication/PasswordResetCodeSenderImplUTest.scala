@@ -19,7 +19,7 @@ class PasswordResetCodeSenderImplUTest
 
   val timeProvider = new TestTimeProviderImpl()
   val configuration =
-    new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
+    new Configuration(ConfigFactory.parseFile(new File("conf/application.test.conf")).resolve())
   val authenticationAPI = mock[AuthenticationAPI]
   val linkSender = new TestCodeSender()
   val user = new TestUserImpl(Some(id1), "alice", "alice@alice.com", pAlice2, Active, Some(timeProvider.now()))

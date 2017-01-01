@@ -29,7 +29,7 @@ class AuthenticationFacadeATest
   val passwordResetCode = "some password reset code"
   val newPassword = "some new password"
   val configuration =
-    new Configuration(ConfigFactory.parseFile(new File("conf/application.conf")).resolve())
+    new Configuration(ConfigFactory.parseFile(new File("conf/application.test.conf")).resolve())
 
   "retrieving a user by ID" should "retrieve the latest added user with the given parent ID if that user is" +
     " active, otherwise return empty" in { implicit session =>
