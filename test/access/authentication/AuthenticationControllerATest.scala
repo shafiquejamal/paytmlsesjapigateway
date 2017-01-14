@@ -5,9 +5,10 @@ import java.util.UUID
 
 import access._
 import access.registration.ActivationCodeGenerator
+import com.eigenroute.scalikejdbchelpers.DBConfig
+import com.eigenroute.scalikejdbctesthelpers.{ScalikeJDBCTestDBConfig, InitialMigration, OneAppPerTestWithOverrides}
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
-import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
 import play.api.Configuration
@@ -46,7 +47,7 @@ class AuthenticationControllerATest
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
     dBConfig.setUpAllDB()
     migrate(dBConfig)
-    sqlToAddUsers.foreach(_.update.apply())
+    sqlToExecute.foreach(_.update.apply())
     super.beforeEach()
   }
 

@@ -4,8 +4,9 @@ import java.io.File
 import java.util.UUID
 
 import access.{JWTAlgorithmProviderImpl, JWTPrivateKeyProviderImpl}
+import com.eigenroute.scalikejdbchelpers.DBConfig
+import com.eigenroute.scalikejdbctesthelpers.{ScalikeJDBCTestDBConfig, InitialMigration, OneAppPerTestWithOverrides}
 import com.typesafe.config.ConfigFactory
-import db.{DBConfig, InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import org.scalatest._
 import pdi.jwt.JwtJson
 import play.api.Configuration
@@ -37,7 +38,7 @@ class UserControllerATest
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
     dBConfig.setUpAllDB()
     migrate(dBConfig)
-    sqlToAddUsers.foreach(_.update.apply())
+    sqlToExecute.foreach(_.update.apply())
     super.beforeEach()
   }
 

@@ -1,8 +1,9 @@
 package access.registration
 
+import com.eigenroute.scalikejdbchelpers.DBConfig
+import com.eigenroute.scalikejdbctesthelpers.{InitialMigration, ScalikeJDBCTestDBConfig, OneAppPerTestWithOverrides}
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
-import db._
 import org.scalatest._
 import play.api.http.HeaderNames
 import play.api.inject.bind
@@ -37,7 +38,7 @@ class RegistrationControllerATest
     implicit val session = NamedAutoSession(Symbol(dBConfig.dBName))
     dBConfig.setUpAllDB()
     migrate(dBConfig)
-    sqlToAddUsers.foreach(_.update.apply())
+    sqlToExecute.foreach(_.update.apply())
     super.beforeEach()
   }
 

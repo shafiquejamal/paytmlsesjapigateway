@@ -3,8 +3,8 @@ package user
 import java.util.UUID
 
 import access.authentication.PasswordResetCodeAndDate
+import com.eigenroute.scalikejdbchelpers.{DBConfig, ScalikeJDBCSessionProvider}
 import com.google.inject.{Inject, Singleton}
-import db.{DBConfig, ScalikeJDBCSessionProvider}
 import org.joda.time.DateTime
 import scalikejdbc.TxBoundary.Try._
 import scalikejdbc._

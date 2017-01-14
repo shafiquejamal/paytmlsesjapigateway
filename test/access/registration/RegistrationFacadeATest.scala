@@ -1,6 +1,6 @@
 package access.registration
 
-import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import com.eigenroute.scalikejdbctesthelpers.{TestScalikeJDBCSessionProvider, TestDBConnection, CrauthAutoRollback}
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, Matchers, ShouldMatchers}
@@ -19,6 +19,7 @@ class RegistrationFacadeATest
   with BeforeAndAfterEach
   with TestDBConnection {
 
+  val converter = new WrappedResultSetToTestUserConverterImpl()
   val user = new TestUserImpl()
   val testUUIDProviderImpl = new TestUUIDProviderImpl()
   testUUIDProviderImpl.index = 10

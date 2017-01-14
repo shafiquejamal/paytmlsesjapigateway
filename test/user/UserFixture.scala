@@ -61,7 +61,7 @@ trait UserFixture {
   val charlie =
     TestUserImpl(Some(id4), "charlie", "charlie@charlie.com", pCharlie5, userStatus = Unverified, Some(now))
 
-  val sqlToAddUsers = Vector(
+  val sqlToExecute = Vector(
     sql"insert into xuser  (id, authorid, createdat) values (${id1}, ${id1}, ${now})",
     sql"insert into xuser  (id, authorid, createdat) values (${id2}, ${id2}, ${now})",
     sql"insert into xuser  (id, authorid, createdat) values (${id3}, ${id3}, ${now})",

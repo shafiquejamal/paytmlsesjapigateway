@@ -4,8 +4,8 @@ import java.io.File
 import java.util.UUID
 
 import access.registration.ActivationCodeGenerator
+import com.eigenroute.scalikejdbctesthelpers.{TestScalikeJDBCSessionProvider, TestDBConnection, CrauthAutoRollback}
 import com.typesafe.config.ConfigFactory
-import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
@@ -25,6 +25,7 @@ class AuthenticationFacadeATest
   with TestDBConnection
   with UserFixture {
 
+  val converter = new WrappedResultSetToTestUserConverterImpl()
   val timeProvider = new TestTimeProviderImpl()
   val passwordResetCode = "some password reset code"
   val newPassword = "some new password"

@@ -1,6 +1,6 @@
 package user
 
-import db.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import com.eigenroute.scalikejdbctesthelpers.{TestDBConnection, CrauthAutoRollback, TestScalikeJDBCSessionProvider}
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
@@ -17,6 +17,7 @@ class UserFacadeATest
   with BeforeAndAfterEach
   with TestDBConnection {
 
+  val converter = new WrappedResultSetToTestUserConverterImpl()
   val user = new TestUserImpl()
 
   "changing the username" should "change the users username if the username is available" in { implicit session =>
