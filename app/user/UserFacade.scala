@@ -2,11 +2,11 @@ package user
 
 import java.util.UUID
 
+import com.eigenroute.time.TimeProvider
 import com.google.inject.{Inject, Singleton}
 import user.UserMessage._
 import user.UserStatus._
 import util.Password._
-import util.TimeProvider
 
 import scala.util.{Failure, Try}
 

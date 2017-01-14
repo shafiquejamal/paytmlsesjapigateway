@@ -2,6 +2,7 @@ package access.authentication
 
 import java.io.File
 
+import com.eigenroute.time.TestTimeProviderImpl
 import com.typesafe.config.ConfigFactory
 import communication.TestCodeSender
 import org.scalamock.scalatest.MockFactory
@@ -9,7 +10,6 @@ import org.scalatest.{FlatSpec, ShouldMatchers}
 import play.api.Configuration
 import user.UserStatus.Active
 import user.{TestUserImpl, UserFixture}
-import util.TestTimeProviderImpl
 
 class PasswordResetCodeSenderImplUTest
   extends FlatSpec

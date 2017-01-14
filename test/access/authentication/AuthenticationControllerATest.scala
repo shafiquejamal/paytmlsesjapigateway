@@ -5,8 +5,10 @@ import java.util.UUID
 
 import access._
 import access.registration.ActivationCodeGenerator
+import com.eigenroute.id.{TestUUIDProviderImpl, UUIDProvider}
 import com.eigenroute.scalikejdbchelpers.DBConfig
-import com.eigenroute.scalikejdbctesthelpers.{ScalikeJDBCTestDBConfig, InitialMigration, OneAppPerTestWithOverrides}
+import com.eigenroute.scalikejdbctesthelpers.{InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
+import com.eigenroute.time.{TestTimeProviderImpl, TimeProvider}
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
 import org.scalatest._
@@ -19,7 +21,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import scalikejdbc.NamedAutoSession
 import user.UserFixture
-import util.{TestTimeProviderImpl, TestUUIDProviderImpl, TimeProvider, UUIDProvider}
 
 class AuthenticationControllerATest
   extends FlatSpec

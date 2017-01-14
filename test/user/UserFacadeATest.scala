@@ -1,11 +1,11 @@
 package user
 
-import com.eigenroute.scalikejdbctesthelpers.{TestDBConnection, CrauthAutoRollback, TestScalikeJDBCSessionProvider}
+import com.eigenroute.scalikejdbctesthelpers.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import com.eigenroute.time.TestTimeProviderImpl
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec
 import scalikejdbc.DBSession
-import util.TestTimeProviderImpl
 
 import scala.util.{Failure, Success}
 

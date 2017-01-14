@@ -1,14 +1,14 @@
 package user
 
 import access.authentication.PasswordResetCodeAndDate
-import com.eigenroute.scalikejdbctesthelpers.{TestScalikeJDBCSessionProvider, TestDBConnection, CrauthAutoRollback}
+import com.eigenroute.scalikejdbctesthelpers.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import com.eigenroute.time.TestTimeProviderImpl
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers}
 import scalikejdbc._
 import user.UserStatus._
 import util.Password.hash
-import util.TestTimeProviderImpl
 
 import scala.util.Success
 

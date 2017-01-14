@@ -3,6 +3,8 @@ package access.authentication
 import java.util.UUID
 
 import access.registration.ActivationCodeGenerator
+import com.eigenroute.id.UUIDProvider
+import com.eigenroute.time.TimeProvider
 import com.google.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Configuration
@@ -10,7 +12,6 @@ import user.UserMessage._
 import user.UserStatus._
 import user.{User, UserDAO, UserMessage}
 import util.Password._
-import util.{TimeProvider, UUIDProvider}
 
 import scala.util.{Failure, Try}
 

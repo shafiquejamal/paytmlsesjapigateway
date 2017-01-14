@@ -2,9 +2,9 @@ package user
 
 import java.util.UUID
 
+import com.eigenroute.id.UUIDProvider
 import org.joda.time.DateTime
 import user.UserStatus.Active
-import util.UUIDProvider
 
 import scala.util.{Failure, Try}
 

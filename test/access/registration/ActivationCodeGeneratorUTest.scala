@@ -1,8 +1,8 @@
 package access.registration
 
-import org.scalatest.{ShouldMatchers, FlatSpec}
+import com.eigenroute.id.TestUUIDProviderImpl
+import org.scalatest.{FlatSpec, ShouldMatchers}
 import user.TestUserImpl
-import util.TestUUIDProviderImpl
 
 class ActivationCodeGeneratorUTest extends FlatSpec with ShouldMatchers {
 

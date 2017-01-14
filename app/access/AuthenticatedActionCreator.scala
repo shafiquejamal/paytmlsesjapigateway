@@ -4,6 +4,7 @@ import java.security.PublicKey
 import java.util.UUID
 
 import access.authentication.AuthenticationAPI
+import com.eigenroute.time.TimeProvider
 import org.joda.time.DateTime
 import pdi.jwt._
 import pdi.jwt.algorithms.JwtAsymetricAlgorithm
@@ -11,7 +12,6 @@ import play.api.Configuration
 import play.api.libs.json.JsObject
 import play.api.mvc.Results._
 import play.api.mvc._
-import util.TimeProvider
 
 import scala.concurrent.Future
 import scala.util.Success

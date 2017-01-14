@@ -4,10 +4,10 @@ import javax.inject.Inject
 
 import access.authentication.AuthenticationAPI
 import access.{AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPublicKeyProvider}
+import com.eigenroute.time.TimeProvider
 import play.api.Configuration
 import play.api.libs.json.{JsSuccess, Json}
 import play.api.mvc.{Action, Controller, Result}
-import util.TimeProvider
 
 class UserController @Inject()(
     override val authenticationAPI: AuthenticationAPI,

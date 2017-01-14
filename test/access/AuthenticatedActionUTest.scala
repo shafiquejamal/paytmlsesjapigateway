@@ -5,6 +5,8 @@ import java.security.spec.ECPrivateKeySpec
 import java.security.{KeyFactory, PrivateKey, Security}
 
 import access.authentication.AuthenticationAPI
+import com.eigenroute.id.TestUUIDProviderImpl
+import com.eigenroute.time.{TestTimeProviderImpl, TimeProvider}
 import com.google.inject.Inject
 import com.typesafe.config.ConfigFactory
 import org.bouncycastle.jce.ECNamedCurveTable
@@ -19,7 +21,6 @@ import play.api.mvc.Controller
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import user.TestUserImpl
-import util.{TestTimeProviderImpl, TestUUIDProviderImpl, TimeProvider}
 
 
 class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppPerTest with MockFactory {

@@ -1,7 +1,9 @@
 package access.registration
 
+import com.eigenroute.id.{TestUUIDProviderImpl, UUIDProvider}
 import com.eigenroute.scalikejdbchelpers.DBConfig
-import com.eigenroute.scalikejdbctesthelpers.{InitialMigration, ScalikeJDBCTestDBConfig, OneAppPerTestWithOverrides}
+import com.eigenroute.scalikejdbctesthelpers.{InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
+import com.eigenroute.time.{TestTimeProviderImpl, TimeProvider}
 import com.typesafe.config.ConfigFactory
 import communication.{Emailer, TestEmailerImpl}
 import org.scalatest._
@@ -12,7 +14,6 @@ import play.api.test.Helpers._
 import play.api.test._
 import scalikejdbc.NamedAutoSession
 import user.UserFixture
-import util._
 
 class RegistrationControllerATest
   extends FlatSpec

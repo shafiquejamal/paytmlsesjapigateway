@@ -2,12 +2,13 @@ package access.registration
 
 import java.util.UUID
 
+import com.eigenroute.id.UUIDProvider
+import com.eigenroute.time.TimeProvider
 import com.google.inject.{Inject, Singleton}
 import org.apache.commons.validator.routines.EmailValidator
 import user.UserStatus.{Active, _}
 import user.{User, UserDAO, UserMessage, UserStatus}
 import util.Password.hash
-import util.{TimeProvider, UUIDProvider}
 
 import scala.util.Try
 

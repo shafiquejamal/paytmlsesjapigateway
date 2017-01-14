@@ -3,20 +3,22 @@ package user
 import java.util.UUID
 
 import access.authentication.PasswordResetCodeAndDate
+import com.eigenroute.id.UUIDProvider
 import com.eigenroute.scalikejdbchelpers.{DBConfig, ScalikeJDBCSessionProvider}
 import com.google.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import scalikejdbc.TxBoundary.Try._
 import scalikejdbc._
-import util.UUIDProvider
 
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class ScalikeJDBCUserDAO @Inject()(wrappedResultSetToUserConverter: WrappedResultSetToUserConverter,
-                                   scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider,
-                                   dBConfig: DBConfig,
-                                   uUIDProvider: UUIDProvider) extends UserDAO {
+class ScalikeJDBCUserDAO @Inject()(
+    wrappedResultSetToUserConverter: WrappedResultSetToUserConverter,
+    scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider,
+    dBConfig: DBConfig,
+    uUIDProvider: UUIDProvider)
+  extends UserDAO {
 
   val namedDB = NamedDB(Symbol(dBConfig.dBName))
   namedDB.autoClose(false)

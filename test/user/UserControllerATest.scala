@@ -4,8 +4,10 @@ import java.io.File
 import java.util.UUID
 
 import access.{JWTAlgorithmProviderImpl, JWTPrivateKeyProviderImpl}
+import com.eigenroute.id.{TestUUIDProviderImpl, UUIDProvider}
 import com.eigenroute.scalikejdbchelpers.DBConfig
-import com.eigenroute.scalikejdbctesthelpers.{ScalikeJDBCTestDBConfig, InitialMigration, OneAppPerTestWithOverrides}
+import com.eigenroute.scalikejdbctesthelpers.{InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
+import com.eigenroute.time.{TestTimeProviderImpl, TimeProvider}
 import com.typesafe.config.ConfigFactory
 import org.scalatest._
 import pdi.jwt.JwtJson
@@ -15,7 +17,6 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import scalikejdbc.NamedAutoSession
-import util._
 
 class UserControllerATest
   extends FlatSpec

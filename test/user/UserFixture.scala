@@ -2,10 +2,11 @@ package user
 
 import java.util.UUID
 
+import com.eigenroute.id.TestUUIDProviderImpl
+import com.eigenroute.time.TestTimeProviderImpl
 import scalikejdbc._
 import user.UserStatus._
 import util.Password.hash
-import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 trait UserFixture {
 

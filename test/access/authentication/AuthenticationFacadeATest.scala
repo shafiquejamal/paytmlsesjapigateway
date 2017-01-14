@@ -4,7 +4,8 @@ import java.io.File
 import java.util.UUID
 
 import access.registration.ActivationCodeGenerator
-import com.eigenroute.scalikejdbctesthelpers.{TestScalikeJDBCSessionProvider, TestDBConnection, CrauthAutoRollback}
+import com.eigenroute.scalikejdbctesthelpers.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import com.eigenroute.time.TestTimeProviderImpl
 import com.typesafe.config.ConfigFactory
 import org.scalatest.TryValues._
 import org.scalatest._
@@ -12,7 +13,6 @@ import org.scalatest.fixture.FlatSpec
 import play.api.Configuration
 import scalikejdbc.DBSession
 import user._
-import util.TestTimeProviderImpl
 
 import scala.util.Success
 

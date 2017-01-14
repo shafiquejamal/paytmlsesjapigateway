@@ -1,12 +1,13 @@
 package access.registration
 
-import com.eigenroute.scalikejdbctesthelpers.{TestScalikeJDBCSessionProvider, TestDBConnection, CrauthAutoRollback}
+import com.eigenroute.id.TestUUIDProviderImpl
+import com.eigenroute.scalikejdbctesthelpers.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
+import com.eigenroute.time.TestTimeProviderImpl
 import org.scalatest.TryValues._
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.{BeforeAndAfterEach, Matchers, ShouldMatchers}
 import scalikejdbc.DBSession
 import user._
-import util.{TestTimeProviderImpl, TestUUIDProviderImpl}
 
 import scala.util.Success
 

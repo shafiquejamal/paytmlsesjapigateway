@@ -4,6 +4,8 @@ import access._
 import access.authentication.AuthenticationMessage._
 import access.authentication.EmailMessage._
 import access.authentication.ResetPasswordMessage._
+import com.eigenroute.id.UUIDProvider
+import com.eigenroute.time.TimeProvider
 import com.google.inject.Inject
 import pdi.jwt.JwtJson
 import play.api.Configuration
@@ -11,7 +13,6 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import user.UserAPI
 import user.UserStatus.{Active, Unverified}
-import util.{TimeProvider, UUIDProvider}
 
 import scala.util.{Failure, Success}
 
