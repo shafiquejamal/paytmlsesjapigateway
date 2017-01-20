@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   filters,
+  "com.eigenroute" % "eigenroute-publish-subscribe_2.11" % "0.0.4",
   "com.eigenroute" % "eigenroute-messagebroker-messages_2.11" % "0.0.2",
   "com.eigenroute" % "eigenroute-scalikejdbc-helpers_2.11" % "0.0.1",
   "org.flywaydb" %% "flyway-play" % "3.0.0",
