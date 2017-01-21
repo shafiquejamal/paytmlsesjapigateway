@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.eigenroute.time.TimeProvider
 import com.google.inject.{Inject, Singleton}
+import entrypoint.UserAPI
 import user.UserMessage._
 import user.UserStatus._
 import util.Password._

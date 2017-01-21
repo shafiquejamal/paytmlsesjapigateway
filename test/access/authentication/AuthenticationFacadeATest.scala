@@ -7,6 +7,7 @@ import access.registration.ActivationCodeGenerator
 import com.eigenroute.scalikejdbctesthelpers.{CrauthAutoRollback, TestDBConnection, TestScalikeJDBCSessionProvider}
 import com.eigenroute.time.TestTimeProviderImpl
 import com.typesafe.config.ConfigFactory
+import entrypoint.AuthenticationAPI
 import org.scalatest.TryValues._
 import org.scalatest._
 import org.scalatest.fixture.FlatSpec

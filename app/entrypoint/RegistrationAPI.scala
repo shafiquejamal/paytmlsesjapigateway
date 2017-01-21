@@ -1,7 +1,8 @@
-package access.registration
+package entrypoint
 
 import java.util.UUID
 
+import access.registration.RegistrationMessage
 import user.{UserMessage, UserStatus}
 
 import scala.util.Try

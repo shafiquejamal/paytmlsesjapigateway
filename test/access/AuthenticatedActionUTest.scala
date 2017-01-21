@@ -4,11 +4,11 @@ import java.io.File
 import java.security.spec.ECPrivateKeySpec
 import java.security.{KeyFactory, PrivateKey, Security}
 
-import access.authentication.AuthenticationAPI
 import com.eigenroute.id.TestUUIDProviderImpl
 import com.eigenroute.time.{TestTimeProviderImpl, TimeProvider}
 import com.google.inject.Inject
 import com.typesafe.config.ConfigFactory
+import entrypoint.AuthenticationAPI
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.spec.ECNamedCurveSpec
 import org.scalamock.scalatest.MockFactory
@@ -23,7 +23,11 @@ import play.api.test.Helpers._
 import user.TestUserImpl
 
 
-class AuthenticatedActionUTest extends FlatSpec with ShouldMatchers with OneAppPerTest with MockFactory {
+class AuthenticatedActionUTest
+  extends FlatSpec
+  with ShouldMatchers
+  with OneAppPerTest
+  with MockFactory {
 
   val oKcontent = "request was ok"
 

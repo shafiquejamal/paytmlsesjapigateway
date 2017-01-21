@@ -6,6 +6,7 @@ import access.registration.ActivationCodeGenerator
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import com.google.inject.{Inject, Singleton}
+import entrypoint.AuthenticationAPI
 import org.joda.time.DateTime
 import play.api.Configuration
 import user.UserMessage._

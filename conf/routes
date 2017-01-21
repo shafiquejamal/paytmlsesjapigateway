@@ -6,15 +6,15 @@
 
 # Map static resources from the /public folder to the /assets URL path
 
-POST    /register                   access.registration.RegistrationController.register
-POST    /resend-activation-link     access.registration.RegistrationController.resendActivationLink
-POST    /activate                   access.registration.RegistrationController.activate
-GET     /username/:username         access.registration.RegistrationController.usernameCheck(username:String)
-GET     /email/:email               access.registration.RegistrationController.emailCheck(email:String)
+POST    /register                   entrypoint.RegistrationController.register
+POST    /resend-activation-link     entrypoint.RegistrationController.resendActivationLink
+POST    /activate                   entrypoint.RegistrationController.activate
+GET     /username/:username         entrypoint.RegistrationController.usernameCheck(username:String)
+GET     /email/:email               entrypoint.RegistrationController.emailCheck(email:String)
 
-POST    /authenticate               access.authentication.AuthenticationController.authenticate
-POST    /send-password-reset-link   access.authentication.AuthenticationController.sendPasswordResetCode
-POST    /reset-password             access.authentication.AuthenticationController.resetPassword
-POST    /logout-all-devices         access.authentication.AuthenticationController.logoutAllDevices
+POST    /authenticate               entrypoint.AuthenticationController.authenticate
+POST    /send-password-reset-link   entrypoint.AuthenticationController.sendPasswordResetCode
+POST    /reset-password             entrypoint.AuthenticationController.resetPassword
+POST    /logout-all-devices         entrypoint.AuthenticationController.logoutAllDevices
 
-POST    /change-password            user.UserController.changePassword
+POST    /change-password            entrypoint.UserController.changePassword

@@ -1,7 +1,8 @@
-package access.authentication
+package entrypoint
 
 import java.util.UUID
 
+import access.authentication.{AuthenticationMessage, PasswordResetCodeAndDate}
 import org.joda.time.DateTime
 import user.UserMessage
 

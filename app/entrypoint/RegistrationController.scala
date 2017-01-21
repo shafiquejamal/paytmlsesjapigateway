@@ -1,14 +1,15 @@
-package access.registration
+package entrypoint
 
 import access.authentication.EmailMessage
 import access.registration.RegistrationMessage._
+import access.registration.{AccountActivationCodeSender, ActivateAccountMessage, ActivationCodeGenerator, RegistrationMessage}
 import com.eigenroute.id.UUIDProvider
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc._
+import user.UserMessage
 import user.UserStatus._
-import user.{UserAPI, UserMessage}
 
 import scala.util.Success
 

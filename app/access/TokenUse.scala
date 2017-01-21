@@ -2,7 +2,7 @@ package access
 
 import java.util.UUID
 
-import access.authentication.AuthenticationAPI
+import entrypoint.AuthenticationAPI
 import org.joda.time.DateTime
 import user.UserMessage
 

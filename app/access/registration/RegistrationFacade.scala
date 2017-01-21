@@ -5,6 +5,7 @@ import java.util.UUID
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import com.google.inject.{Inject, Singleton}
+import entrypoint.RegistrationAPI
 import org.apache.commons.validator.routines.EmailValidator
 import user.UserStatus.{Active, _}
 import user.{User, UserDAO, UserMessage, UserStatus}

@@ -1,6 +1,8 @@
-package user
+package entrypoint
 
 import java.util.UUID
+
+import user.{ChangePasswordMessage, ChangeUsernameMessage, UserMessage}
 
 import scala.util.Try
 

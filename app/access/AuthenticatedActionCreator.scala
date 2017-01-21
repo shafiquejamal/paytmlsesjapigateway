@@ -3,8 +3,8 @@ package access
 import java.security.PublicKey
 import java.util.UUID
 
-import access.authentication.AuthenticationAPI
 import com.eigenroute.time.TimeProvider
+import entrypoint.AuthenticationAPI
 import org.joda.time.DateTime
 import pdi.jwt._
 import pdi.jwt.algorithms.JwtAsymetricAlgorithm
