@@ -15,7 +15,7 @@ case class EmailMessage(email: String) {
 
 object EmailMessage {
 
-  implicit val EmailMessageReads: Reads[EmailMessage] =
+  implicit val emailMessageReads: Reads[EmailMessage] =
     (JsPath \ "email").read[String](email).map(EmailMessage.apply)
 
 }

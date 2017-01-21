@@ -1,6 +1,9 @@
 package entrypoint
 
-import access.authentication.{ToServerAuthenticateMessage, ToServerLogoutMessage}
+import access.authentication.ToServerAuthenticateMessage.ToServerAuthenticate
+import access.authentication.ToServerLogoutMessage.ToServerLogout
+import access.authentication.ToServerPasswordResetRequestMessage.ToServerPasswordResetRequest
+import access.registration.ToServerResendActivationCodeRequestMessage.ToServerResendActivationCodeRequest
 import akka.actor.ActorRef
 import play.api.libs.json.{JsValue, Json, Writes}
 
@@ -32,7 +35,7 @@ trait ToServerSocketMessage extends SocketMessage {
 
 }
 
-sealed trait ToServerSocketMessageType extends SocketMessageType {
+trait ToServerSocketMessageType extends SocketMessageType {
 
   def socketMessage(msg: JsValue): ToServerSocketMessage
 
@@ -40,20 +43,9 @@ sealed trait ToServerSocketMessageType extends SocketMessageType {
 
 object ToServerSocketMessageType {
 
-  case object ToServerAuthenticate extends ToServerSocketMessageType {
-    override val description = "toServerAuthenticate"
-    override def socketMessage(msg: JsValue): ToServerAuthenticateMessage = ToServerAuthenticateMessage(
-       (msg \ "jwt").validate[String].getOrElse("")
-    )
-  }
-
-  case object ToServerLogout extends ToServerSocketMessageType {
-    override val description = "toServerLogout"
-    override def socketMessage(msg: JsValue) = ToServerLogoutMessage
-  }
-
-
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
+    ToServerPasswordResetRequest.description -> ToServerPasswordResetRequest,
+    ToServerResendActivationCodeRequest.description -> ToServerResendActivationCodeRequest,
     ToServerAuthenticate.description -> ToServerAuthenticate,
     ToServerLogout.description -> ToServerLogout
   )
@@ -63,22 +55,6 @@ object ToServerSocketMessageType {
 }
 
 object SocketMessageType {
-
-  case object ToClientLoginSuccessful extends SocketMessageType {
-    override val description = "SOCKET_LOGIN_SUCCESSFUL"
-  }
-
-  case object ToClientLoginFailed extends SocketMessageType {
-    override val description = "SOCKET_LOGIN_FAILED"
-  }
-
-  case object ToClientAlreadyAuthenticated extends SocketMessageType {
-    override val description = "SOCKET_ALREADY_AUTHENTICATED"
-  }
-
-  case object ToClientLoggingOut extends SocketMessageType {
-    override val description = "SOCKET_LOGGING_OUT"
-  }
 
   implicit object SocketMessageTypeWrites extends Writes[SocketMessageType] {
     override def writes(socketMessageType: SocketMessageType) = Json.toJson(socketMessageType.description)

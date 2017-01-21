@@ -1,10 +1,23 @@
 package access.authentication
 
-import entrypoint.ToServerSocketMessageType.ToServerAuthenticate
-import entrypoint.{SocketMessageType, ToServerSocketMessage}
+import access.authentication.ToServerAuthenticateMessage.ToServerAuthenticate
+import entrypoint.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
+import play.api.libs.json.JsValue
 
 case class ToServerAuthenticateMessage(jwt: String) extends ToServerSocketMessage {
 
   override def socketMessageType: SocketMessageType = ToServerAuthenticate
+
+}
+
+object ToServerAuthenticateMessage {
+
+  case object ToServerAuthenticate extends ToServerSocketMessageType {
+    override val description = "toServerAuthenticate"
+
+    override def socketMessage(msg: JsValue): ToServerAuthenticateMessage = ToServerAuthenticateMessage(
+       (msg \ "jwt").validate[String].getOrElse("")
+    )
+  }
 
 }
