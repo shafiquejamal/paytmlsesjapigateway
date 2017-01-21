@@ -39,7 +39,6 @@ class Authenticator (
       maybeValidUser.fold {
         unnamedClient ! ToClientLoginFailedMessage.toJson
       } { case (clientId, clientUsername) =>
-        clientUserId = clientId
         namedClient =
           context.actorOf(
             NamedClient.props(unnamedClient), namedClientActorName(clientId, uUIDProvider.randomUUID()))
