@@ -86,7 +86,7 @@ class RegistrationController @Inject() (
       }
   }
 
-  private def registerUser(request: Request[JsValue], registrationMessage:RegistrationMessage) =
+  private def registerUser(request: Request[JsValue], registrationMessage: RegistrationMessage) =
     registrationAPI.signUp(registrationMessage, accountActivationLinkSender.statusOnRegistration) match {
       case Success(user) =>
         accountActivationLinkSender

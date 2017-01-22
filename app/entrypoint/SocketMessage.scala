@@ -1,8 +1,11 @@
 package entrypoint
 
+import access.authentication.ResetPasswordMessage.ResetPassword
 import access.authentication.ToServerAuthenticateMessage.ToServerAuthenticate
 import access.authentication.ToServerLogoutMessage.ToServerLogout
 import access.authentication.ToServerPasswordResetRequestMessage.ToServerPasswordResetRequest
+import access.registration.ActivateAccountMessage.ActivateAccount
+import access.registration.RegistrationMessage.Registration
 import access.registration.ToServerResendActivationCodeRequestMessage.ToServerResendActivationCodeRequest
 import akka.actor.ActorRef
 import play.api.libs.json.{JsValue, Json, Writes}
@@ -44,6 +47,9 @@ trait ToServerSocketMessageType extends SocketMessageType {
 object ToServerSocketMessageType {
 
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
+    ResetPassword.description -> ResetPassword,
+    Registration.description -> Registration,
+    ActivateAccount.description -> ActivateAccount,
     ToServerPasswordResetRequest.description -> ToServerPasswordResetRequest,
     ToServerResendActivationCodeRequest.description -> ToServerResendActivationCodeRequest,
     ToServerAuthenticate.description -> ToServerAuthenticate,

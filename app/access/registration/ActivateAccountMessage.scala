@@ -1,11 +1,14 @@
 package access.registration
 
+import entrypoint.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import org.apache.commons.validator.routines.EmailValidator
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json.{Reads, _}
 
-case class ActivateAccountMessage(email: String, code: String) {
+case class ActivateAccountMessage(email: String, code: String) extends ToServerSocketMessage {
+
+  override val socketMessageType: SocketMessageType = ActivateAccountMessage.ActivateAccount
 
   private val emailValidator = EmailValidator.getInstance()
 
@@ -17,9 +20,15 @@ case class ActivateAccountMessage(email: String, code: String) {
 
 object ActivateAccountMessage {
 
-  implicit val ResetPasswordMessageReads: Reads[ActivateAccountMessage] = (
+  implicit val resetPasswordMessageReads: Reads[ActivateAccountMessage] = (
     (JsPath \ "email").read[String](email) and
     (JsPath \ "code").read[String](minLength[String](1))
     ) (ActivateAccountMessage.apply _)
+
+  case object ActivateAccount extends ToServerSocketMessageType {
+    override val description = "toServerActivateAccount"
+    override def socketMessage(msg: JsValue): ActivateAccountMessage =
+      resetPasswordMessageReads.reads(msg).asOpt.getOrElse(ActivateAccountMessage("", ""))
+  }
 
 }
