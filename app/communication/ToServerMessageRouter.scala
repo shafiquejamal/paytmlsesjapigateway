@@ -1,10 +1,11 @@
-package entrypoint
+package communication
 
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
+import entrypoint.UserAPI
 
 class ToServerMessageRouter(
     client: ActorRef,
@@ -15,7 +16,7 @@ class ToServerMessageRouter(
     uUIDProvider: UUIDProvider)
   extends Actor
   with ActorLogging {
-  
+
   override def receive = {
 
     case message =>

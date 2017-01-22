@@ -1,10 +1,12 @@
-package entrypoint
+package clientmessaging
 
 import access.authentication.Authenticator
 import access.{JWTAlgorithmProvider, JWTPublicKeyProvider}
 import akka.actor.{Actor, ActorLogging, _}
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
+import communication.ToServerSocketMessageType
+import entrypoint.{AuthenticationAPI, UserAPI, UserChecker}
 import play.api.Configuration
 import play.api.libs.json.JsValue
 

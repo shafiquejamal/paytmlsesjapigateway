@@ -4,9 +4,11 @@ import java.util.UUID
 
 import access._
 import akka.actor._
+import clientmessaging.ClientPaths._
+import clientmessaging.NamedClient
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
-import entrypoint.ClientPaths._
+import communication.{ToServerMessageRouter, ToServerSocketMessage}
 import entrypoint._
 import play.api.Configuration
 

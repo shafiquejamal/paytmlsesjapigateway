@@ -1,6 +1,7 @@
-package entrypoint
+package clientmessaging
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import communication.ToClientSocketMessage
 
 class NamedClient(unnamedClient: ActorRef) extends Actor with ActorLogging {
 

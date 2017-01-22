@@ -3,6 +3,7 @@ package entrypoint
 import access.{AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPublicKeyProvider}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import clientmessaging.MessageTranslator
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import com.google.inject.Inject

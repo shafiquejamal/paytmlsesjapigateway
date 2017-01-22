@@ -1,7 +1,7 @@
 package access.authentication
 
 import access.authentication.ToServerAuthenticateMessage.ToServerAuthenticate
-import entrypoint.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
+import communication.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import play.api.libs.json.JsValue
 
 case class ToServerAuthenticateMessage(jwt: String) extends ToServerSocketMessage {

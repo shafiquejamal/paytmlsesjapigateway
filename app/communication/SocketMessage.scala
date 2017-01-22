@@ -1,4 +1,4 @@
-package entrypoint
+package communication
 
 import access.authentication.ResetPasswordMessage.ResetPassword
 import access.authentication.ToServerAuthenticateMessage.ToServerAuthenticate
@@ -28,7 +28,6 @@ trait ToClientSocketMessage extends SocketMessage {
   def payload: AnyRef
 
   def toJson: JsValue
-
 
 }
 

@@ -1,7 +1,7 @@
 package access.authentication
 
 import access.authentication.AuthenticationMessage.ToServerLogin
-import entrypoint.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
+import communication.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import org.apache.commons.validator.routines.EmailValidator
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._

@@ -1,4 +1,4 @@
-package entrypoint
+package clientmessaging
 
 import java.util.UUID
 

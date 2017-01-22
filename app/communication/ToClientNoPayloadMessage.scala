@@ -1,4 +1,4 @@
-package entrypoint
+package communication
 
 import play.api.libs.json.{JsValue, Json, Writes}
 
@@ -9,9 +9,9 @@ trait ToClientNoPayloadMessage extends ToClientSocketMessage {
   implicit val messageWrites: Writes[ToClientSocketMessage] =
     new Writes[ToClientSocketMessage] {
       def writes(message: ToClientSocketMessage) = Json.obj(
-                                                             "payload" -> "",
-                                                             "socketMessageType" -> socketMessageType
-                                                           )
+        "payload" -> "",
+        "socketMessageType" -> socketMessageType
+      )
     }
 
   override def toJson: JsValue = Json.toJson(this)
