@@ -18,3 +18,5 @@ POST    /reset-password             entrypoint.AuthenticationController.resetPas
 POST    /logout-all-devices         entrypoint.AuthenticationController.logoutAllDevices
 
 POST    /change-password            entrypoint.UserController.changePassword
+
+GET     /messaging                  entrypoint.ClientMessagingController.connect
