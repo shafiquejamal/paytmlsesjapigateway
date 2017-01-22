@@ -48,7 +48,7 @@ class Authenticator (
           context.actorOf(
             ToServerMessageRouter.props(
               namedClient, userAPI, clientId, clientUsername, timeProvider, uUIDProvider))
-        namedClient ! ToClientLoginSuccessfulMessage
+        namedClient ! ToClientTokenAcceptedMessage
         context.become(processAuthenticatedRequests)
       }
 
