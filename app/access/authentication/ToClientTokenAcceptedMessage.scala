@@ -4,9 +4,9 @@ import communication.{SocketMessageType, ToClientNoPayloadMessage}
 
 case object ToClientTokenAcceptedMessage extends ToClientNoPayloadMessage {
 
-  override val socketMessageType: SocketMessageType = ToClientLoginSuccessful
+  override val socketMessageType: SocketMessageType = ToClientTokenAccepted
 
-  case object ToClientLoginSuccessful extends SocketMessageType {
+  case object ToClientTokenAccepted extends SocketMessageType {
     override val description = "SOCKET_TOKEN_ACCEPTED"
   }
 

@@ -1,6 +1,6 @@
 package entrypoint
 
-import access.{AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPublicKeyProvider}
+import access.{JWTPrivateKeyProvider, AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPublicKeyProvider}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import clientmessaging.MessageTranslator
@@ -18,6 +18,7 @@ class ClientMessagingController @Inject() (
     override val authenticationAPI: AuthenticationAPI,
     override val jWTAlgorithmProvider: JWTAlgorithmProvider,
     override val jWTPublicKeyProvider: JWTPublicKeyProvider,
+    jWTPrivateKeyProvider: JWTPrivateKeyProvider,
     system: ActorSystem,
     materializer: Materializer,
     userChecker: UserChecker,
@@ -39,6 +40,7 @@ class ClientMessagingController @Inject() (
           authenticationAPI,
           jWTAlgorithmProvider,
           jWTPublicKeyProvider,
+          jWTPrivateKeyProvider,
           configuration,
           timeProvider,
           uUIDProvider,

@@ -1,7 +1,7 @@
 package clientmessaging
 
 import access.authentication.Authenticator
-import access.{JWTAlgorithmProvider, JWTPublicKeyProvider}
+import access.{JWTAlgorithmProvider, JWTPrivateKeyProvider, JWTPublicKeyProvider}
 import akka.actor.{Actor, ActorLogging, _}
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
@@ -16,6 +16,7 @@ class MessageTranslator(
     authenticationAPI: AuthenticationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
     jWTPublicKeyProvider: JWTPublicKeyProvider,
+    jWTPrivateKeyProvider: JWTPrivateKeyProvider,
     configuration: Configuration,
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
@@ -31,6 +32,7 @@ class MessageTranslator(
         authenticationAPI,
         jWTAlgorithmProvider,
         jWTPublicKeyProvider,
+        jWTPrivateKeyProvider,
         configuration,
         timeProvider,
         uUIDProvider,
@@ -55,6 +57,7 @@ object MessageTranslator {
     authenticationAPI: AuthenticationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
     jWTPublicKeyProvider: JWTPublicKeyProvider,
+    jWTPrivateKeyProvider: JWTPrivateKeyProvider,
     configuration: Configuration,
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
@@ -67,6 +70,7 @@ object MessageTranslator {
         authenticationAPI,
         jWTAlgorithmProvider,
         jWTPublicKeyProvider,
+        jWTPrivateKeyProvider,
         configuration,
         timeProvider,
         uUIDProvider,
