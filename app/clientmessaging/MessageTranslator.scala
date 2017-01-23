@@ -1,6 +1,6 @@
 package clientmessaging
 
-import access.authentication.Authenticator
+import access.authentication.{PasswordResetCodeSender, Authenticator}
 import access.{JWTAlgorithmProvider, JWTPrivateKeyProvider, JWTPublicKeyProvider}
 import akka.actor.{Actor, ActorLogging, _}
 import com.eigenroute.id.UUIDProvider
@@ -20,7 +20,8 @@ class MessageTranslator(
     configuration: Configuration,
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
-    unnamedClient: ActorRef)
+    unnamedClient: ActorRef,
+    passwordResetCodeSender: PasswordResetCodeSender)
   extends Actor
   with ActorLogging {
 
@@ -36,7 +37,8 @@ class MessageTranslator(
         configuration,
         timeProvider,
         uUIDProvider,
-        unnamedClient))
+        unnamedClient,
+        passwordResetCodeSender))
 
   override def receive = {
 
@@ -61,7 +63,8 @@ object MessageTranslator {
     configuration: Configuration,
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
-    unnamedClient: ActorRef
+    unnamedClient: ActorRef,
+    passwordResetCodeSender: PasswordResetCodeSender
   ) =
     Props(
       new MessageTranslator(
@@ -74,6 +77,7 @@ object MessageTranslator {
         configuration,
         timeProvider,
         uUIDProvider,
-        unnamedClient))
+        unnamedClient,
+        passwordResetCodeSender))
 
 }

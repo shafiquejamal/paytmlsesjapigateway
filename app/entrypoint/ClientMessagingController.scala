@@ -1,5 +1,6 @@
 package entrypoint
 
+import access.authentication.PasswordResetCodeSender
 import access.{JWTPrivateKeyProvider, AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPublicKeyProvider}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
@@ -23,7 +24,8 @@ class ClientMessagingController @Inject() (
     materializer: Materializer,
     userChecker: UserChecker,
     userAPI: UserAPI,
-    uUIDProvider: UUIDProvider)
+    uUIDProvider: UUIDProvider,
+    passwordResetCodeSender: PasswordResetCodeSender)
  extends Controller
  with AuthenticatedActionCreator {
 
@@ -44,7 +46,8 @@ class ClientMessagingController @Inject() (
           configuration,
           timeProvider,
           uUIDProvider,
-          unnamedClient))
+          unnamedClient,
+          passwordResetCodeSender))
     }
   }
 

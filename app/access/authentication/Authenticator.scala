@@ -14,6 +14,9 @@ import pdi.jwt.JwtJson
 import play.api.Configuration
 import play.api.libs.json.Json
 import user.UserMessage
+import user.UserStatus.{Unverified, Active}
+
+import scala.util.{Failure, Success}
 
 class Authenticator (
     userChecker: UserChecker,
@@ -25,7 +28,8 @@ class Authenticator (
     configuration: Configuration,
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
-    unnamedClient: ActorRef)
+    unnamedClient: ActorRef,
+    passwordResetCodeSender: PasswordResetCodeSender)
   extends Actor
   with ActorLogging {
 
@@ -61,6 +65,29 @@ class Authenticator (
       }
       unnamedClient ! response.toJson
 
+    case toServerPasswordResetRequestMessage: ToServerPasswordResetRequestMessage =>
+      val maybeUser = userAPI.findByEmailLatest(toServerPasswordResetRequestMessage.email)
+      maybeUser.fold[Unit](){ user =>
+        user.userStatus match {
+          case Active =>
+            passwordResetCodeSender.send(user, "")
+          case Unverified =>
+          case _ =>
+        }
+      }
+      unnamedClient ! ToClientPasswordResetCodeSentMessage.toJson
+
+    case resetPasswordMessage: ResetPasswordMessage =>
+      authenticationAPI
+        .resetPassword(
+            resetPasswordMessage.email,
+            resetPasswordMessage.code.replaceAll("-", ""),
+            resetPasswordMessage.newPassword) match {
+          case Success(user) =>
+            unnamedClient ! ToClientPasswordResetSuccessfulMessage.toJson
+          case Failure(failure) =>
+            unnamedClient ! ToClientPasswordResetFailedMessage.toJson
+        }
 
   }
 
@@ -103,7 +130,8 @@ object Authenticator {
       configuration: Configuration,
       timeProvider: TimeProvider,
       uUIDProvider: UUIDProvider,
-      unnamedClient: ActorRef
+      unnamedClient: ActorRef,
+      passwordResetCodeSender: PasswordResetCodeSender
     ) =
     Props(
       new Authenticator(
@@ -116,6 +144,7 @@ object Authenticator {
         configuration,
         timeProvider,
         uUIDProvider,
-        unnamedClient))
+        unnamedClient,
+        passwordResetCodeSender))
 
 }
