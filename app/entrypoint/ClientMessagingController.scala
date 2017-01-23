@@ -1,7 +1,7 @@
 package entrypoint
 
 import access.authentication.PasswordResetCodeSender
-import access.{JWTPrivateKeyProvider, AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPublicKeyProvider}
+import access.{AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPrivateKeyProvider, JWTPublicKeyProvider}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import clientmessaging.MessageTranslator
@@ -17,6 +17,7 @@ class ClientMessagingController @Inject() (
     override val timeProvider: TimeProvider,
     override val configuration: Configuration,
     override val authenticationAPI: AuthenticationAPI,
+    registrationAPI: RegistrationAPI,
     override val jWTAlgorithmProvider: JWTAlgorithmProvider,
     override val jWTPublicKeyProvider: JWTPublicKeyProvider,
     jWTPrivateKeyProvider: JWTPrivateKeyProvider,
@@ -40,6 +41,7 @@ class ClientMessagingController @Inject() (
           userChecker,
           userAPI,
           authenticationAPI,
+          registrationAPI,
           jWTAlgorithmProvider,
           jWTPublicKeyProvider,
           jWTPrivateKeyProvider,

@@ -7,6 +7,8 @@ import access.authentication.ToServerLogoutMessage.ToServerLogout
 import access.authentication.ToServerPasswordResetRequestMessage.ToServerPasswordResetRequest
 import access.registration.ActivateAccountMessage.ActivateAccount
 import access.registration.RegistrationMessage.Registration
+import access.registration.ToServerIsEmailAvailableMessage._
+import access.registration.ToServerIsUsernameAvailableMessage.ToServerIsUsernameAvailable
 import access.registration.ToServerResendActivationCodeRequestMessage.ToServerResendActivationCodeRequest
 import akka.actor.ActorRef
 import play.api.libs.json.{JsValue, Json, Writes}
@@ -49,6 +51,8 @@ object ToServerSocketMessageType {
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
     ResetPassword.description -> ResetPassword,
     Registration.description -> Registration,
+    ToServerIsEmailAvailable.description -> ToServerIsEmailAvailable,
+    ToServerIsUsernameAvailable.description -> ToServerIsUsernameAvailable,
     ActivateAccount.description -> ActivateAccount,
     ToServerLogin.description -> ToServerLogin,
     ToServerPasswordResetRequest.description -> ToServerPasswordResetRequest,

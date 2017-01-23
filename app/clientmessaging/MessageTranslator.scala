@@ -1,12 +1,12 @@
 package clientmessaging
 
-import access.authentication.{PasswordResetCodeSender, Authenticator}
+import access.authentication.{Authenticator, PasswordResetCodeSender}
 import access.{JWTAlgorithmProvider, JWTPrivateKeyProvider, JWTPublicKeyProvider}
 import akka.actor.{Actor, ActorLogging, _}
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import communication.ToServerSocketMessageType
-import entrypoint.{AuthenticationAPI, UserAPI, UserChecker}
+import entrypoint.{AuthenticationAPI, RegistrationAPI, UserAPI, UserChecker}
 import play.api.Configuration
 import play.api.libs.json.JsValue
 
@@ -14,6 +14,7 @@ class MessageTranslator(
     userChecker: UserChecker,
     userAPI: UserAPI,
     authenticationAPI: AuthenticationAPI,
+    registrationAPI: RegistrationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
     jWTPublicKeyProvider: JWTPublicKeyProvider,
     jWTPrivateKeyProvider: JWTPrivateKeyProvider,
@@ -31,6 +32,7 @@ class MessageTranslator(
         userChecker,
         userAPI,
         authenticationAPI,
+        registrationAPI,
         jWTAlgorithmProvider,
         jWTPublicKeyProvider,
         jWTPrivateKeyProvider,
@@ -57,6 +59,7 @@ object MessageTranslator {
     userChecker: UserChecker,
     userAPI: UserAPI,
     authenticationAPI: AuthenticationAPI,
+    registrationAPI: RegistrationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
     jWTPublicKeyProvider: JWTPublicKeyProvider,
     jWTPrivateKeyProvider: JWTPrivateKeyProvider,
@@ -71,6 +74,7 @@ object MessageTranslator {
         userChecker,
         userAPI,
         authenticationAPI,
+        registrationAPI,
         jWTAlgorithmProvider,
         jWTPublicKeyProvider,
         jWTPrivateKeyProvider,

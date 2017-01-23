@@ -3,6 +3,7 @@ package access.authentication
 import java.util.UUID
 
 import access._
+import access.registration._
 import akka.actor._
 import clientmessaging.ClientPaths._
 import clientmessaging.NamedClient
@@ -14,7 +15,7 @@ import pdi.jwt.JwtJson
 import play.api.Configuration
 import play.api.libs.json.Json
 import user.UserMessage
-import user.UserStatus.{Unverified, Active}
+import user.UserStatus.{Active, Unverified}
 
 import scala.util.{Failure, Success}
 
@@ -22,6 +23,7 @@ class Authenticator (
     userChecker: UserChecker,
     userAPI: UserAPI,
     authenticationAPI: AuthenticationAPI,
+    registrationAPI: RegistrationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
     jWTPublicKeyProvider: JWTPublicKeyProvider,
     jWTPrivateKeyProvider: JWTPrivateKeyProvider,
@@ -89,6 +91,16 @@ class Authenticator (
             unnamedClient ! ToClientPasswordResetFailedMessage.toJson
         }
 
+    case isEmailAvailableMessage : ToServerIsEmailAvailableMessage =>
+      val isEmailAvailable: Boolean = registrationAPI.isEmailIsAvailable(isEmailAvailableMessage.email)
+      unnamedClient ! ToClientEmailIsAvailableMessage(
+        EmailAvailability(isEmailAvailableMessage.email, isEmailAvailable)).toJson
+
+    case isUsernameAvailableMessage: ToServerIsUsernameAvailableMessage =>
+      val isUsernameAvailable: Boolean = registrationAPI.isUsernameIsAvailable(isUsernameAvailableMessage.username)
+      unnamedClient ! ToClientUsernameIsAvailableMessage(
+        UsernameAvailability(isUsernameAvailableMessage.username, isUsernameAvailable)).toJson
+
   }
 
   def processAuthenticatedRequests: Receive = {
@@ -124,6 +136,7 @@ object Authenticator {
       chatAuthenticator: UserChecker,
       userAPI: UserAPI,
       authenticationAPI: AuthenticationAPI,
+      registrationAPI: RegistrationAPI,
       jWTAlgorithmProvider: JWTAlgorithmProvider,
       jWTPublicKeyProvider: JWTPublicKeyProvider,
       jWTPrivateKeyProvider: JWTPrivateKeyProvider,
@@ -138,6 +151,7 @@ object Authenticator {
         chatAuthenticator,
         userAPI,
         authenticationAPI,
+        registrationAPI,
         jWTAlgorithmProvider,
         jWTPublicKeyProvider,
         jWTPrivateKeyProvider,
