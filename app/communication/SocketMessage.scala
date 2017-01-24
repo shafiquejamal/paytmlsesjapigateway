@@ -12,6 +12,7 @@ import access.registration.ToServerIsUsernameAvailableMessage.ToServerIsUsername
 import access.registration.ToServerResendActivationCodeRequestMessage.ToServerResendActivationCodeRequest
 import akka.actor.ActorRef
 import play.api.libs.json.{JsValue, Json, Writes}
+import user.ChangePasswordMessage.ChangePassword
 
 
 trait SocketMessage {
@@ -54,6 +55,7 @@ object ToServerSocketMessageType {
     ToServerIsEmailAvailable.description -> ToServerIsEmailAvailable,
     ToServerIsUsernameAvailable.description -> ToServerIsUsernameAvailable,
     ActivateAccount.description -> ActivateAccount,
+    ChangePassword.description -> ChangePassword,
     ToServerLogin.description -> ToServerLogin,
     ToServerPasswordResetRequest.description -> ToServerPasswordResetRequest,
     ToServerResendActivationCodeRequest.description -> ToServerResendActivationCodeRequest,

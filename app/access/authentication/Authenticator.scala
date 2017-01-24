@@ -9,13 +9,13 @@ import clientmessaging.ClientPaths._
 import clientmessaging.NamedClient
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
-import communication.{ToClientSocketMessage, ToServerMessageRouter, ToServerSocketMessage}
+import communication.{ToClientNoPayloadMessage, ToClientSocketMessage, ToServerMessageRouter, ToServerSocketMessage}
 import entrypoint._
 import pdi.jwt.JwtJson
 import play.api.Configuration
 import play.api.libs.json.Json
-import user.UserMessage
 import user.UserStatus.{Active, Unverified}
+import user.{ChangePasswordMessage, UserMessage}
 
 import scala.util.{Failure, Success}
 
@@ -49,7 +49,7 @@ class Authenticator (
           AllowedTokens(MultiUse))
 
       maybeValidUser.fold {
-        unnamedClient ! ToClientLoginFailedMessage.toJson
+        unnamedClient ! ToClientLogoutMessage.toJson
       } { case (clientId, clientUsername) => createNamedClientAndRouter(clientId, clientUsername) }
 
     case authenticationMessage: AuthenticationMessage =>
@@ -112,12 +112,21 @@ class Authenticator (
       unnamedClient ! ToClientLoggingOutMessage.toJson
       context.unbecome()
 
+    case changePasswordMessage: ChangePasswordMessage =>
+      val maybeUserMessage = userAPI.changePassword(clientUserId, changePasswordMessage).toOption
+      val response = maybeUserMessage.fold[ToClientNoPayloadMessage](ToClientPasswordChangeFailedMessage){ _ =>
+        ToClientPasswordChangeSuccessfulMessage }
+      unnamedClient ! response.toJson
+      unnamedClient ! ToClientLogoutMessage.toJson
+      context.unbecome()
+
     case msg: ToServerSocketMessage =>
       msg sendTo toServerMessageRouter
 
   }
 
   private def createNamedClientAndRouter(clientId: UUID, clientUsername: String): Unit = {
+    clientUserId = clientId
     namedClient =
       context.actorOf(
         NamedClient.props(unnamedClient), namedClientActorName(clientId, uUIDProvider.randomUUID()))
