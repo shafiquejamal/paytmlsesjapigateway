@@ -31,7 +31,8 @@ class Authenticator (
     timeProvider: TimeProvider,
     uUIDProvider: UUIDProvider,
     unnamedClient: ActorRef,
-    passwordResetCodeSender: PasswordResetCodeSender)
+    passwordResetCodeSender: PasswordResetCodeSender,
+    accountActivationLinkSender:AccountActivationCodeSender)
   extends Actor
   with ActorLogging {
 
@@ -101,6 +102,13 @@ class Authenticator (
       unnamedClient ! ToClientUsernameIsAvailableMessage(
         UsernameAvailability(isUsernameAvailableMessage.username, isUsernameAvailable)).toJson
 
+    case registrationMessage: RegistrationMessage =>
+      val maybeUserMessage = registrationAPI.signUp(registrationMessage, accountActivationLinkSender.statusOnRegistration)
+      val response =
+        maybeUserMessage.toOption.fold[ToClientSocketMessage](ToClientRegistrationFailedMessage){ _ =>
+          ToClientRegistrationSuccessfulMessage
+        }
+      unnamedClient ! response.toJson
   }
 
   def processAuthenticatedRequests: Receive = {
@@ -153,7 +161,8 @@ object Authenticator {
       timeProvider: TimeProvider,
       uUIDProvider: UUIDProvider,
       unnamedClient: ActorRef,
-      passwordResetCodeSender: PasswordResetCodeSender
+      passwordResetCodeSender: PasswordResetCodeSender,
+      accountActivationLinkSender:AccountActivationCodeSender
     ) =
     Props(
       new Authenticator(
@@ -168,6 +177,7 @@ object Authenticator {
         timeProvider,
         uUIDProvider,
         unnamedClient,
-        passwordResetCodeSender))
+        passwordResetCodeSender,
+        accountActivationLinkSender))
 
 }
