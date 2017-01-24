@@ -22,7 +22,7 @@ object ChangePasswordMessage {
     ) (ChangePasswordMessage.apply _)
 
   case object ChangePassword extends ToServerSocketMessageType {
-    override val description = "CHANGE_PASSWORD"
+    override val description = "toServerChangePassword"
 
     override def socketMessage(msg: JsValue): ChangePasswordMessage =
       Try(changePasswordMessageReads.reads(msg)).toOption.flatMap(_.asOpt).getOrElse(ChangePasswordMessage(".", "."))
