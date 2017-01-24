@@ -6,6 +6,8 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json.{Reads, _}
 
+import scala.util.Try
+
 case class ActivateAccountMessage(email: String, code: String) extends ToServerSocketMessage {
 
   override val socketMessageType: SocketMessageType = ActivateAccountMessage.ActivateAccount
@@ -28,7 +30,7 @@ object ActivateAccountMessage {
   case object ActivateAccount extends ToServerSocketMessageType {
     override val description = "toServerActivateAccount"
     override def socketMessage(msg: JsValue): ActivateAccountMessage =
-      resetPasswordMessageReads.reads(msg).asOpt.getOrElse(ActivateAccountMessage("", ""))
+      Try(resetPasswordMessageReads.reads(msg)).toOption.flatMap(_.asOpt).getOrElse(ActivateAccountMessage("", ""))
   }
 
 }

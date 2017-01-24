@@ -6,6 +6,8 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json.{Reads, _}
 
+import scala.util.Try
+
 case class ResetPasswordMessage(email: String, code: String, newPassword: String)
   extends ToServerSocketMessage {
 
@@ -31,7 +33,7 @@ object ResetPasswordMessage {
   case object ResetPassword extends ToServerSocketMessageType {
     override val description = "toServerResetPassword"
     override def socketMessage(msg: JsValue): ResetPasswordMessage =
-      resetPasswordMessageReads.reads(msg).asOpt.getOrElse(ResetPasswordMessage("1", "2" , "3"))
+      Try(resetPasswordMessageReads.reads(msg)).toOption.flatMap(_.asOpt).getOrElse(ResetPasswordMessage("1", "2" , "3"))
   }
 
 }

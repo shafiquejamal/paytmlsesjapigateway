@@ -6,6 +6,8 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
+import scala.util.Try
+
 case class RegistrationMessage(maybeUsername:Option[String], email:String, password:String) extends ToServerSocketMessage {
 
   override val socketMessageType: SocketMessageType = RegistrationMessage.Registration
@@ -30,7 +32,7 @@ object RegistrationMessage {
   case object Registration extends ToServerSocketMessageType {
     override val description = "toServerRegistration"
     override def socketMessage(msg: JsValue): RegistrationMessage =
-      registrationMessageReads.reads(msg).asOpt.getOrElse(RegistrationMessage(None, "", ""))
+      Try(registrationMessageReads.reads(msg)).toOption.flatMap(_.asOpt).getOrElse(RegistrationMessage(None, "", ""))
   }
 
 }

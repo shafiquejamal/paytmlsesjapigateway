@@ -7,6 +7,8 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
+import scala.util.Try
+
 case class AuthenticationMessage(maybeUsername:Option[String], maybeEmail:Option[String], password:String)
   extends ToServerSocketMessage {
 
@@ -31,7 +33,9 @@ object AuthenticationMessage {
   case object ToServerLogin extends ToServerSocketMessageType {
     override val description = "toServerLogin"
     override def socketMessage(msg: JsValue): AuthenticationMessage =
-      AuthenticationMessage.authenticationMessageReads.reads(msg).asOpt.getOrElse(AuthenticationMessage(None, None, ""))
+      Try(AuthenticationMessage.authenticationMessageReads.reads(msg))
+      .toOption.flatMap(_.asOpt)
+      .getOrElse(AuthenticationMessage(None, None, ""))
   }
 
 }
