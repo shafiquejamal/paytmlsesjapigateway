@@ -1,4 +1,4 @@
-package communication
+package asynccommunication
 
 import access.CodeSender
 import user.UserMessage

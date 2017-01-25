@@ -3,11 +3,11 @@ package modules
 import access._
 import access.authentication.{AuthenticationFacade, PasswordResetCodeSender, PasswordResetCodeSenderImpl}
 import access.registration.{AccountActivationCodeSender, AccountActivationCodeSenderImpl, RegistrationFacade}
+import asynccommunication.{Emailer, EmailerImpl}
 import com.eigenroute.id.{UUIDProvider, UUIDProviderImpl}
 import com.eigenroute.scalikejdbchelpers.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import com.eigenroute.time.{TimeProvider, TimeProviderImpl}
 import com.google.inject.AbstractModule
-import communication.{Emailer, EmailerImpl}
 import entrypoint.{AuthenticationAPI, RegistrationAPI, UserAPI}
 import net.codingwell.scalaguice.ScalaModule
 import user.UserFacade

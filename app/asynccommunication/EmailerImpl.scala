@@ -1,4 +1,4 @@
-package communication
+package asynccommunication
 
 import com.google.inject.Inject
 import play.api.libs.mailer.{Email, MailerClient}

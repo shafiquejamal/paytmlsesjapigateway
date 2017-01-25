@@ -1,11 +1,11 @@
 package access.registration
 
+import asynccommunication.{Emailer, TestEmailerImpl}
 import com.eigenroute.id.{TestUUIDProviderImpl, UUIDProvider}
 import com.eigenroute.scalikejdbchelpers.DBConfig
 import com.eigenroute.scalikejdbctesthelpers.{InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import com.eigenroute.time.{TestTimeProviderImpl, TimeProvider}
 import com.typesafe.config.ConfigFactory
-import communication.{Emailer, TestEmailerImpl}
 import org.scalatest._
 import play.api.http.HeaderNames
 import play.api.inject.bind

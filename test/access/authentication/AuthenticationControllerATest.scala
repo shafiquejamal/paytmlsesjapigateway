@@ -5,12 +5,12 @@ import java.util.UUID
 
 import access._
 import access.registration.ActivationCodeGenerator
+import asynccommunication.{Emailer, TestEmailerImpl}
 import com.eigenroute.id.{TestUUIDProviderImpl, UUIDProvider}
 import com.eigenroute.scalikejdbchelpers.DBConfig
 import com.eigenroute.scalikejdbctesthelpers.{InitialMigration, OneAppPerTestWithOverrides, ScalikeJDBCTestDBConfig}
 import com.eigenroute.time.{TestTimeProviderImpl, TimeProvider}
 import com.typesafe.config.ConfigFactory
-import communication.{Emailer, TestEmailerImpl}
 import org.scalatest._
 import pdi.jwt.JwtJson
 import play.api.Configuration
