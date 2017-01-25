@@ -11,6 +11,8 @@ import entrypoint.{AuthenticationAPI, RegistrationAPI, UserAPI, UserChecker}
 import play.api.Configuration
 import play.api.libs.json.JsValue
 
+import scala.util.Try
+
 class MessageTranslator(
     userChecker: UserChecker,
     userAPI: UserAPI,
@@ -49,8 +51,8 @@ class MessageTranslator(
 
     case msg: JsValue =>
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
-      val socketMessage = ToServerSocketMessageType.from(messageType).socketMessage(msg)
-      socketMessage sendTo authenticator
+      val maybeSocketMessage = Try(ToServerSocketMessageType.from(messageType).socketMessage(msg)).toOption
+      maybeSocketMessage.foreach { socketMessage => socketMessage sendTo authenticator }
 
   }
 

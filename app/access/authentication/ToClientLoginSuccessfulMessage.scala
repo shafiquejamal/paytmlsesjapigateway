@@ -12,7 +12,7 @@ object SuccessfulLoginPayload {
     (JsPath \ "username").write[String] and
     (JsPath \ "email").write[String] and
     (JsPath \ "token").write[String]
-    ) ( message => (message.username, message.email, message.token))
+    ) (message => (message.username, message.email, message.token))
 
 }
 
@@ -24,6 +24,8 @@ case class ToClientLoginSuccessfulMessage(override val payload: SuccessfulLoginP
     override val description = "LOGIN_SUCCESSFUL"
   }
 
+  import ToClientLoginSuccessfulMessage.toClientLoginSuccessfulMessageWrites
+
   override def toJson: JsValue = Json.toJson(this)
 
 }
@@ -32,9 +34,9 @@ object ToClientLoginSuccessfulMessage {
 
   import SuccessfulLoginPayload.successfulLoginPayloadWrites
 
-  implicit val toClientLoginSuccessfulMessage: Writes[ToClientLoginSuccessfulMessage] = (
+  implicit val toClientLoginSuccessfulMessageWrites: Writes[ToClientLoginSuccessfulMessage] = (
     (JsPath \ "socketMessageType").write[SocketMessageType] and
     (JsPath \ "payload").write[SuccessfulLoginPayload]
-    ) ( message => (message.socketMessageType, message.payload))
+    ) (message => (message.socketMessageType, message.payload))
 
 }

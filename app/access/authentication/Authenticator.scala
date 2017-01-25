@@ -14,7 +14,7 @@ import entrypoint._
 import pdi.jwt.JwtJson
 import play.api.Configuration
 import play.api.libs.json.Json
-import user.UserStatus.{Active, Unverified}
+import user.UserStatus._
 import user.{ChangePasswordMessage, UserMessage}
 
 import scala.util.{Failure, Success}
@@ -36,6 +36,7 @@ class Authenticator (
   extends Actor
   with ActorLogging {
 
+  val activationCodeKey = configuration.getString(ActivationCodeGenerator.configurationKey).getOrElse("")
   var namedClient: ActorRef = _
   var toServerMessageRouter: ActorRef = _
   var clientUserId: UUID = _
@@ -105,8 +106,24 @@ class Authenticator (
     case registrationMessage: RegistrationMessage =>
       val maybeUserMessage = registrationAPI.signUp(registrationMessage, accountActivationLinkSender.statusOnRegistration)
       val response =
-        maybeUserMessage.toOption.fold[ToClientSocketMessage](ToClientRegistrationFailedMessage){ _ =>
+        maybeUserMessage.toOption.fold[ToClientSocketMessage](ToClientRegistrationFailedMessage){ userMessage =>
+          accountActivationLinkSender
+          .sendActivationCode(userMessage, activationCodeKey)
           ToClientRegistrationSuccessfulMessage
+        }
+      unnamedClient ! response.toJson
+
+    case activateAccountMessage: ActivateAccountMessage =>
+      val (email, code) = (activateAccountMessage.email, activateAccountMessage.code)
+      val response: ToClientSocketMessage = userAPI.findByEmailLatest(email).fold[ToClientSocketMessage]{
+          ToClientAccountActivationFailedMessage("User does not exist")
+        } { user =>
+          val userId = user.maybeId.map(_.toString).getOrElse("")
+          if (ActivationCodeGenerator.checkCode(userId, code, activationCodeKey)) {
+            activateUser(user, code)
+          } else {
+            ToClientAccountActivationFailedMessage("Incorrect code")
+          }
         }
       unnamedClient ! response.toJson
   }
@@ -131,6 +148,22 @@ class Authenticator (
     case msg: ToServerSocketMessage =>
       msg sendTo toServerMessageRouter
 
+  }
+
+  private def activateUser(user:UserMessage, code:String): ToClientSocketMessage = {
+    user.userStatus match {
+      case Unverified | Deactivated =>
+        registrationAPI.activate(user.maybeId.get) match {
+          case Success(activatedUser) =>
+            ToClientAccountActivationSuccessfulMessage
+          case _ =>
+            ToClientAccountActivationFailedMessage("Activation code incorrect")
+        }
+      case Blocked =>
+        ToClientAccountActivationFailedMessage("This user is blocked")
+      case Admin | Active =>
+        ToClientAccountActivationAlreadyActiveMessage
+    }
   }
 
   private def createNamedClientAndRouter(clientId: UUID, clientUsername: String): Unit = {
