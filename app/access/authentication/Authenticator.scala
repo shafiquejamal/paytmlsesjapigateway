@@ -147,6 +147,11 @@ class Authenticator (
       unnamedClient ! ToClientLoggingOutMessage.toJson
       context.unbecome()
 
+    case ToServerLogoutAllMessage =>
+      authenticationAPI.logoutAllDevices(clientUserId)
+      val allAuthenticatorsForThisUser = context.actorSelection(namedClientPath(clientUserId))
+      allAuthenticatorsForThisUser ! ToServerLogoutMessage
+
     case changePasswordMessage: ChangePasswordMessage =>
       val maybeUserMessage = userAPI.changePassword(clientUserId, changePasswordMessage).toOption
       val response = maybeUserMessage.fold[ToClientNoPayloadMessage](ToClientPasswordChangeFailedMessage){ _ =>
@@ -180,7 +185,7 @@ class Authenticator (
     clientUserId = clientId
     namedClient =
       context.actorOf(
-        NamedClient.props(unnamedClient), namedClientActorName(clientId, uUIDProvider.randomUUID()))
+        NamedClient.props(unnamedClient, self), namedClientActorName(clientId, uUIDProvider.randomUUID()))
     toServerMessageRouter =
       context.actorOf(
         ToServerMessageRouter.props(

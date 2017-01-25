@@ -3,6 +3,7 @@ package communication
 import access.authentication.AuthenticationMessage.ToServerLogin
 import access.authentication.ResetPasswordMessage.ResetPassword
 import access.authentication.ToServerAuthenticateMessage.ToServerAuthenticate
+import access.authentication.ToServerLogoutAllMessage.ToServerLogoutAll
 import access.authentication.ToServerLogoutMessage.ToServerLogout
 import access.authentication.ToServerPasswordResetRequestMessage.ToServerPasswordResetRequest
 import access.registration.ActivateAccountMessage.ActivateAccount
@@ -57,6 +58,7 @@ object ToServerSocketMessageType {
     ToServerIsUsernameAvailable.description -> ToServerIsUsernameAvailable,
     ActivateAccount.description -> ActivateAccount,
     ChangePassword.description -> ChangePassword,
+    ToServerLogoutAll.description -> ToServerLogoutAll,
     ToServerResendActivationCode.description -> ToServerResendActivationCode,
     ToServerLogin.description -> ToServerLogin,
     ToServerPasswordResetRequest.description -> ToServerPasswordResetRequest,
