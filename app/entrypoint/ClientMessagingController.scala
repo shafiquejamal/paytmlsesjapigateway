@@ -5,10 +5,10 @@ import access.registration.AccountActivationCodeSender
 import access.{AuthenticatedActionCreator, JWTAlgorithmProvider, JWTPrivateKeyProvider, JWTPublicKeyProvider}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import clientmessaging.MessageTranslator
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import com.google.inject.Inject
+import messaging.MessageTranslator
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.libs.streams.ActorFlow

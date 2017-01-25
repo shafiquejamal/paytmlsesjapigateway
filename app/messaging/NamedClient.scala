@@ -1,8 +1,7 @@
-package clientmessaging
+package messaging
 
 import access.authentication.ToServerLogoutMessage
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import communication.ToClientSocketMessage
 
 class NamedClient(unnamedClient: ActorRef, authenticator: ActorRef)
   extends Actor
@@ -23,5 +22,5 @@ object NamedClient {
 
   def props(unnamedClient: ActorRef, authenticator: ActorRef) =
     Props(new NamedClient(unnamedClient, authenticator))
-  
+
 }

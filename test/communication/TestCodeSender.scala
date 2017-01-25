@@ -1,5 +1,6 @@
 package communication
 
+import access.CodeSender
 import user.UserMessage
 
 class TestCodeSender extends CodeSender {

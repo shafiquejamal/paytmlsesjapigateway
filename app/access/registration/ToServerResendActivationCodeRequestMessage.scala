@@ -2,7 +2,7 @@ package access.registration
 
 import access.authentication.EmailMessage
 import access.registration.ToServerResendActivationCodeRequestMessage.ToServerResendActivationCodeRequest
-import communication.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
+import messaging.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import play.api.libs.json.JsValue
 
 case class ToServerResendActivationCodeRequestMessage(email: String) extends ToServerSocketMessage {

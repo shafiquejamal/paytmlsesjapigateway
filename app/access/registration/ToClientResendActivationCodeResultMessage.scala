@@ -1,6 +1,6 @@
 package access.registration
 
-import communication.{SocketMessageType, ToClientSocketMessage}
+import messaging.{SocketMessageType, ToClientSocketMessage}
 import play.api.libs.json.{JsValue, Json, Writes}
 
 case class ToClientResendActivationCodeResultMessage(override val payload: String) extends ToClientSocketMessage {

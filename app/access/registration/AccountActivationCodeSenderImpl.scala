@@ -1,10 +1,11 @@
 package access.registration
 
+import access.CodeSender
 import com.google.inject.Inject
-import communication.CodeSender
 import user.{UserMessage, UserStatus}
 
-class AccountActivationCodeSenderImpl @Inject()(linkSender: CodeSender) extends AccountActivationCodeSender {
+class AccountActivationCodeSenderImpl @Inject()(linkSender: CodeSender)
+  extends AccountActivationCodeSender {
 
   override def sendActivationCode(user: UserMessage, key: String): Unit = {
     val activationCodeWithDashes =

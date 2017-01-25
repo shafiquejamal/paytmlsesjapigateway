@@ -1,6 +1,6 @@
 package access.authentication
 
-import communication.{SocketMessageType, ToClientSocketMessage}
+import messaging.{SocketMessageType, ToClientSocketMessage}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, JsValue, Json, Writes}
 

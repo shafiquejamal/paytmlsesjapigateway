@@ -1,6 +1,6 @@
 package access.authentication
 
-import communication.{ToServerSocketMessageType, SocketMessageType, ToServerSocketMessage}
+import messaging.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import play.api.libs.json.JsValue
 
 case object ToServerLogoutAllMessage extends ToServerSocketMessage {

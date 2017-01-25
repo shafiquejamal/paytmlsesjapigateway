@@ -1,4 +1,4 @@
-package communication
+package messaging
 
 import access.authentication.AuthenticationMessage.ToServerLogin
 import access.authentication.ResetPasswordMessage.ResetPassword

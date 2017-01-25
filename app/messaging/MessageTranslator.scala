@@ -1,4 +1,4 @@
-package clientmessaging
+package messaging
 
 import access.authentication.{Authenticator, PasswordResetCodeSender}
 import access.registration.AccountActivationCodeSender
@@ -6,7 +6,6 @@ import access.{JWTAlgorithmProvider, JWTPrivateKeyProvider, JWTPublicKeyProvider
 import akka.actor.{Actor, ActorLogging, _}
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
-import communication.ToServerSocketMessageType
 import entrypoint.{AuthenticationAPI, RegistrationAPI, UserAPI, UserChecker}
 import play.api.Configuration
 import play.api.libs.json.JsValue

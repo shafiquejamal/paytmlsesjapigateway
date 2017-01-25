@@ -1,6 +1,6 @@
 package access.registration
 
-import communication.{SocketMessageType, ToClientNoPayloadMessage}
+import messaging.{SocketMessageType, ToClientNoPayloadMessage}
 
 object ToClientAccountActivationAlreadyActiveMessage extends ToClientNoPayloadMessage {
 

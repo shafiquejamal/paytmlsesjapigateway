@@ -1,7 +1,7 @@
 package access.registration
 
 import access.authentication.EmailMessage
-import communication.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
+import messaging.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import play.api.libs.json.JsValue
 
 case class ToServerIsEmailAvailableMessage(email: String) extends ToServerSocketMessage {

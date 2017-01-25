@@ -1,4 +1,4 @@
-package communication
+package messaging
 
 import play.api.libs.json.{JsValue, Json, Writes}
 

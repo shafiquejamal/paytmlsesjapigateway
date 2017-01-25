@@ -1,6 +1,7 @@
-package communication
+package access
 
 import com.google.inject.Inject
+import communication.Emailer
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import user.UserMessage

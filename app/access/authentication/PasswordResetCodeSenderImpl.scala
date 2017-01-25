@@ -1,9 +1,9 @@
 package access.authentication
 
+import access.CodeSender
 import access.registration.ActivationCodeGenerator
 import com.eigenroute.time.TimeProvider
 import com.google.inject.Inject
-import communication.CodeSender
 import entrypoint.AuthenticationAPI
 import org.joda.time.Days
 import play.api.Configuration

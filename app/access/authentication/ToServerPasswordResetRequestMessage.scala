@@ -1,7 +1,7 @@
 package access.authentication
 
 import access.authentication.ToServerPasswordResetRequestMessage.ToServerPasswordResetRequest
-import communication.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
+import messaging.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import play.api.libs.json.JsValue
 
 case class ToServerPasswordResetRequestMessage(email: String) extends ToServerSocketMessage {

@@ -1,6 +1,6 @@
 package access.authentication
 
-import communication.{SocketMessageType, ToClientNoPayloadMessage}
+import messaging.{SocketMessageType, ToClientNoPayloadMessage}
 
 case object ToClientLoggingOutMessage extends ToClientNoPayloadMessage {
 

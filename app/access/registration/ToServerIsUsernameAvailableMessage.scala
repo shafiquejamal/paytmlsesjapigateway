@@ -1,6 +1,6 @@
 package access.registration
 
-import communication.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
+import messaging.{SocketMessageType, ToServerSocketMessage, ToServerSocketMessageType}
 import play.api.libs.json.Reads._
 import play.api.libs.json.{JsPath, JsValue, Reads}
 

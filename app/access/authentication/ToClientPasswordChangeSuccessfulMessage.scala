@@ -1,6 +1,6 @@
 package access.authentication
 
-import communication.{SocketMessageType, ToClientNoPayloadMessage}
+import messaging.{SocketMessageType, ToClientNoPayloadMessage}
 
 object ToClientPasswordChangeSuccessfulMessage extends ToClientNoPayloadMessage {
 

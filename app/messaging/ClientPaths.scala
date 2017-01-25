@@ -1,4 +1,4 @@
-package clientmessaging
+package messaging
 
 import java.util.UUID
 

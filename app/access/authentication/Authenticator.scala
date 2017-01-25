@@ -5,12 +5,11 @@ import java.util.UUID
 import access._
 import access.registration._
 import akka.actor._
-import clientmessaging.ClientPaths._
-import clientmessaging.NamedClient
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
-import communication.{ToClientNoPayloadMessage, ToClientSocketMessage, ToServerMessageRouter, ToServerSocketMessage}
 import entrypoint._
+import messaging.ClientPaths._
+import messaging._
 import pdi.jwt.JwtJson
 import play.api.Configuration
 import play.api.libs.json.Json
