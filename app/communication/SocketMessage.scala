@@ -9,6 +9,7 @@ import access.registration.ActivateAccountMessage.ActivateAccount
 import access.registration.RegistrationMessage.Registration
 import access.registration.ToServerIsEmailAvailableMessage._
 import access.registration.ToServerIsUsernameAvailableMessage.ToServerIsUsernameAvailable
+import access.registration.ToServerResendActivationCodeMessage.ToServerResendActivationCode
 import access.registration.ToServerResendActivationCodeRequestMessage.ToServerResendActivationCodeRequest
 import akka.actor.ActorRef
 import play.api.libs.json.{JsValue, Json, Writes}
@@ -56,6 +57,7 @@ object ToServerSocketMessageType {
     ToServerIsUsernameAvailable.description -> ToServerIsUsernameAvailable,
     ActivateAccount.description -> ActivateAccount,
     ChangePassword.description -> ChangePassword,
+    ToServerResendActivationCode.description -> ToServerResendActivationCode,
     ToServerLogin.description -> ToServerLogin,
     ToServerPasswordResetRequest.description -> ToServerPasswordResetRequest,
     ToServerResendActivationCodeRequest.description -> ToServerResendActivationCodeRequest,

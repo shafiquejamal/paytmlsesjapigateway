@@ -126,6 +126,16 @@ class Authenticator (
           }
         }
       unnamedClient ! response.toJson
+
+    case toServerResendActivationCodeMessage: ToServerResendActivationCodeMessage =>
+      val response = userAPI.findUnverifiedUser(toServerResendActivationCodeMessage.email).fold[ToClientSocketMessage] {
+        ToClientResendActivationCodeResultMessage("User not registered or already verified")
+      } { user =>
+        accountActivationLinkSender.sendActivationCode(user, activationCodeKey)
+        ToClientResendActivationCodeResultMessage("Code sent")
+      }
+      unnamedClient ! response.toJson
+
   }
 
   def processAuthenticatedRequests: Receive = {
