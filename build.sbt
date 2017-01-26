@@ -1,4 +1,4 @@
-name := """access-service"""
+name := """api-gateway-template"""
 
 version := "0.0.1"
 
