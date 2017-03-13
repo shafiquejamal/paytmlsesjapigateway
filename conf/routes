@@ -20,3 +20,5 @@ POST    /logout-all-devices         entrypoint.AuthenticationController.logoutAl
 POST    /change-password            entrypoint.UserController.changePassword
 
 GET     /messaging                  entrypoint.ClientMessagingController.connect
+
+GET     /hello-world                entrypoint.challenge.ChallengeController.helloWorld
