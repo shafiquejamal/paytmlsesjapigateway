@@ -1,7 +1,5 @@
-import com.eigenroute.plumbing.PublisherSubscriber
 import com.google.inject.AbstractModule
 import net.codingwell.scalaguice.ScalaModule
-import plumbing.MessageSubscriber
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -16,7 +14,7 @@ import plumbing.MessageSubscriber
 class Module extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
-    bind[PublisherSubscriber].to[MessageSubscriber].asEagerSingleton
+
   }
 
 }

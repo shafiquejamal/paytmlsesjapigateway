@@ -1,4 +1,4 @@
-name := """api-gateway-template"""
+name := """paytmlsesjapigateway"""
 
 version := "0.0.1"
 
@@ -11,8 +11,6 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   filters,
-  "com.eigenroute" % "eigenroute-publish-subscribe-rabbitmq-play_2.11" % "0.0.5",
-  "com.eigenroute" % "eigenroute-messagebroker-messages_2.11" % "0.0.4",
   "com.eigenroute" % "eigenroute-scalikejdbc-helpers_2.11" % "0.0.1",
   "org.flywaydb" %% "flyway-play" % "3.0.0",
   "com.h2database"  %  "h2"                % "1.4.191",
