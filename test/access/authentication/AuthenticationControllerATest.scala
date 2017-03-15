@@ -40,7 +40,6 @@ class AuthenticationControllerATest
 
   val dBConfig = new ScalikeJDBCTestDBConfig()
   val newPassword = "some new password"
-  val timeProvider = new TestTimeProviderImpl()
   val configuration =
     new Configuration(ConfigFactory.parseFile(new File("conf/application.test.conf")).resolve())
 
@@ -67,7 +66,7 @@ class AuthenticationControllerATest
 
   trait JWTChecker {
     def checkJWT(authentication:JsValue) = {
-      val tokenFromRequest = (contentFromRequest(authentication) \ "token").asOpt[String].map{ token =>
+      (contentFromRequest(authentication) \ "token").asOpt[String].map{ token =>
         token.split(".").take(2).toList.mkString(".") } should contain(expectedJWT.split(".").take(2).toList.mkString("."))
       (contentFromRequest(authentication) \ "username").asOpt[String] should contain("alice")
       (contentFromRequest(authentication) \ "email").asOpt[String] should contain("alice@alice.com")

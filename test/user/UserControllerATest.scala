@@ -48,7 +48,6 @@ class UserControllerATest
     super.afterEach()
   }
 
-  val timeProvider = new TestTimeProviderImpl()
   val jWTAlgorithmProvider = new JWTAlgorithmProviderImpl()
   val configuration =
     new Configuration(ConfigFactory.parseFile(new File("conf/application.test.conf")).resolve())

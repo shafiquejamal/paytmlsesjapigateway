@@ -2,26 +2,13 @@ package user
 
 import java.util.UUID
 
-import com.eigenroute.id.TestUUIDProviderImpl
-import com.eigenroute.time.TestTimeProviderImpl
+import domain.CommonFixture
 import scalikejdbc._
 import user.UserStatus._
 import util.Password.hash
 
-trait UserFixture {
+trait UserFixture extends CommonFixture {
 
-  val now = new TestTimeProviderImpl().now()
-  val later = now.plusDays(1)
-  val yesterday = now.minusDays(1).plusMillis(1)
-  val dayBeforeYesterday = now.minusDays(2)
-
-  val id1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
-  val id2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
-  val id3 = UUID.fromString("00000000-0000-0000-0000-000000000003")
-  val id4 = UUID.fromString("00000000-0000-0000-0000-000000000004")
-  val id5 = UUID.fromString("00000000-0000-0000-0000-000000000005")
-  val id6 = UUID.fromString("00000000-0000-0000-0000-000000000006")
-  val id7 = UUID.fromString("00000000-0000-0000-0000-000000000007")
   val idNonExistentUser = UUID.fromString("90000000-0000-0000-0000-000000000000")
 
   val idMsgAliceBob1 = UUID.fromString("00000000-0000-0000-0000-100000000013")
@@ -31,15 +18,6 @@ trait UserFixture {
   val idMsgBobAlice2 = UUID.fromString("00000000-0000-0000-0000-200000000031")
   val idMsgBobAlice3 = UUID.fromString("00000000-0000-0000-0000-300000000031")
 
-  val idContactAliceBob = UUID.fromString("00000000-0000-0000-0000-100000000013")
-  val idContactBobCharlie = UUID.fromString("00000000-0000-0000-0000-100000000034")
-  val idContactBobAlice = UUID.fromString("00000000-0000-0000-0000-100000000031")
-  val idContactBobDiane = UUID.fromString("00000000-0000-0000-0000-100000000037")
-  val idContactAliceCharlie = UUID.fromString("00000000-0000-0000-0000-100000000014")
-  val idContactCharlieDiane = UUID.fromString("00000000-0000-0000-0000-100000000017")
-  val idContactDianeAlice = UUID.fromString("00000000-0000-0000-0000-100000000071")
-
-  val uUIDProvider = new TestUUIDProviderImpl()
   uUIDProvider.index = 100
 
   val pAlice1 = hash("passwordAliceID1")

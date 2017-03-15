@@ -49,8 +49,14 @@ class MessageTranslator(
   override def receive = {
 
     case msg: JsValue =>
+      log.info(s"Message translator received message: $msg")
       val messageType = (msg \ "messageType").validate[String].getOrElse("")
+      log.info(s"messageType: $messageType")
+      val temp = ToServerSocketMessageType.from(messageType)
+      log.info(s"ToServerSocketMessageType.from(messageType): $temp")
+      log.info(s"socketMessage: ${temp.socketMessage(msg)}")
       val maybeSocketMessage = Try(ToServerSocketMessageType.from(messageType).socketMessage(msg)).toOption
+      log.info(s"maybeSocketMessage: $maybeSocketMessage")
       maybeSocketMessage.foreach { socketMessage => socketMessage sendTo authenticator }
 
   }

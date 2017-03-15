@@ -8,6 +8,7 @@ import akka.stream.Materializer
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import com.google.inject.Inject
+import com.typesafe.scalalogging.LazyLogging
 import messaging.MessageTranslator
 import play.api.Configuration
 import play.api.libs.json.JsValue
@@ -30,13 +31,14 @@ class ClientMessagingController @Inject() (
     passwordResetCodeSender: PasswordResetCodeSender,
     accountActivationLinkSender:AccountActivationCodeSender)
  extends Controller
- with AuthenticatedActionCreator {
+ with AuthenticatedActionCreator
+ with LazyLogging {
 
   implicit val mat = materializer
   implicit val actorRefFactory = system
 
   def connect = {
-
+    
     WebSocket.accept[JsValue, JsValue] { request =>
       ActorFlow.actorRef(unnamedClient =>
         MessageTranslator.props(

@@ -103,6 +103,7 @@ class Authenticator (
         UsernameAvailability(isUsernameAvailableMessage.username, isUsernameAvailable)).toJson
 
     case registrationMessage: RegistrationMessage =>
+      log.info(s"authenticator received: $registrationMessage")
       val maybeUserMessage = registrationAPI.signUp(registrationMessage, accountActivationLinkSender.statusOnRegistration)
       val response =
         maybeUserMessage.toOption.fold[ToClientSocketMessage](ToClientRegistrationFailedMessage){ userMessage =>

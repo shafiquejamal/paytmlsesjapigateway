@@ -22,6 +22,7 @@ libraryDependencies ++= Seq(
   "commons-validator" % "commons-validator" % "1.5.1",
   "com.typesafe.play" %% "play-mailer" % "5.0.0",
   "com.typesafe" % "config" % "1.3.0",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
   "com.eigenroute" % "eigenroute-scalikejdbc-test-helpers_2.11" % "0.0.1" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % Test,
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
