@@ -7,6 +7,7 @@ import access.registration._
 import akka.actor._
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
+import domain.twittersearch.API
 import entrypoint._
 import messaging.ClientPaths._
 import messaging._
@@ -21,6 +22,7 @@ import scala.util.{Failure, Success}
 class Authenticator (
     userChecker: UserChecker,
     userAPI: UserAPI,
+    api: API,
     authenticationAPI: AuthenticationAPI,
     registrationAPI: RegistrationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
@@ -163,6 +165,11 @@ class Authenticator (
     case msg: ToServerSocketMessage =>
       msg sendTo toServerMessageRouter
 
+    case msg: ToClientSocketMessage =>
+      log.info(s"sending toClientSocketMessage: $msg")
+      val allAuthenticatorsForThisUser = context.actorSelection(namedClientPath(clientUserId))
+      allAuthenticatorsForThisUser ! msg.toJson
+
   }
 
   private def activateUser(user:UserMessage, code:String): ToClientSocketMessage = {
@@ -189,7 +196,7 @@ class Authenticator (
     toServerMessageRouter =
       context.actorOf(
         ToServerMessageRouter.props(
-          namedClient, userAPI, clientId, clientUsername, timeProvider, uUIDProvider))
+          namedClient, userAPI, api, clientId, clientUsername, timeProvider, uUIDProvider))
     context.become(processAuthenticatedRequests)
   }
 
@@ -200,6 +207,7 @@ object Authenticator {
   def props(
       chatAuthenticator: UserChecker,
       userAPI: UserAPI,
+      api: API,
       authenticationAPI: AuthenticationAPI,
       registrationAPI: RegistrationAPI,
       jWTAlgorithmProvider: JWTAlgorithmProvider,
@@ -216,6 +224,7 @@ object Authenticator {
       new Authenticator(
         chatAuthenticator,
         userAPI,
+        api,
         authenticationAPI,
         registrationAPI,
         jWTAlgorithmProvider,

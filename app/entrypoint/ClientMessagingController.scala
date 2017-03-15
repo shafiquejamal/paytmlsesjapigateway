@@ -9,6 +9,7 @@ import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
+import domain.twittersearch.API
 import messaging.MessageTranslator
 import play.api.Configuration
 import play.api.libs.json.JsValue
@@ -27,6 +28,7 @@ class ClientMessagingController @Inject() (
     materializer: Materializer,
     userChecker: UserChecker,
     userAPI: UserAPI,
+    api: API,
     uUIDProvider: UUIDProvider,
     passwordResetCodeSender: PasswordResetCodeSender,
     accountActivationLinkSender:AccountActivationCodeSender)
@@ -38,12 +40,13 @@ class ClientMessagingController @Inject() (
   implicit val actorRefFactory = system
 
   def connect = {
-    
+
     WebSocket.accept[JsValue, JsValue] { request =>
       ActorFlow.actorRef(unnamedClient =>
         MessageTranslator.props(
           userChecker,
           userAPI,
+          api,
           authenticationAPI,
           registrationAPI,
           jWTAlgorithmProvider,

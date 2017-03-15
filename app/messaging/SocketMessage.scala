@@ -12,6 +12,7 @@ import access.registration.ToServerIsEmailAvailableMessage._
 import access.registration.ToServerIsUsernameAvailableMessage.ToServerIsUsernameAvailable
 import access.registration.ToServerResendActivationCodeMessage.ToServerResendActivationCode
 import akka.actor.ActorRef
+import domain.twittersearch.SaveSearchTermMessage.SaveSearchTerm
 import play.api.libs.json.{JsValue, Json, Writes}
 import user.ChangePasswordMessage.ChangePassword
 
@@ -51,6 +52,7 @@ trait ToServerSocketMessageType extends SocketMessageType {
 object ToServerSocketMessageType {
 
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
+    SaveSearchTerm.description -> SaveSearchTerm,
     ResetPassword.description -> ResetPassword,
     Registration.description -> Registration,
     ToServerIsEmailAvailable.description -> ToServerIsEmailAvailable,

@@ -6,6 +6,7 @@ import access.{JWTAlgorithmProvider, JWTPrivateKeyProvider, JWTPublicKeyProvider
 import akka.actor.{Actor, ActorLogging, _}
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
+import domain.twittersearch.API
 import entrypoint.{AuthenticationAPI, RegistrationAPI, UserAPI, UserChecker}
 import play.api.Configuration
 import play.api.libs.json.JsValue
@@ -15,6 +16,7 @@ import scala.util.Try
 class MessageTranslator(
     userChecker: UserChecker,
     userAPI: UserAPI,
+    api: API,
     authenticationAPI: AuthenticationAPI,
     registrationAPI: RegistrationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
@@ -34,6 +36,7 @@ class MessageTranslator(
       Authenticator.props(
         userChecker,
         userAPI,
+        api,
         authenticationAPI,
         registrationAPI,
         jWTAlgorithmProvider,
@@ -68,6 +71,7 @@ object MessageTranslator {
   def props(
     userChecker: UserChecker,
     userAPI: UserAPI,
+    api: API,
     authenticationAPI: AuthenticationAPI,
     registrationAPI: RegistrationAPI,
     jWTAlgorithmProvider: JWTAlgorithmProvider,
@@ -84,6 +88,7 @@ object MessageTranslator {
       new MessageTranslator(
         userChecker,
         userAPI,
+        api,
         authenticationAPI,
         registrationAPI,
         jWTAlgorithmProvider,

@@ -8,6 +8,7 @@ import com.eigenroute.id.{UUIDProvider, UUIDProviderImpl}
 import com.eigenroute.scalikejdbchelpers.{DBConfig, ScalikeJDBCDevProdDBConfig, ScalikeJDBCSessionProvider, ScalikeJDBCSessionProviderImpl}
 import com.eigenroute.time.{TimeProvider, TimeProviderImpl}
 import com.google.inject.AbstractModule
+import domain.twittersearch.{API, DAO, Facade, ScalikeJDBCDAOImpl}
 import entrypoint.{AuthenticationAPI, RegistrationAPI, UserAPI}
 import net.codingwell.scalaguice.ScalaModule
 import user.UserFacade
@@ -29,6 +30,8 @@ class Module extends AbstractModule with ScalaModule {
     bind[AccountActivationCodeSender].to[AccountActivationCodeSenderImpl]
     bind[PasswordResetCodeSender].to[PasswordResetCodeSenderImpl]
     bind[CodeSender].to[CodeSenderImpl]
+    bind[API].to[Facade]
+    bind[DAO].to[ScalikeJDBCDAOImpl]
   }
 
 }

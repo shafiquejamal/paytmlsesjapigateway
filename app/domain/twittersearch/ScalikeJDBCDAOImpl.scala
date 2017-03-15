@@ -4,11 +4,12 @@ import java.util.UUID
 
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.scalikejdbchelpers.{DBConfig, ScalikeJDBCSessionProvider}
+import com.google.inject.Inject
 import scalikejdbc._
 
 import scala.util.{Failure, Success, Try}
 
-class ScalikeJDBCDAOImpl(
+class ScalikeJDBCDAOImpl @Inject() (
     uUIDProvider: UUIDProvider,
     scalikeJDBCSessionProvider: ScalikeJDBCSessionProvider,
     dBConfig: DBConfig)
