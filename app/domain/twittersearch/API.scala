@@ -11,6 +11,6 @@ trait API {
 
   def searchTerms(userId: UUID): Seq[SearchTerm]
 
-  def search(searchText: String): Future[Seq[String]]
+  def search(searchText: String): Future[Seq[TwitterSearchResult]]
 
 }

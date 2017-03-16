@@ -20,6 +20,6 @@ class Facade @Inject() (
 
   override def searchTerms(userId: UUID): Seq[SearchTerm] = dAO searchTerms userId
 
-  override def search(searchText: String): Future[Seq[String]] = TwitterSearcher search searchText
+  override def search(searchText: String): Future[Seq[TwitterSearchResult]] = TwitterSearcher search searchText
 
 }

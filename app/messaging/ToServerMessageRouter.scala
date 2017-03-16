@@ -39,7 +39,7 @@ class ToServerMessageRouter(
     case SearchTwitterMessage(searchText) =>
       import context.dispatcher
       api.search(searchText) onSuccess {
-        case searchResults: List[String] =>
+        case searchResults: List[TwitterSearchResult] =>
           client ! TwitterSearchResultsMessage(searchResults)
       }
 
