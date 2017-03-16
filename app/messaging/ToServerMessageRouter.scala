@@ -5,7 +5,7 @@ import java.util.UUID
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
-import domain.twittersearch.{API, SaveSearchTermMessage, SearchTermSavedMessage}
+import domain.twittersearch._
 import entrypoint.UserAPI
 import messaging.ClientPaths._
 
@@ -24,9 +24,16 @@ class ToServerMessageRouter(
 
     case saveSearchTermMessage: SaveSearchTermMessage =>
       val result = api.addSearchTerm(clientId, saveSearchTermMessage.searchText)
-      result.toOption.foreach { message =>
+      result.toOption.foreach { searchTerm =>
         val allAuthenticatorsForThisUser = context.actorSelection(namedClientPath(clientId))
-        allAuthenticatorsForThisUser ! SearchTermSavedMessage(message)
+        allAuthenticatorsForThisUser ! SearchTermSavedMessage(searchTerm)
+      }
+
+    case RetrieveSearchTermsMessage =>
+      val savedSearchTerms = api.searchTerms(clientId)
+      val allAuthenticatorsForThisUser = context.actorSelection(namedClientPath(clientId))
+      savedSearchTerms.foreach { savedSearchTerm =>
+        allAuthenticatorsForThisUser ! SearchTermSavedMessage(savedSearchTerm)
       }
 
     case message =>
