@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   filters,
+  "com.danielasfregola" %% "twitter4s" % "5.0",
   "com.eigenroute" % "eigenroute-scalikejdbc-helpers_2.11" % "0.0.1",
   "org.flywaydb" %% "flyway-play" % "3.0.0",
   "com.h2database"  %  "h2"                % "1.4.191",

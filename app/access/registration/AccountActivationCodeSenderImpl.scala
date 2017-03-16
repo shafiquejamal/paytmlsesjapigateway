@@ -5,7 +5,7 @@ import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import user.{UserMessage, UserStatus}
 
-class AccountActivationCodeSenderImpl @Inject()(linkSender: CodeSender)
+class AccountActivationCodeSenderImpl @Inject()(codeSender: CodeSender)
   extends AccountActivationCodeSender
   with LazyLogging {
 
@@ -13,7 +13,7 @@ class AccountActivationCodeSenderImpl @Inject()(linkSender: CodeSender)
     val activationCodeWithDashes =
       ActivationCodeGenerator.generateWithDashes(user.maybeId.map(_.toString).getOrElse(""), key)
     logger.info(s"Activation code: $activationCodeWithDashes")
-    linkSender.send(user, activationCodeWithDashes, "activation.subject", "activation.body")
+    codeSender.send(user, activationCodeWithDashes, "activation.subject", "activation.body")
   }
 
   override val statusOnRegistration = UserStatus.Unverified

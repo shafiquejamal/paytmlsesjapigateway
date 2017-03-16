@@ -17,7 +17,7 @@ class RegistrationController @Inject() (
     registrationAPI: RegistrationAPI,
     userAPI: UserAPI,
     uUIDProvider: UUIDProvider,
-    configuration:Configuration,
+    configuration: Configuration,
     accountActivationLinkSender:AccountActivationCodeSender)
   extends Controller {
 

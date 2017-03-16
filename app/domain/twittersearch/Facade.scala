@@ -6,6 +6,7 @@ import com.eigenroute.id.UUIDProvider
 import com.eigenroute.time.TimeProvider
 import com.google.inject.Inject
 
+import scala.concurrent.Future
 import scala.util.Try
 
 class Facade @Inject() (
@@ -14,9 +15,11 @@ class Facade @Inject() (
     timeProvider: TimeProvider)
   extends API {
 
-  def addSearchTerm(userId: UUID, searchText: String): Try[SearchTerm] =
-    dAO.addSearchTerm(SearchTerm(userId, searchText, timeProvider.now()))
+  override def addSearchTerm(userId: UUID, searchText: String): Try[SearchTerm] =
+    dAO addSearchTerm SearchTerm(userId, searchText, timeProvider.now())
 
-  def searchTerms(userId: UUID): Seq[SearchTerm] = dAO.searchTerms(userId)
+  override def searchTerms(userId: UUID): Seq[SearchTerm] = dAO searchTerms userId
+
+  override def search(searchText: String): Future[Seq[String]] = TwitterSearcher search searchText
 
 }
