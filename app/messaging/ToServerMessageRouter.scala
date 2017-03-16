@@ -22,8 +22,8 @@ class ToServerMessageRouter(
 
   override def receive = {
 
-    case saveSearchTermMessage: SaveSearchTermMessage =>
-      val result = api.addSearchTerm(clientId, saveSearchTermMessage.searchText)
+    case SaveSearchTermMessage(searchText) =>
+      val result = api.addSearchTerm(clientId, searchText)
       result.toOption.foreach { searchTerm =>
         val allAuthenticatorsForThisUser = context.actorSelection(namedClientPath(clientId))
         allAuthenticatorsForThisUser ! SearchTermSavedMessage(searchTerm)
@@ -34,6 +34,13 @@ class ToServerMessageRouter(
       val allAuthenticatorsForThisUser = context.actorSelection(namedClientPath(clientId))
       savedSearchTerms.foreach { savedSearchTerm =>
         allAuthenticatorsForThisUser ! SearchTermSavedMessage(savedSearchTerm)
+      }
+
+    case SearchTwitterMessage(searchText) =>
+      import context.dispatcher
+      api.search(searchText) onSuccess {
+        case searchResults: List[String] =>
+          client ! TwitterSearchResultsMessage(searchResults)
       }
 
     case message =>
