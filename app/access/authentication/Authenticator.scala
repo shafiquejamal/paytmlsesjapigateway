@@ -159,7 +159,6 @@ class Authenticator (
       val response = maybeUserMessage.fold[ToClientNoPayloadMessage](ToClientPasswordChangeFailedMessage){ _ =>
         ToClientPasswordChangeSuccessfulMessage }
       unnamedClient ! response.toJson
-      unnamedClient ! ToClientLogoutMessage.toJson
       context.unbecome()
 
     case msg: ToServerSocketMessage =>
