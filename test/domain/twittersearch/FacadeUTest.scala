@@ -29,6 +29,6 @@ class FacadeUTest extends FlatSpecLike with ShouldMatchers with MockFactory with
     facade.searchTerms(id1) should contain theSameElementsInOrderAs expected
   }
 
-  def makeFacade = new Facade(uUIDProvider, mockedDAO, timeProvider)
+  def makeFacade = new Facade(uUIDProvider, mockedDAO, timeProvider, null)
 
 }

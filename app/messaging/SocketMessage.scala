@@ -71,7 +71,7 @@ object ToServerSocketMessageType {
     ToServerLogout.description -> ToServerLogout
   )
 
-  def from(description:String): ToServerSocketMessageType = socketMessageTypeFrom(description)
+  def from(description:String): ToServerSocketMessageType = socketMessageTypeFrom.getOrElse(description, ToServerLogout)
 
 }
 

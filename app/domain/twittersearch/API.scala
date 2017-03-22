@@ -13,4 +13,6 @@ trait API {
 
   def search(searchText: String): Future[Seq[TwitterSearchResult]]
 
+  def randomWord: Future[String]
+
 }
