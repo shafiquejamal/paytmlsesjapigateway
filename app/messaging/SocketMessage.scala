@@ -12,6 +12,7 @@ import access.registration.ToServerIsEmailAvailableMessage._
 import access.registration.ToServerIsUsernameAvailableMessage.ToServerIsUsernameAvailable
 import access.registration.ToServerResendActivationCodeMessage.ToServerResendActivationCode
 import akka.actor.ActorRef
+import domain.twittersearch.FetchRandomWordMessage.FetchRandomWord
 import domain.twittersearch.RetrieveSearchTermsMessage.RetrieveSearchTerms
 import domain.twittersearch.SaveSearchTermMessage.SaveSearchTerm
 import domain.twittersearch.SearchTwitterMessage.SearchTwitter
@@ -54,6 +55,7 @@ trait ToServerSocketMessageType extends SocketMessageType {
 object ToServerSocketMessageType {
 
   private val socketMessageTypeFrom = Map[String, ToServerSocketMessageType](
+    FetchRandomWord.description -> FetchRandomWord,
     SearchTwitter.description -> SearchTwitter,
     RetrieveSearchTerms.description -> RetrieveSearchTerms,
     SaveSearchTerm.description -> SaveSearchTerm,

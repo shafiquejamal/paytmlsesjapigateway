@@ -43,6 +43,13 @@ class ToServerMessageRouter(
           client ! TwitterSearchResultsMessage(searchResults)
       }
 
+    case FetchRandomWordMessage =>
+      import context.dispatcher
+      api.randomWord onSuccess {
+        case randomWord: String =>
+          client ! RandomWordMessage(randomWord)
+      }
+
     case message =>
       log.info(s"Message for routing received $message")
 

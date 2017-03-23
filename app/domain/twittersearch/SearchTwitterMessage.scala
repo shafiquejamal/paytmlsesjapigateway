@@ -14,7 +14,7 @@ case class SearchTwitterMessage(searchText: String) extends ToServerSocketMessag
 
 object SearchTwitterMessage {
 
-   implicit val reads: Reads[SearchTwitterMessage] =
+  implicit val reads: Reads[SearchTwitterMessage] =
     (JsPath \ "searchText").read[String].map( text => SearchTwitterMessage(text))
 
   case object SearchTwitter extends ToServerSocketMessageType {
