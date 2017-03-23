@@ -10,14 +10,15 @@ import scala.concurrent.Future
 class RandomWordFetcher @Inject() (materializer: Materializer) {
 
   implicit val implicitMaterializer = materializer
-  val client = AhcWSClient()
 
   def fetch: Future[String] = {
+    val client = AhcWSClient()
     client
       .url("http://www.setgetgo.com/randomword/get.php")
       .withHeaders("Cache-Control" -> "no-cache")
       .get()
       .map { wsResponse => wsResponse.body }
+      .andThen { case _ => client.close() }
   }
 
 }
